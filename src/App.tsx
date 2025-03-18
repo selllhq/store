@@ -1,7 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { createContext } from 'react';
 import StoreLayout from './components/StoreLayout';
 import HomePage from './pages/HomePage';
+
+// Create a context for store configuration
+export const StoreConfigContext = createContext<any>(null);
 
 const queryClient = new QueryClient({
   defaultOptions: {

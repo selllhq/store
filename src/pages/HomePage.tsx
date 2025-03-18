@@ -1,14 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { getStoreProducts, ProductFilters } from '../services/api';
 import { Product } from '../types/product';
+import { StoreConfigContext } from '../App';
 
 interface HomePageProps {
   storeId: string;
+  storeConfig?: any;
 }
 
 export default function HomePage({ storeId }: HomePageProps) {
+  const storeConfig = useContext(StoreConfigContext) || {};
   const [filters, setFilters] = useState<ProductFilters>({
     sortBy: 'newest'
   });
@@ -208,12 +211,12 @@ export default function HomePage({ storeId }: HomePageProps) {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
               {sortedProducts.slice(0, visibleProducts).map((product) => (
-                <div key={product.id} className="bg-[#1E1E1E] rounded-lg overflow-hidden">
+                <div key={product.id} className="rounded-lg overflow-hidden" style={{ backgroundColor: storeConfig?.background_color || '#1E1E1E' }}>
                   {/* Product Image Area */}
-                  <div className="relative aspect-square bg-[#1E1E1E]">
+                  <div className="relative aspect-square" style={{ backgroundColor: storeConfig?.background_color || '#1E1E1E' }}>
                     {/* Stock indicator */}
                     <div className="absolute top-3 right-3 z-10">
-                      <span className="text-xs font-medium px-3 py-1 rounded-full bg-green-500/20 text-green-400">
+                      <span className="text-xs font-medium px-3 py-1 rounded-full bg-green-500/20 text-green-400" style={{ backgroundColor: `${storeConfig?.theme_color || '#4CAF50'}22`, color: storeConfig?.theme_color || '#4CAF50' }}>
                         {product.stock === -1 ? '∞ Unlimited' : `${product.stock || 20} in stock`}
                       </span>
                     </div>
@@ -231,8 +234,8 @@ export default function HomePage({ storeId }: HomePageProps) {
                     )}
                   </div>
                   
-                  {/* Product Info Area - Dark Gray Background */}
-                  <div className="p-4 bg-[#2A2A2A]">
+                  {/* Product Info Area */}
+                  <div className="p-4" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}CC` : '#2A2A2A' }}>
                     <h3 className="font-bold text-xl text-white mb-1">{product.name || 'Product Name'}</h3>
                     <p className="text-gray-400 text-sm mb-3">{product.description || 'Product description will appear here'}</p>
                     
@@ -247,7 +250,13 @@ export default function HomePage({ storeId }: HomePageProps) {
                     
                     <Link 
                       to={`/product/${product.id}`} 
-                      className="block w-full py-3 bg-[#FFA726] hover:bg-[#FF9800] text-white font-medium rounded text-center transition-colors duration-300"
+                      className="block w-full py-3 text-white font-medium rounded text-center transition-colors duration-300"
+                      style={{ 
+                        backgroundColor: storeConfig?.theme_color || '#FFA726',
+                        filter: 'brightness(1)'
+                      }}
+                      onMouseOver={(e) => e.currentTarget.style.filter = 'brightness(0.9)'}
+                      onMouseOut={(e) => e.currentTarget.style.filter = 'brightness(1)'}
                     >
                       View in Store
                     </Link>
