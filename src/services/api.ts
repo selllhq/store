@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Store } from '../types/store';
 import { Product } from '../types/product';
 
-const api = axios.create({
+export const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'https://selll.online/api',
 });
 
@@ -39,5 +39,37 @@ export const getFilteredProducts = async (storeId: string, filters: ProductFilte
   if (filters.search) params.append('search', filters.search);
   
   const response = await api.get(`/stores/${storeId}/products?${params.toString()}`);
+  return response.data;
+};
+
+// Order interfaces
+export interface OrderCustomer {
+  name: string;
+  email: string;
+  phone: string;
+  address?: string;
+  city?: string;
+  country?: string;
+}
+
+export interface OrderItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+export interface Order {
+  id: string;
+  status: string;
+  customer: OrderCustomer;
+  items: OrderItem[];
+  total: number;
+  created_at: string;
+}
+
+// Fetch order details
+export const getOrderDetails = async (storeId: string, orderId: string): Promise<Order> => {
+  const response = await api.get(`/stores/${storeId}/orders/${orderId}`);
   return response.data;
 };

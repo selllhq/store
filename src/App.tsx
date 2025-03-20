@@ -3,6 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createContext } from 'react';
 import StoreLayout from './components/StoreLayout';
 import HomePage from './pages/HomePage';
+import OrderConfirmation from './pages/OrderConfirmation';
 
 // Create a context for store configuration
 export const StoreConfigContext = createContext<any>(null);
@@ -35,6 +36,7 @@ function App() {
             <StoreLayout storeName={isLocalhost ? 'demo-store' : storeName}>
               <Routes>
                 <Route index element={<HomePage storeId={isLocalhost ? 'demo-store' : storeName} />} />
+                <Route path="order" element={<OrderConfirmation />} />
                 <Route path="*" element={<Navigate to="." replace />} />
               </Routes>
             </StoreLayout>
