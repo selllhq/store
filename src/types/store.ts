@@ -5,6 +5,8 @@ export interface Store {
   logo?: string;
   banner?: string;
   customDomain?: string;
+  currency?: string;
+  config?: string;
   theme?: StoreTheme;
 }
 

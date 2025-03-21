@@ -1,8 +1,8 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { StoreConfigContext } from '../App';
 import AboutModal from './AboutModal';
-import CartSlideout from './CartSlideout';
+import BagSlideout from './BagSlideout';
 import ProductModal from './ProductModal';
 import { getStore, getStoreProducts } from '../services/api';
 
@@ -36,17 +36,20 @@ interface StoreLayoutProps {
   storeName: string;
 }
 
+// Create a context for products data
+export const ProductsContext = React.createContext<any[]>([]);
+
 export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartItems, setCartItems] = useState<any[]>([]);
-  const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [isBagOpen, setIsBagOpen] = useState(false);
+  const [bagItems, setBagItems] = useState<any[]>([]);
+  const [selectedProduct] = useState<any>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
 
-  // Cart management functions
-  const addToCart = (product: any, quantity: number = 1) => {
-    setCartItems(prevItems => {
-      // Check if product already exists in cart
+  // Bag management functions
+  const addToBag = (product: any, quantity: number = 1) => {
+    setBagItems(prevItems => {
+      // Check if product already exists in bag
       const existingItemIndex = prevItems.findIndex(item => item.id === product.id);
       
       if (existingItemIndex >= 0) {
@@ -70,24 +73,24 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
         }];
       }
     });
-    setIsCartOpen(true);
+    setIsBagOpen(true);
   };
 
-  const updateCartItemQuantity = (productId: string, newQuantity: number) => {
+  const updateBagItemQuantity = (productId: string, newQuantity: number) => {
     if (newQuantity <= 0) {
-      removeFromCart(productId);
+      removeFromBag(productId);
       return;
     }
     
-    setCartItems(prevItems => {
+    setBagItems(prevItems => {
       return prevItems.map(item => 
         item.id === productId ? { ...item, cartQuantity: newQuantity } : item
       );
     });
   };
 
-  const removeFromCart = (productId: string) => {
-    setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+  const removeFromBag = (productId: string) => {
+    setBagItems(prevItems => prevItems.filter(item => item.id !== productId));
   };
 
   const { data: store, isLoading, error } = useQuery<Store>({
@@ -96,7 +99,8 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
     enabled: !!storeName,
   });
 
-  const { data: products } = useQuery({
+  // Fetch products data to pass to HomePage
+  const { data: products = [] } = useQuery({
     queryKey: ['products', store?.id],
     queryFn: () => store?.id ? getStoreProducts(store.id) : Promise.resolve([]),
     enabled: !!store?.id,
@@ -132,161 +136,89 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
     <StoreConfigContext.Provider value={storeConfig}>
       <div className="min-h-screen" style={{ backgroundColor: storeConfig?.background_color, color: storeConfig?.text_color }}>
         {/* Navigation */}
-        <header className="sticky top-0 z-10 border-b z-20" style={{ backgroundColor: storeConfig?.background_color, borderColor: storeConfig?.border_color || '#2A2A2A' }}>
+        <header 
+          className="sticky top-0 z-50 backdrop-blur-lg bg-opacity-80 shadow-lg" 
+          style={{ 
+            backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}AA` : '#1A1A1AAA', 
+            borderBottom: `1px solid ${storeConfig?.border_color ? `${storeConfig.border_color}20` : '#2A2A2A20'}`,
+          }}
+        >
           <div className="container mx-auto px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-4">
               {/* Store Logo & Name */}
-              <div className="flex items-center gap-3 mr-8">
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-[#2A2A2A] flex items-center justify-center text-white text-sm font-bold">
+              <a href="/" className="group flex items-center gap-3 transition-transform duration-300 hover:scale-105">
+                <div 
+                  className="w-11 h-11 rounded-xl overflow-hidden flex items-center justify-center text-white text-sm font-bold shadow-lg border-2 transition-all duration-300 group-hover:rounded-full" 
+                  style={{ 
+                    borderColor: storeConfig?.theme_color || '#FFA726',
+                    boxShadow: `0 4px 12px ${storeConfig?.theme_color ? `${storeConfig.theme_color}40` : 'rgba(255, 167, 38, 0.25)'}` 
+                  }}
+                >
                   {store?.logo ? (
                     <img src={store.logo} alt={store?.name} className="w-full h-full object-cover" />
                   ) : (
-                    <span>{store?.name?.charAt(0) || 'S'}</span>
+                    <div className="w-full h-full flex items-center justify-center" style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}>
+                      <span className="text-lg font-bold">{store?.name?.charAt(0) || 'S'}</span>
+                    </div>
                   )}
                 </div>
-                <h1 className="font-bold">{store?.name || 'Store Name'} <a href="https://selll.online" target="_blank" rel="noopener noreferrer" className="italic pr-2 text-xs">on Selll</a></h1>
-              </div>
+                <div>
+                  <h1 className="font-bold text-xl tracking-tight">
+                    {store?.name || 'Store Name'} 
+                  </h1>
+                  <a 
+                    href="https://selll.online" 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="italic text-xs opacity-70 hover:opacity-100 transition-all duration-300 hover:text-[#FFA726]"
+                  >
+                    powered by Selll
+                  </a>
+                </div>
+              </a>
             </div>
-            <div>
+            <div className="flex items-center gap-3">
               <button
-                onClick={() => setIsCartOpen(true)}
-                className="cursor-pointer px-5 py-2 font-medium transition-colors rounded flex items-center gap-2"
+                onClick={() => setIsAboutModalOpen(true)}
+                className="px-4 py-2 font-medium transition-all duration-300 rounded-lg flex items-center gap-2 hover:bg-opacity-20"
+                style={{ 
+                  color: storeConfig?.text_color || '#FFFFFF'
+                }}
+              >
+                <span>About</span>
+              </button>
+              <button
+                onClick={() => setIsBagOpen(true)}
+                className="relative px-5 py-2.5 font-medium transition-all duration-300 rounded-lg flex items-center gap-2 hover:scale-105 shadow-md"
+                style={{ 
+                  backgroundColor: storeConfig?.theme_color || '#FFA726',
+                  color: '#FFFFFF'
+                }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                <span>Cart ({cartItems.length})</span>
+                <span>Bag</span>
+                {bagItems.length > 0 && (
+                  <span 
+                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full text-xs flex items-center justify-center text-white font-medium shadow-sm"
+                    style={{ backgroundColor: '#000000' }}
+                  >
+                    {bagItems.length}
+                  </span>
+                )}
               </button>
             </div>
           </div>
         </header>
 
-        {/* Optional Hero Section - Only show if store has hero content */}
-        {(window.location.pathname === '/' || window.location.pathname === '/selll-store/') && storeConfig?.show_hero && (
-          <div className="w-full overflow-hidden mb-16">
-            <div className="relative">
-              {/* Hero Background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-[#1E1E1E] to-[#121212] opacity-80"></div>
 
-              {/* Hero Image */}
-              {storeConfig?.hero_image ? (
-                <img
-                  src={storeConfig?.hero_image}
-                  alt={store?.name}
-                  className="w-full h-[500px] object-cover"
-                />
-              ) : (
-                <div className="w-full h-[400px] bg-gradient-to-r from-[#1E1E1E] via-[#121212] to-[#2A2A2A] hero-gradient"></div>
-              )}
-
-              {/* Hero Content */}
-              <div className="absolute inset-0 flex flex-col justify-center">
-                <div className="container mx-auto px-6">
-                  <div className={`${storeConfig?.hero_content_alignment === 'center' ? 'mx-auto text-center' : storeConfig?.hero_content_alignment === 'right' ? 'ml-auto text-right' : ''} max-w-2xl`}>
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white">
-                      {storeConfig?.hero_title || 'Discover Our Products'}
-                    </h2>
-                    <p className="text-lg text-gray-300 mb-8 max-w-xl" style={{ marginLeft: storeConfig?.hero_content_alignment === 'center' ? 'auto' : '', marginRight: storeConfig?.hero_content_alignment === 'center' ? 'auto' : storeConfig?.hero_content_alignment === 'right' ? '0' : '' }}>
-                      {storeConfig?.hero_description || 'Explore our collection of high-quality products designed to meet your needs.'}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
         
-        <main className="container mx-auto px-6 py-12 text-white">
-          {/* If we're on the home page, show featured products */}
-          {window.location.pathname === '/' || window.location.pathname === '/selll-store/' ? (
-            <>
-              {/* Featured Products */}
-              <div className="mb-12">
-                {products && products.length > 0 ? (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {products.slice(0, 4).map((product: any) => (
-                      <div key={product.id} className="rounded-lg overflow-hidden border relative group cursor-pointer" 
-                        style={{ backgroundColor: storeConfig?.background_color || '#1A1A1A', color: storeConfig?.text_color || '#FFFFFF', borderColor: storeConfig?.border_color || '#2A2A2A' }}
-                        onClick={() => {
-                          if (storeConfig?.open_product_in_popup) {
-                            setSelectedProduct(product);
-                            setIsProductModalOpen(true);
-                          } else {
-                            window.location.href = `/product/${product.id}`;
-                          }
-                        }}
-                      >
-                        {/* Product Image Area */}
-                        <div className="relative aspect-square bg-black">
-                          {/* Stock indicator */}
-                          <div className="absolute top-3 right-3 z-10">
-                            <span className="text-xs font-medium px-3 py-1 rounded-full" style={{ backgroundColor: `${storeConfig?.theme_color || '#4CAF50'}22`, color: storeConfig?.theme_color || '#4CAF50' }}>
-                              {product.stock === -1 ? '∞ Unlimited' : `${product.stock || 20} in stock`}
-                            </span>
-                          </div>
-
-                          {product.image ? (
-                            <img
-                              src={product.image}
-                              alt={product.name}
-                              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <svg className="w-16 h-16 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                        {/* Product Info Area - New Design */}
-                        <div className="p-4">
-                          <h3 className="font-bold text-xl mb-1">{product.name}</h3>
-                          <p className="text-sm mb-3 opacity-70">{product.description}</p>
-                          <div className="mb-4">
-                            <span className="text-2xl font-bold" style={{ color: storeConfig?.theme_color || '#00A3FF' }}>
-                              {store?.currency || 'GHS'} {Number(product.price).toFixed(2)}
-                            </span>
-                          </div>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation(); // Prevent triggering the parent onClick
-                              // Add product to cart using the cart management function
-                              addToCart(product);
-                            }}
-                            className="block w-full py-2 text-sm h-9 font-medium rounded text-center transition-all duration-300 cursor-pointer"
-                            style={{
-                              backgroundColor: storeConfig?.theme_color || '#00A3FF',
-                              color: '#FFFFFF',
-                              transform: 'scale(1)'
-                            }}
-                            onMouseOver={(e) => {
-                              e.currentTarget.style.filter = 'brightness(0.9)';
-                            }}
-                            onMouseOut={(e) => {
-                              e.currentTarget.style.filter = 'brightness(1)';
-                            }}
-                          >
-                            Add to Cart
-                          </button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-16 border rounded-lg" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
-                    <svg className="w-16 h-16 text-gray-700 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
-                    </svg>
-                    <p className="text-gray-400 text-lg">No products available yet.</p>
-                    <p className="text-gray-500 text-sm mt-2">Check back soon for new arrivals!</p>
-                  </div>
-                )}
-              </div>
-            </>
-          ) : (
-            children
-          )}
+        <main className="container mx-auto px-6 py-16" style={{ color: storeConfig?.text_color || '#FFFFFF' }}>
+          {/* Share products data with child components via context */}
+          <ProductsContext.Provider value={products}>
+            {children}
+          </ProductsContext.Provider>
         </main>
 
         {/* About Modal */}
@@ -296,16 +228,16 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
           store={store || null}
         />
 
-        {/* Cart Slideout */}
-        <CartSlideout
-          isOpen={isCartOpen}
-          onClose={() => setIsCartOpen(false)}
-          cartItems={cartItems}
+        {/* Bag Slideout */}
+        <BagSlideout
+          isOpen={isBagOpen}
+          onClose={() => setIsBagOpen(false)}
+          cartItems={bagItems}
           storeId={store?.id || ''}
           storeName={store?.name || ''}
           currency={store?.currency || 'GHS'}
-          updateQuantity={updateCartItemQuantity}
-          removeItem={removeFromCart}
+          updateQuantity={updateBagItemQuantity}
+          removeItem={removeFromBag}
         />
 
         <footer className="py-16 border-t" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
@@ -334,46 +266,129 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
               </div>
             </div>)}
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-x-8 gap-y-10 pb-10">
+              <div className="md:col-span-1">
+                <div className="flex flex-col space-y-4">
+                  {store?.logo ? (
+                    <img src={store.logo} alt={store?.name} className="h-8 w-auto mb-2" />
+                  ) : (
+                    <h3 className="text-lg font-semibold">{store?.name || 'Store'}</h3>
+                  )}
+                  <p className="text-sm text-gray-400 leading-relaxed">
+                    {store?.description || 'Quality products for our valued customers.'}
+                  </p>
+                </div>
+              </div>
+              
               <div>
-                <h3 className="text-lg font-medium mb-4">Quick Links</h3>
-                <ul className="space-y-2">
-                  <li><a href="#" onClick={(e) => { e.preventDefault(); setIsAboutModalOpen(true) }} className="text-gray-400 transition-colors">About Us</a></li>
-                  <li><a href="#" className="text-gray-400 transition-colors">Contact</a></li>
+                <h3 className="text-sm font-medium uppercase tracking-wider mb-3 text-gray-300">Quick Links</h3>
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <a 
+                      href="#" 
+                      onClick={(e) => { e.preventDefault(); setIsAboutModalOpen(true) }} 
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                    >
+                      About Us
+                    </a>
+                  </li>
+                  <li>
+                    <a 
+                      href="#" 
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                    >
+                      Contact
+                    </a>
+                  </li>
                 </ul>
               </div>
+              
               <div>
-                <h3 className="text-lg font-medium mb-4">Customer Service</h3>
-                <ul className="space-y-2">
-                  <li><a href="#" className="text-gray-400 transition-colors">FAQ</a></li>
-                  <li><a href="#" className="text-gray-400 transition-colors">Shipping & Returns</a></li>
-                  <li><a href="#" className="text-gray-400 transition-colors">Terms & Conditions</a></li>
-                  <li><a href="#" className="text-gray-400 transition-colors">Privacy Policy</a></li>
+                <h3 className="text-sm font-medium uppercase tracking-wider mb-3 text-gray-300">Customer Service</h3>
+                <ul className="space-y-2 text-sm">
+                  <li>
+                    <a 
+                      href="#" 
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                    >
+                      FAQ
+                    </a>
+                  </li>
+                  <li>
+                    <a 
+                      href="#" 
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                    >
+                      Shipping & Returns
+                    </a>
+                  </li>
+                  <li>
+                    <a 
+                      href="#" 
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                    >
+                      Terms & Conditions
+                    </a>
+                  </li>
                 </ul>
               </div>
+              
               <div>
-                <h3 className="text-lg font-medium mb-4">Contact Us</h3>
-                <ul className="space-y-2 text-gray-400">
-                  <li className="flex items-start gap-2">
-                    <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                    </svg>
-                    <span>
-                      {store?.owner?.email}
-                    </span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <svg className="w-5 h-5 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                    </svg>
-                    <span>{store?.owner?.phone || storeConfig?.phone}</span>
-                  </li>
+                <h3 className="text-sm font-medium uppercase tracking-wider mb-3 text-gray-300">Contact</h3>
+                <ul className="space-y-3 text-sm text-gray-400">
+                  {(store?.email || storeConfig?.email) && (
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                      </svg>
+                      <span>{store?.email || storeConfig?.email}</span>
+                    </li>
+                  )}
+                  {(store?.phone || storeConfig?.phone) && (
+                    <li className="flex items-center gap-2">
+                      <svg className="w-4 h-4 flex-shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                      </svg>
+                      <span>{store?.phone || storeConfig?.phone}</span>
+                    </li>
+                  )}
                 </ul>
+                
+                {/* Social Media Links */}
+                <div className="flex space-x-4 mt-4">
+                  {(store?.instagram || storeConfig?.instagram) && (
+                    <a 
+                      href={`https://instagram.com/${store?.instagram || storeConfig?.instagram}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                      aria-label="Instagram"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                      </svg>
+                    </a>
+                  )}
+                  
+                  {(store?.twitter || storeConfig?.twitter) && (
+                    <a 
+                      href={`https://twitter.com/${store?.twitter || storeConfig?.twitter}`} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-gray-400 hover:text-white transition-colors duration-200"
+                      aria-label="Twitter"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                      </svg>
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
 
-            <div className="pt-8 border-t text-center text-gray-400 text-sm" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
-              <p>© {new Date().getFullYear()} {store?.name || 'Store Name'}. Powered by <a href="https://selll.online" className="font-medium" style={{ color: storeConfig?.theme_color }}>Selll</a></p>
+            <div className="pt-6 mt-6 border-t border-opacity-20 text-center text-gray-400 text-xs" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
+              <p>© {new Date().getFullYear()} {store?.name || 'Store Name'}. Powered by <a href="https://selll.online" className="font-medium transition-colors duration-200 hover:text-white" style={{ color: storeConfig?.theme_color }}>Selll</a></p>
             </div>
           </div>
         </footer>
@@ -387,7 +402,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
         storeConfig={storeConfig} 
         store={store} 
         onAddToCart={(product) => {
-          addToCart(product);
+          addToBag(product);
           setIsProductModalOpen(false);
         }}
       />

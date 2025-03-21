@@ -35,7 +35,7 @@ function App() {
           <Route path="/*" element={
             <StoreLayout storeName={isLocalhost ? 'demo-store' : storeName}>
               <Routes>
-                <Route index element={<HomePage storeId={isLocalhost ? 'demo-store' : storeName} />} />
+                <Route index element={<HomePage />} />
                 <Route path="order" element={<OrderConfirmation />} />
                 <Route path="*" element={<Navigate to="." replace />} />
               </Routes>

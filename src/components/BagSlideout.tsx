@@ -1,19 +1,19 @@
 import { useContext, useState } from 'react';
 import { StoreConfigContext } from '../App';
 import CheckoutModal from './CheckoutModal';
-import { CartItem } from '../types/cart';
+import { CartItem as BagItem } from '../types/cart';
 
 interface BagSlideoutProps {
   isOpen: boolean;
   onClose: () => void;
-  cartItems: CartItem[];
+  cartItems: BagItem[];
   currency?: string;
   updateQuantity?: (productId: string, quantity: number) => void;
   removeItem?: (productId: string) => void;
   isLoading?: boolean;
   storeId?: string;
   storeName?: string;
-  clearCart?: () => void;
+  clearBag?: () => void;
 }
 
 export default function BagSlideout({ 
@@ -26,19 +26,19 @@ export default function BagSlideout({
   isLoading = false,
   storeId,
   storeName,
-  clearCart
+  clearBag
 }: BagSlideoutProps) {
   const storeConfig = useContext(StoreConfigContext) || {};
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
   // Helper function to check if stock is available
-  const isOutOfStock = (item: CartItem) => {
+  const isOutOfStock = (item: BagItem) => {
     if (item.quantity === 'unlimited') return false;
     return item.quantity === 'limited' && parseInt(item.quantity_items || '0') === 0;
   };
 
   // Helper function to check if quantity exceeds limit
-  const isQuantityLimitReached = (item: CartItem, checkQuantity: number = Number(item.cartQuantity)) => {
+  const isQuantityLimitReached = (item: BagItem, checkQuantity: number = Number(item.cartQuantity)) => {
     console.log('check', checkQuantity, item.quantity_items);
     if (item.quantity === 'unlimited') return false;
     return item.quantity === 'limited' && checkQuantity >= Number(item.quantity_items);
@@ -52,8 +52,8 @@ export default function BagSlideout({
   };
 
   const handleCheckoutComplete = () => {
-    if (clearCart) {
-      clearCart();
+    if (clearBag) {
+      clearBag();
     }
     onClose();
   };
