@@ -4,7 +4,33 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>Selll</title>
+    <!-- Dynamic meta tags will be replaced by server-side code -->
+    <meta name="description" content="Shop the best products at %STORE_NAME%. Quality items at great prices." />
+    <meta name="keywords" content="%STORE_NAME%, online store, shop, ecommerce, %STORE_KEYWORDS%" />
+    
+    <!-- Open Graph tags for social sharing -->
+    <meta property="og:title" content="%STORE_NAME% | Shop Online" />
+    <meta property="og:description" content="%STORE_DESCRIPTION%" />
+    <meta property="og:image" content="%STORE_IMAGE%" />
+    <meta property="og:url" content="%STORE_URL%" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Twitter Card tags -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="%STORE_NAME% | Shop Online" />
+    <meta name="twitter:description" content="%STORE_DESCRIPTION%" />
+    <meta name="twitter:image" content="%STORE_IMAGE%" />
+    
+    <!-- Canonical URL to prevent duplicate content issues -->
+    <link rel="canonical" href="%STORE_URL%" />
+    
+    <!-- Preconnect to required origins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    
+    <!-- Robots meta tag -->
+    <meta name="robots" content="index, follow" />
   </head>
   <body>
     <div id="root"></div>
