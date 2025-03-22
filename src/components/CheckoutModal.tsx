@@ -134,6 +134,8 @@ export default function CheckoutModal({
 
   if (!isOpen) return null;
 
+  console.log(storeConfig, 'storeConfig');
+
   return (
     <>
       {/* Backdrop */}
@@ -146,7 +148,7 @@ export default function CheckoutModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <div 
           className="relative bg-white/95 backdrop-blur-xl rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-          style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}F2` : '#1E1E1EF2', color: storeConfig?.text_color || '#FFFFFF' }}
+          style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#1E1E1EF2', color: storeConfig?.text_color || '#FFFFFF' }}
         >
           {/* Close button */}
           <button
@@ -165,11 +167,16 @@ export default function CheckoutModal({
                 
                 <div className="mb-6">
                   <h3 className="text-lg font-medium mb-3">Order Summary</h3>
-                  <div className="border rounded-lg divide-y" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
+                  <div className="border rounded-lg divide-y" style={{ 
+                    backgroundColor: storeConfig?.background_color || '#1A1A1A',
+                    borderColor: storeConfig?.border_color || '#2A2A2A'
+                  }}>
                     {cartItems.map(item => (
-                      <div key={item.id} className="flex justify-between p-3">
+                      <div key={item.id} className="flex justify-between p-3" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gray-800 rounded overflow-hidden flex-shrink-0">
+                          <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0" style={{ 
+                            backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#1A1A1A'
+                          }}>
                             {item.image ? (
                               <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                             ) : (
@@ -190,7 +197,7 @@ export default function CheckoutModal({
                         </div>
                       </div>
                     ))}
-                    <div className="p-3 flex justify-between font-medium">
+                    <div className="p-3 flex justify-between font-medium" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
                       <span>Total</span>
                       <span style={{ color: storeConfig?.theme_color || '#FFA726' }}>{currency} {total.toFixed(2)}</span>
                     </div>
@@ -356,11 +363,16 @@ export default function CheckoutModal({
                 
                 <div className="mb-6">
                   <h3 className="text-lg font-medium mb-3">Order Summary</h3>
-                  <div className="border rounded-lg divide-y" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
+                  <div className="border rounded-lg divide-y" style={{ 
+                    backgroundColor: storeConfig?.background_color || '#1A1A1A',
+                    borderColor: storeConfig?.border_color || '#2A2A2A'
+                  }}>
                     {cartItems.map(item => (
-                      <div key={item.id} className="flex justify-between p-3">
+                      <div key={item.id} className="flex justify-between p-3" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gray-800 rounded overflow-hidden flex-shrink-0">
+                          <div className="w-12 h-12 rounded overflow-hidden flex-shrink-0" style={{ 
+                            backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#1A1A1A'
+                          }}>
                             {item.image ? (
                               <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                             ) : (
@@ -381,7 +393,7 @@ export default function CheckoutModal({
                         </div>
                       </div>
                     ))}
-                    <div className="p-3 flex justify-between font-medium">
+                    <div className="p-3 flex justify-between font-medium" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
                       <span>Total</span>
                       <span style={{ color: storeConfig?.theme_color || '#FFA726' }}>{currency} {total.toFixed(2)}</span>
                     </div>
@@ -395,7 +407,10 @@ export default function CheckoutModal({
                     </div>
                   )}
 
-                  <div className="mb-6 p-4 border rounded-lg" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
+                  <div className="mb-6 p-4 border rounded-lg" style={{ 
+                    backgroundColor: storeConfig?.background_color || '#1A1A1A',
+                    borderColor: storeConfig?.border_color || '#2A2A2A'
+                  }}>
                     <div className="flex items-center mb-4">
                       <input 
                         type="radio" 

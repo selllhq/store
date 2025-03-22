@@ -125,9 +125,13 @@ export default function OrderConfirmation() {
               </div>
               
               <h3 className="text-lg font-medium mb-3">Items</h3>
-              <div className="border rounded-lg divide-y mb-6" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
+              <div className="rounded-lg divide-y mb-6" style={{ 
+                backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#1A1A1A',
+                borderColor: storeConfig?.border_color || '#2A2A2A',
+                border: `1px solid ${storeConfig?.border_color || '#2A2A2A'}`
+              }}>
                 {orderDetails.items.map(item => (
-                  <div key={item.id} className="flex justify-between p-4">
+                  <div key={item.id} className="flex justify-between p-4" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
                     <div>
                       <p className="font-medium">{item.name}</p>
                       <p className="text-sm opacity-70">Qty: {item.quantity}</p>
@@ -135,7 +139,7 @@ export default function OrderConfirmation() {
                     <p className="font-medium">${item.price.toFixed(2)}</p>
                   </div>
                 ))}
-                <div className="p-4 flex justify-between font-semibold">
+                <div className="p-4 flex justify-between font-semibold" style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}>
                   <span>Total</span>
                   <span style={{ color: storeConfig?.theme_color || '#FFA726' }}>${orderDetails.total.toFixed(2)}</span>
                 </div>
