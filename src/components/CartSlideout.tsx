@@ -289,10 +289,9 @@ export default function BagSlideout({
               <p className="text-gray-400 mb-8 max-w-xs mx-auto">Looks like you haven't added any items to your bag yet. Browse the store and find something you'll love!</p>
               <button 
                 onClick={onClose}
-                className="px-6 py-3.5 w-full rounded-lg font-medium text-sm transition-all duration-300 hover:shadow-lg"
+                className="px-6 py-3.5 w-full rounded-lg font-medium text-sm transition-all duration-300 hover:shadow-lg text-white"
                 style={{ 
                   backgroundColor: storeConfig?.theme_color || '#FFA726',
-                  color: '#000000',
                   transform: 'translateY(0)'
                 }}
                 onMouseOver={(e) => {

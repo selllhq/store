@@ -1,19 +1,37 @@
 import { useState, useContext, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { ProductFilters } from '../services/api';
-import { Product } from '../types/product';
 import { StoreConfigContext } from '../App';
-import { ProductsContext } from '../components/StoreLayout';
+import { ProductsContext, CartFunctionsContext } from '../components/StoreLayout';
 import { Store } from '../types/store';
+
+// Helper function to adjust color brightness
+const adjustColorBrightness = (hex: string, percent: number): string => {
+  // Remove the # if present
+  hex = hex.replace('#', '');
+  
+  // Convert hex to RGB
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  
+  // Adjust brightness
+  const adjustedR = Math.min(255, Math.max(0, r + (r * percent / 100)));
+  const adjustedG = Math.min(255, Math.max(0, g + (g * percent / 100)));
+  const adjustedB = Math.min(255, Math.max(0, b + (b * percent / 100)));
+  
+  // Convert back to hex
+  return `#${Math.round(adjustedR).toString(16).padStart(2, '0')}${Math.round(adjustedG).toString(16).padStart(2, '0')}${Math.round(adjustedB).toString(16).padStart(2, '0')}`;
+};
 
 interface HomePageProps {
   storeConfig?: any;
   store?: Store;
-  addToBag?: (product: Product) => void;
 }
 
-export default function HomePage({ store, addToBag }: HomePageProps) {
+export default function HomePage({ store }: HomePageProps) {
   const storeConfig = useContext(StoreConfigContext) || {};
+  const { addToBag, openBag } = useContext(CartFunctionsContext);
   const [filters, setFilters] = useState<ProductFilters>({
     sortBy: 'newest'
   });
@@ -174,7 +192,9 @@ export default function HomePage({ store, addToBag }: HomePageProps) {
                 />
               </div>
             ) : (
-              <div className="relative h-[60vh] max-h-[600px] min-h-[400px] bg-gradient-to-r from-[#121212] to-[#1A1A1A]">
+              <div className="relative h-[60vh] max-h-[600px] min-h-[400px]" style={{
+                background: `linear-gradient(to right, ${storeConfig?.background_color || '#121212'}, ${storeConfig?.background_color ? adjustColorBrightness(storeConfig.background_color, 15) : '#1A1A1A'})`
+              }}>
                 {/* Single subtle accent element */}
                 <div
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
@@ -231,23 +251,17 @@ export default function HomePage({ store, addToBag }: HomePageProps) {
       )}
 
       {/* Main content starts here */}
-      <div id="products-section" className="py-12 relative mt-8" style={{ zIndex: 1 }}>
+      <div id="products-section" className="py-12 relative" style={{ 
+        zIndex: 1,
+        marginTop: storeConfig?.show_hero ? '0' : '2rem',
+        background: storeConfig?.background_color || '#121212'
+      }}>
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-48 h-48 bg-gradient-to-br opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
           style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}></div>
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl opacity-5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"
           style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}></div>
 
-        {/* Heading with decorative elements */}
-        <div className="relative mb-12 text-center">
-          <h2 className="text-4xl font-bold inline-block relative">
-            <span className="relative z-10">Our Products</span>
-            <div className="absolute bottom-1 left-0 right-0 h-3 opacity-20 -z-10 skew-x-12"
-              style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}></div>
-          </h2>
-          <div className="w-16 h-1 mx-auto mt-4 rounded-full"
-            style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}></div>
-        </div>
         <div className="container mx-auto px-6">
           {/* Search and Sort Controls */}
           <div className="flex justify-between items-center mb-8">
@@ -307,7 +321,8 @@ export default function HomePage({ store, addToBag }: HomePageProps) {
                     }}
                     onClick={() => {
                       if (storeConfig?.open_product_in_popup) {
-                        // Handle modal opening in parent component
+                        // Open product modal
+                        window.dispatchEvent(new CustomEvent('openProductModal', { detail: { product } }));
                       } else {
                         window.location.href = `/product/${product.id}`;
                       }
@@ -375,25 +390,7 @@ export default function HomePage({ store, addToBag }: HomePageProps) {
                         </div>
                       )}
 
-                      {/* Enhanced quick add overlay with glassmorphism */}
-                      <div className="absolute inset-0 backdrop-blur-sm bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent triggering the parent onClick
-                            addToBag && addToBag(product);
-                          }}
-                          className="px-6 py-3 rounded-md font-medium text-white transform transition-all duration-300 hover:scale-105 hover:shadow-lg flex items-center gap-2"
-                          style={{
-                            backgroundColor: storeConfig?.theme_color || '#FFA726',
-                            boxShadow: `0 4px 15px ${storeConfig?.theme_color || '#FFA726'}50`
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                          </svg>
-                          Quick Add
-                        </button>
-                      </div>
+                      {/* Quick add overlay removed as requested */}
                     </div>
 
                     {/* Enhanced Product Info Area with modern design */}
@@ -418,7 +415,9 @@ export default function HomePage({ store, addToBag }: HomePageProps) {
                         <button
                           onClick={(e) => {
                             e.stopPropagation(); // Prevent triggering the parent onClick
-                            addToBag && addToBag(product);
+                            addToBag(product);
+                            // Open bag slideout
+                            openBag();
                           }}
                           className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
                           style={{
@@ -428,7 +427,7 @@ export default function HomePage({ store, addToBag }: HomePageProps) {
                           }}
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                           </svg>
                         </button>
                       </div>
