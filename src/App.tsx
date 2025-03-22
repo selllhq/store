@@ -34,11 +34,13 @@ function App() {
         <Routes>
           <Route path="/*" element={
             <StoreLayout storeName={isLocalhost ? 'demo-store' : storeName}>
-              <Routes>
-                <Route index element={<HomePage />} />
-                <Route path="order" element={<OrderConfirmation />} />
-                <Route path="*" element={<Navigate to="." replace />} />
-              </Routes>
+              {(store) => (
+                <Routes>
+                  <Route index element={<HomePage store={store} />} />
+                  <Route path="order" element={<OrderConfirmation />} />
+                  <Route path="*" element={<Navigate to="." replace />} />
+                </Routes>
+              )}
             </StoreLayout>
           } />
         </Routes>

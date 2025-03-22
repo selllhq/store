@@ -1,9 +1,10 @@
 import { useState, useContext, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { ProductFilters } from '../services/api';
+import { ProductFilters, getFilteredProducts } from '../services/api';
 import { StoreConfigContext } from '../App';
-import { ProductsContext, CartFunctionsContext } from '../components/StoreLayout';
+import { CartFunctionsContext } from '../components/StoreLayout';
 import { Store } from '../types/store';
+import { useQuery } from '@tanstack/react-query';
 
 // Helper function to adjust color brightness
 const adjustColorBrightness = (hex: string, percent: number): string => {
@@ -41,10 +42,12 @@ export default function HomePage({ store }: HomePageProps) {
   const [visibleProducts, setVisibleProducts] = useState(8);
   // Active filter no longer needed since we removed filter tabs
 
-  // Get products data from context instead of making a separate API call
-  const products = useContext(ProductsContext);
-  const isLoading = !products || products.length === 0;
-  const error = null;
+  // Fetch filtered products directly from the API
+  const { data: products = [], isLoading, error } = useQuery({
+    queryKey: ['filteredProducts', store?.id, filters],
+    queryFn: () => store?.id ? getFilteredProducts(store.id, filters) : Promise.resolve([]),
+    enabled: !!store?.id,
+  });
 
   // This effect moves the hero section outside the container to make it full-width
   useEffect(() => {
@@ -83,50 +86,13 @@ export default function HomePage({ store }: HomePageProps) {
   // Extract unique categories from products
   // Categories extraction no longer needed since we removed filter tabs
 
-  // Filter products based on current filters
-  const filteredProducts = products ? products.filter(product => {
-    // Featured filter removed
-
-    // Category filtering removed since we removed filter tabs
-
-    // Filter by price range
-    if (filters.minPrice !== undefined && product.price < filters.minPrice) {
-      return false;
-    }
-
-    if (filters.maxPrice !== undefined && product.price > filters.maxPrice) {
-      return false;
-    }
-
-    // Filter by search term
-    if (filters.search && !product.name.toLowerCase().includes(filters.search.toLowerCase()) &&
-      !product.description?.toLowerCase().includes(filters.search.toLowerCase())) {
-      return false;
-    }
-
-    return true;
-  }) : [];
-
-  // Sort products based on sort option
-  const sortedProducts = [...filteredProducts].sort((a, b) => {
-    switch (filters.sortBy) {
-      case 'price_asc':
-        return a.price - b.price;
-      case 'price_desc':
-        return b.price - a.price;
-      case 'oldest':
-        return new Date(a.createdAt || '').getTime() - new Date(b.createdAt || '').getTime();
-      case 'popular':
-        return (b.sales || 0) - (a.sales || 0);
-      case 'newest':
-      default:
-        return new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime();
-    }
-  });
+  // No need for client-side filtering or sorting as it's now handled by the API
+  const sortedProducts = products;
 
   // Handle search input
   const handleSearch = () => {
     setFilters(prev => ({ ...prev, search: searchTerm }));
+    // No need to manually refetch as the queryKey change will trigger a refetch
   };
 
   // Category filter handling no longer needed
@@ -141,6 +107,7 @@ export default function HomePage({ store }: HomePageProps) {
   // Handle sort change
   const handleSortChange = (sortBy: ProductFilters['sortBy']) => {
     setFilters(prev => ({ ...prev, sortBy }));
+    // No need to manually refetch as the queryKey change will trigger a refetch
   };
 
   // Reset all filters
@@ -149,6 +116,7 @@ export default function HomePage({ store }: HomePageProps) {
     setSearchTerm('');
     // Featured reset removed
     setVisibleProducts(8);
+    // No need to manually refetch as the queryKey change will trigger a refetch
   };
 
   if (isLoading) {
@@ -262,22 +230,25 @@ export default function HomePage({ store }: HomePageProps) {
         <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl opacity-5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"
           style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}></div>
 
-        <div className="container mx-auto px-6">
+        <div className="container mx-auto">
           {/* Search and Sort Controls */}
           <div className="flex justify-between items-center mb-8">
             <select
               value={filters.sortBy}
               onChange={(e) => handleSortChange(e.target.value as ProductFilters['sortBy'])}
-              className="bg-zinc-900 border border-zinc-700 rounded-md py-3 px-3 text-white text-sm focus:outline-none focus:ring-1 focus:ring-primary-color"
+              className="border rounded-md py-3 px-3 text-sm focus:outline-none focus:ring-1 transition-all duration-300"
               style={{
+                backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#121212',
+                color: storeConfig?.text_color || '#FFFFFF',
                 borderColor: storeConfig?.border_color || '#2A2A2A',
+                outlineColor: storeConfig?.theme_color || '#FFA726',
               }}
             >
-              <option value="newest">Newest</option>
-              <option value="oldest">Oldest</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
-              <option value="popular">Popularity</option>
+              <option value="newest" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#121212' }}>Newest</option>
+              <option value="oldest" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#121212' }}>Oldest</option>
+              <option value="price_asc" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#121212' }}>Price: Low to High</option>
+              <option value="price_desc" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#121212' }}>Price: High to Low</option>
+              <option value="popular" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#121212' }}>Popularity</option>
             </select>
 
             <div className="relative w-64">
@@ -286,8 +257,10 @@ export default function HomePage({ store }: HomePageProps) {
                 placeholder="Search products..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-zinc-900 border border-zinc-700 rounded-md py-3 px-4 pr-10 text-white text-sm focus:outline-none focus:ring-1"
+                className="w-full border rounded-md py-3 px-4 pr-10 text-sm focus:outline-none focus:ring-1 transition-all duration-300"
                 style={{
+                  backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#121212',
+                  color: storeConfig?.text_color || '#FFFFFF',
                   borderColor: storeConfig?.border_color || '#2A2A2A',
                   outlineColor: storeConfig?.theme_color || '#FFA726'
                 }}
@@ -409,7 +382,14 @@ export default function HomePage({ store }: HomePageProps) {
                           className="text-2xl font-bold transition-all duration-300 group-hover:translate-x-1"
                           style={{ color: storeConfig?.theme_color || '#FFA726' }}
                         >
-                          {store?.currency || 'GHS'} {Number(product.price).toFixed(2)}
+                          {new Intl.NumberFormat(
+                            "en-US",
+                            {
+                              style: "currency",
+                              currency:
+                                store?.currency,
+                            },
+                          ).format(product.price)}
                         </span>
 
                         <button

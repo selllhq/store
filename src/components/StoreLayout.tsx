@@ -33,7 +33,7 @@ const InfoIcon = () => (
 
 
 interface StoreLayoutProps {
-  children: React.ReactNode;
+  children: (store: any) => React.ReactNode;
   storeName: string;
 }
 
@@ -311,7 +311,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
               addToBag: addToBag,
               openBag: () => setIsBagOpen(true)
             }}>
-              {children}
+              {children(store)}
             </CartFunctionsContext.Provider>
           </ProductsContext.Provider>
         </main>
