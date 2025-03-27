@@ -4,6 +4,7 @@ import { createContext } from 'react';
 import StoreLayout from './components/StoreLayout';
 import HomePage from './pages/HomePage';
 import OrderConfirmation from './pages/OrderConfirmation';
+import ProductsPage from './pages/ProductsPage';
 
 // Create a context for store configuration
 export const StoreConfigContext = createContext<any>(null);
@@ -37,6 +38,8 @@ function App() {
               {(store) => (
                 <Routes>
                   <Route index element={<HomePage store={store} />} />
+                  <Route path="products" element={<ProductsPage store={store} />} />
+                  <Route path="product/:productId" element={<ProductsPage store={store} isProductDetail={true} />} />
                   <Route path="order" element={<OrderConfirmation />} />
                   <Route path="*" element={<Navigate to="." replace />} />
                 </Routes>

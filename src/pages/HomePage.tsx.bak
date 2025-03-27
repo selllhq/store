@@ -1,6 +1,5 @@
 import { useContext, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Link } from 'react-router-dom';
 import { getFilteredProducts } from '../services/api';
 import { StoreConfigContext } from '../App';
 import { CartFunctionsContext } from '../components/StoreLayout';
@@ -47,11 +46,22 @@ export default function HomePage({ store }: HomePageProps) {
   const { addToBag, openBag } = useContext(CartFunctionsContext);
 
   // Fetch popular products
-  const { data: popularProducts = [], isLoading, error } = useQuery({
+  const { data: popularProducts = [], isLoading: popularLoading, error: popularError } = useQuery({
     queryKey: ['popularProducts', store?.id],
-    queryFn: () => store?.id ? getFilteredProducts(store.id, { sortBy: 'popular', limit: 8 }) : Promise.resolve([]),
+    queryFn: () => store?.id ? getFilteredProducts(store.id, { sortBy: 'popular', limit: 4 }) : Promise.resolve([]),
     enabled: !!store?.id,
   });
+
+  // Fetch recent products
+  const { data: recentProducts = [], isLoading: recentLoading, error: recentError } = useQuery({
+    queryKey: ['recentProducts', store?.id],
+    queryFn: () => store?.id ? getFilteredProducts(store.id, { sortBy: 'newest', limit: 4 }) : Promise.resolve([]),
+    enabled: !!store?.id,
+  });
+  
+  // Combined loading and error states
+  const isLoading = popularLoading || recentLoading;
+  const error = popularError || recentError;
 
   // This effect moves the hero section outside the container to make it full-width
   useEffect(() => {
@@ -100,8 +110,18 @@ export default function HomePage({ store }: HomePageProps) {
         
         {/* Products Grid Shimmer */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
-          {[...Array(8)].map((_, index) => (
+          {[...Array(4)].map((_, index) => (
             <ShimmerCard key={index} type="product" />
+          ))}
+        </div>
+        
+        {/* Section Title Shimmer */}
+        <div className="animate-pulse h-8 w-48 bg-gray-300 rounded mb-8 mt-12"></div>
+        
+        {/* Products Grid Shimmer */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          {[...Array(4)].map((_, index) => (
+            <ShimmerCard key={`recent-${index}`} type="product" />
           ))}
         </div>
         
@@ -219,9 +239,9 @@ export default function HomePage({ store }: HomePageProps) {
           {/* Popular Products Section */}
           <div className="mb-16">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold" style={{ color: storeConfig?.text_color || '#000000' }}>Our Products</h2>
-              <Link 
-                to="/products?sort=popular" 
+              <h2 className="text-2xl font-bold" style={{ color: storeConfig?.text_color || '#000000' }}>Most Popular</h2>
+              <a 
+                href="/products?sort=popular" 
                 className="text-sm font-medium hover:underline flex items-center gap-1"
                 style={{ color: storeConfig?.theme_color || '#3B82F6' }}
               >
@@ -229,7 +249,7 @@ export default function HomePage({ store }: HomePageProps) {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </Link>
+              </a>
             </div>
 
             {popularProducts && popularProducts.length > 0 ? (
@@ -244,8 +264,12 @@ export default function HomePage({ store }: HomePageProps) {
                   borderColor: storeConfig?.border_color || '#E5E7EB',
                 }}
                     onClick={() => {
-                      // Always open product modal
-                      window.dispatchEvent(new CustomEvent('openProductModal', { detail: { product } }));
+                      if (storeConfig?.open_product_in_popup) {
+                        // Open product modal
+                        window.dispatchEvent(new CustomEvent('openProductModal', { detail: { product } }));
+                      } else {
+                        window.location.href = `/product/${product.id}`;
+                      }
                     }}
                   >
                     {/* Product Image Area with enhanced effects */}
@@ -330,26 +354,146 @@ export default function HomePage({ store }: HomePageProps) {
                     </div>
                   </div>
                 ))}
+          </div>
+        ) : (
+          <div className="text-center py-10 px-4 rounded-lg bg-gray-50 border border-gray-200">
+            <p className="text-gray-500">No popular products available yet.</p>
+          </div>
+        )
+      </div>
+
+          {/* Recent Additions Section */}
+          <div className="mb-16">
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold" style={{ color: storeConfig?.text_color || '#000000' }}>Recent Additions</h2>
+              <a 
+                href="/products?sort=newest" 
+                className="text-sm font-medium hover:underline flex items-center gap-1"
+                style={{ color: storeConfig?.theme_color || '#3B82F6' }}
+              >
+                View all
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </a>
+            </div>
+
+            {recentProducts && recentProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                {recentProducts.map((product) => (
+                  <div
+                    key={product.id}
+                    className="rounded-lg overflow-hidden shadow-md border transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+                    style={{
+                      backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF',
+                      color: storeConfig?.text_color || '#000000',
+                      borderColor: storeConfig?.border_color || '#E5E7EB',
+                    }}
+                    onClick={() => {
+                      if (storeConfig?.open_product_in_popup) {
+                        // Open product modal
+                        window.dispatchEvent(new CustomEvent('openProductModal', { detail: { product } }));
+                      } else {
+                        window.location.href = `/product/${product.id}`;
+                      }
+                    }}
+                  >
+                    {/* Product Image Area with enhanced effects */}
+                    <div className="relative aspect-square overflow-hidden">
+                      {/* Stock indicator */}
+                      <div className="absolute top-3 right-3 z-20">
+                        <span
+                          className={`text-xs font-medium px-2 py-1 rounded-full ${product.stock > 0 ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}
+                        >
+                          {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                        </span>
+                      </div>
+
+                      {/* Product image with subtle hover effect */}
+                      {product.image ? (
+                        <div className="w-full h-full overflow-hidden">
+                          <img
+                            src={product.image}
+                            alt={product.name}
+                            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                          <svg className="w-16 h-16 text-gray-600 animate-pulse-slower" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                          </svg>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Enhanced Product Info Area with modern design */}
+                    <div className="p-6 relative">
+                      {/* Subtle accent line */}
+                      <div
+                        className="absolute top-0 left-6 right-6 h-[1px] opacity-20"
+                        style={{ backgroundColor: storeConfig?.theme_color || '#3B82F6' }}
+                      ></div>
+
+                      <h3 className="font-bold text-xl mb-1.5 line-clamp-1 group-hover:text-opacity-90 transition-colors duration-300">{product.name}</h3>
+                      <p className="text-sm mb-4 opacity-70 line-clamp-2 group-hover:opacity-90 transition-opacity duration-300">{product.description}</p>
+
+                      <div className="flex justify-between items-center">
+                        <span
+                          className="text-2xl font-bold transition-all duration-300 group-hover:translate-x-1"
+                          style={{ color: storeConfig?.theme_color || '#3B82F6' }}
+                        >
+                          {new Intl.NumberFormat(
+                            "en-US",
+                            {
+                              style: "currency",
+                              currency: store?.currency || 'USD',
+                            },
+                          ).format(product.price)}
+                        </span>
+
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation(); // Prevent triggering the parent onClick
+                            addToBag(product);
+                            // Open bag slideout
+                            openBag();
+                          }}
+                          className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
+                          style={{
+                            backgroundColor: storeConfig?.theme_color ? `${storeConfig.theme_color}20` : '#3B82F620',
+                            color: storeConfig?.theme_color || '#3B82F6',
+                            boxShadow: `0 2px 8px ${storeConfig?.theme_color || '#3B82F6'}20`
+                          }}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
               <div className="text-center py-10 px-4 rounded-lg bg-gray-50 border border-gray-200">
-                <p className="text-gray-500">No products available yet.</p>
+                <p className="text-gray-500">No recent products available yet.</p>
               </div>
             )}
           </div>
           
           {/* View All Products Button */}
           <div className="flex justify-center mb-16">
-            <Link
-              to="/products?sort=popular"
-              className="px-8 py-3 rounded-md font-medium transition-all duration-300 hover:bg-opacity-90 text-center inline-block"
+            <a
+              href="/products"
+              className="px-8 py-3 rounded-md font-medium transition-all duration-300 hover:bg-opacity-90 text-center"
               style={{
                 backgroundColor: storeConfig?.theme_color || '#3B82F6',
                 color: '#FFFFFF',
               }}
             >
               View All Products
-            </Link>
+            </a>
           </div>
         </div>
       </div>

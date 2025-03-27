@@ -27,6 +27,7 @@ export interface ProductFilters {
   maxPrice?: number;
   sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'oldest' | 'popular';
   search?: string;
+  limit?: number;
 }
 
 export const getFilteredProducts = async (storeId: string, filters: ProductFilters): Promise<Product[]> => {

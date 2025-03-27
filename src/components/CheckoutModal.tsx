@@ -1,4 +1,5 @@
 import { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { StoreConfigContext } from '../App';
 import { CartItem } from '../types/cart';
 import * as apiService from '../services/api';
@@ -37,6 +38,7 @@ export default function CheckoutModal({
   storeName,
   onCheckoutComplete
 }: CheckoutModalProps) {
+  const navigate = useNavigate();
   const storeConfig = useContext(StoreConfigContext) || {};
   const [step, setStep] = useState<'info' | 'payment' | 'confirmation'>('info');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -110,8 +112,14 @@ export default function CheckoutModal({
           const paymentData = response.data as PaymentResponse;
           
           if (paymentData && paymentData.url) {
-            // Redirect to the payment URL
-            window.location.href = paymentData.url;
+            // Check if it's an internal URL or external URL
+            if (paymentData.url.includes(window.location.hostname)) {
+              // Internal URL - use React Router navigation
+              navigate(paymentData.url.replace(window.location.origin, ''));
+            } else {
+              // External URL - use window.location.href
+              window.location.href = paymentData.url;
+            }
           } else {
             // If no payment link is returned, move to confirmation
             setStep('confirmation');

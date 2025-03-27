@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { StoreConfigContext } from '../App';
 import AboutModal from './AboutModal';
@@ -8,6 +9,7 @@ import { getStore, getStoreProducts } from '../services/api';
 import SEOHead from './SEO/SEOHead';
 import StoreSchema from './SEO/StoreSchema';
 import ProductSchema from './SEO/ProductSchema';
+import ShimmerCard from './ShimmerCard';
 
 // Import the Store type from types
 import { Store as StoreType } from '../types/store';
@@ -22,13 +24,7 @@ const BagIcon = () => (
   </svg>
 );
 
-const InfoIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"></circle>
-    <line x1="12" y1="16" x2="12" y2="12"></line>
-    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-  </svg>
-);
+
 
 
 
@@ -148,7 +144,28 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
     enabled: !!store?.id,
   });
 
-  const storeConfig = JSON.parse(store?.config || '{}');
+  let storeConfig;
+  try {
+    storeConfig = JSON.parse(store?.config || '{}');
+    
+    // Set default colors if store.config is null or empty
+    if (!store?.config || Object.keys(storeConfig).length === 0) {
+      storeConfig = {
+        background_color: '#FFFFFF',  // White background
+        text_color: '#000000',       // Black text
+        theme_color: '#3B82F6',      // Blue theme color
+        border_color: '#E5E7EB'      // Light gray border
+      };
+    }
+  } catch (error) {
+    // Fallback to default colors if JSON parsing fails
+    storeConfig = {
+      background_color: '#FFFFFF',
+      text_color: '#000000',
+      theme_color: '#3B82F6',
+      border_color: '#E5E7EB'
+    };
+  }
 
   useEffect(() => {
     if (store?.theme) {
@@ -160,7 +177,43 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
   }, [store?.theme]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Shimmer Navbar */}
+        <header className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100">
+          <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            <div className="animate-pulse flex items-center">
+              <div className="h-8 w-8 bg-gray-300 rounded-md mr-3"></div>
+              <div className="h-6 w-40 bg-gray-300 rounded"></div>
+            </div>
+            <div className="animate-pulse hidden md:flex items-center space-x-8">
+              <div className="h-4 w-16 bg-gray-300 rounded"></div>
+              <div className="h-4 w-16 bg-gray-300 rounded"></div>
+              <div className="h-4 w-16 bg-gray-300 rounded"></div>
+            </div>
+            <div className="animate-pulse">
+              <div className="h-6 w-6 bg-gray-300 rounded-full"></div>
+            </div>
+          </div>
+        </header>
+        
+        {/* Shimmer Hero */}
+        <div className="container mx-auto px-4 py-8 mt-4">
+          <div className="animate-pulse h-64 w-full bg-gray-300 rounded-lg mb-8"></div>
+          
+          {/* Shimmer Store Info */}
+          <ShimmerCard type="store" />
+          
+          {/* Shimmer Products Grid */}
+          <h2 className="animate-pulse h-8 w-48 bg-gray-300 rounded my-8"></h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+            {[...Array(8)].map((_, index) => (
+              <ShimmerCard key={index} type="product" />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
@@ -177,109 +230,107 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
   return (
     <StoreConfigContext.Provider value={storeConfig}>
       <div className="min-h-screen font-sans" style={{ backgroundColor: storeConfig?.background_color || '#FFFFFF', color: storeConfig?.text_color || '#1A1A1A' }}>
-        {/* Navigation - Modern, minimal design */}
+        {/* Navigation - Laravel style navbar */}
         <header 
-          className="sticky top-0 z-50 backdrop-blur-xl bg-opacity-70 shadow-sm" 
-          style={{ 
-            backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}CC` : '#FFFFFFCC', 
-            borderBottom: `1px solid ${storeConfig?.border_color ? `${storeConfig.border_color}15` : '#E5E5E515'}`,
-          }}
+          className="sticky top-0 z-50 bg-white shadow-sm border-b border-gray-100" 
         >
-          <div className="container mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-            {/* Store Logo & Name - Refined typography */}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 transition-all duration-300">
-                {store?.logo && (
-                  <img 
-                    src={store.logo} 
-                    alt={`${store.name} logo`} 
-                    className="h-10 w-auto object-contain rounded-md"
-                  />
-                )}
-                <div>
-                  <h1 className="font-bold text-xl tracking-tight">
-                    <a href="/" className="hover:opacity-80 transition-opacity duration-200">
-                      {store?.name || 'Store Name'}
-                    </a>
-                  </h1>
-                  <a 
-                    href="https://selll.online" 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="text-xs opacity-60 hover:opacity-100 transition-all duration-200"
-                    style={{ color: storeConfig?.theme_color || '#0070F3' }}
-                  >
-                    powered by Selll
-                  </a>
-                </div>
-              </div>
+          <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+            {/* Store Logo & Name */}
+            <div className="flex items-center">
+              {store?.logo && (
+                <img 
+                  src={store.logo} 
+                  alt={`${store.name} logo`} 
+                  className="h-8 w-auto object-contain mr-3"
+                />
+              )}
+              <Link to="/" className="text-xl font-semibold text-gray-900 hover:text-gray-700 transition-colors">
+                {store?.name || 'Store Name'}
+              </Link>
             </div>
             
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-4">
+            {/* Main Navigation Links */}
+            <div className="hidden md:flex items-center space-x-8">
+              <Link to="/" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Home</Link>
+              <Link to="/products" className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">Catalog</Link>
               <button
                 onClick={() => setIsAboutModalOpen(true)}
-                className="px-4 py-2 text-sm font-medium transition-all duration-200 rounded-full flex items-center gap-2 hover:bg-black/5"
-                style={{ color: storeConfig?.text_color || '#1A1A1A' }}
+                className="text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors"
               >
-                <InfoIcon />
-                <span>About</span>
+                About
               </button>
+            </div>
+            
+            {/* Bag Icon */}
+            <div className="flex items-center">
               <button
                 onClick={() => setIsBagOpen(true)}
-                className="relative px-5 py-2.5 text-sm font-medium transition-all duration-200 rounded-full flex items-center gap-2 hover:shadow-lg"
-                style={{ 
-                  backgroundColor: storeConfig?.theme_color || '#0070F3',
-                  color: '#FFFFFF'
-                }}
+                className="relative p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                aria-label="Shopping Bag"
               >
                 <BagIcon />
-                <span>Bag</span>
                 {bagItems.length > 0 && (
                   <span 
-                    className="absolute -top-2 -right-2 w-5 h-5 rounded-full text-xs flex items-center justify-center text-white font-medium shadow-sm"
-                    style={{ backgroundColor: '#000000' }}
+                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gray-900 text-white text-xs flex items-center justify-center font-medium"
                   >
                     {bagItems.length}
                   </span>
                 )}
               </button>
             </div>
+            
+            {/* Mobile Menu Button */}
+            <div className="md:hidden">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="text-gray-600 hover:text-gray-900 focus:outline-none"
+              >
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {mobileMenuOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
           </div>
           
           {/* Mobile Navigation Menu */}
           {mobileMenuOpen && (
-            <div 
-              className="md:hidden py-3 px-4 space-y-2 border-t animate-fadeIn"
-              style={{ 
-                borderColor: storeConfig?.border_color ? `${storeConfig.border_color}15` : '#E5E5E515',
-                backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}F5` : '#FFFFFFF5'
-              }}
-            >
+            <div className="md:hidden py-3 px-4 space-y-2 border-t bg-white">
+              <Link 
+                to="/"
+                className="block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Home
+              </Link>
+              <Link 
+                to="/products"
+                className="block px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                Catalog
+              </Link>
               <button
                 onClick={() => {
                   setIsAboutModalOpen(true);
                   setMobileMenuOpen(false);
                 }}
-                className="w-full px-4 py-3 text-sm font-medium transition-all duration-200 rounded-lg flex items-center gap-2 hover:bg-black/5"
-                style={{ color: storeConfig?.text_color || '#1A1A1A' }}
+                className="w-full text-left px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg"
               >
-                <InfoIcon />
-                <span>About</span>
+                About
               </button>
               <button
                 onClick={() => {
                   setIsBagOpen(true);
                   setMobileMenuOpen(false);
                 }}
-                className="w-full px-4 py-3 text-sm font-medium transition-all duration-200 rounded-lg flex items-center gap-2"
-                style={{ 
-                  backgroundColor: `${storeConfig?.theme_color || '#0070F3'}15`,
-                  color: storeConfig?.theme_color || '#0070F3'
-                }}
+                className="w-full text-left px-4 py-2 text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg flex items-center justify-between"
               >
-                <BagIcon />
-                <span>Bag ({bagItems.length})</span>
+                <span>Bag</span>
+                <span className="bg-gray-900 text-white text-xs px-2 py-1 rounded-full">{bagItems.length}</span>
               </button>
             </div>
           )}
