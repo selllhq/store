@@ -60,12 +60,17 @@ export interface OrderItem {
 }
 
 export interface Order {
-  id: string;
+  id: number;
+  customer_id: number;
+  store_id: number;
+  total: string | number;
+  billing_session_id: string;
+  store_url: string;
   status: string;
-  customer: OrderCustomer;
-  items: OrderItem[];
-  total: number;
   created_at: string;
+  updated_at: string;
+  customer?: OrderCustomer;
+  items?: OrderItem[];
 }
 
 // Fetch order details
