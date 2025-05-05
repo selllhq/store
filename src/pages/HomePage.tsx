@@ -3,28 +3,32 @@ import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { getFilteredProducts } from '../services/api';
 import { StoreConfigContext } from '../App';
-import { CartFunctionsContext } from '../components/StoreLayout';
 import { Store } from '../types/store';
 import { useQuery } from '@tanstack/react-query';
 import ShimmerCard from '../components/ShimmerCard';
+import ProductCard from '../components/ProductCard';
 
 // Helper function to adjust color brightness
 const adjustColorBrightness = (hex: string, percent: number): string => {
   // Remove the # if present
   hex = hex.replace('#', '');
-  
+
   // Convert hex to RGB
   const r = parseInt(hex.substring(0, 2), 16);
   const g = parseInt(hex.substring(2, 4), 16);
   const b = parseInt(hex.substring(4, 6), 16);
-  
+
   // Adjust brightness
-  const adjustedR = Math.min(255, Math.max(0, r + (r * percent / 100)));
-  const adjustedG = Math.min(255, Math.max(0, g + (g * percent / 100)));
-  const adjustedB = Math.min(255, Math.max(0, b + (b * percent / 100)));
-  
+  const adjustedR = Math.min(255, Math.max(0, r + (r * percent) / 100));
+  const adjustedG = Math.min(255, Math.max(0, g + (g * percent) / 100));
+  const adjustedB = Math.min(255, Math.max(0, b + (b * percent) / 100));
+
   // Convert back to hex
-  return `#${Math.round(adjustedR).toString(16).padStart(2, '0')}${Math.round(adjustedG).toString(16).padStart(2, '0')}${Math.round(adjustedB).toString(16).padStart(2, '0')}`;
+  return `#${Math.round(adjustedR).toString(16).padStart(2, '0')}${Math.round(
+    adjustedG
+  )
+    .toString(16)
+    .padStart(2, '0')}${Math.round(adjustedB).toString(16).padStart(2, '0')}`;
 };
 
 interface HomePageProps {
@@ -34,22 +38,28 @@ interface HomePageProps {
 
 export default function HomePage({ store }: HomePageProps) {
   let storeConfig = useContext(StoreConfigContext) || {};
-  
+
   // Set default colors if storeConfig is empty
   if (Object.keys(storeConfig).length === 0) {
     storeConfig = {
-      background_color: '#FFFFFF',  // White background
-      text_color: '#000000',       // Black text
-      theme_color: '#3B82F6',      // Blue theme color
-      border_color: '#E5E7EB'      // Light gray border
+      background_color: '#FFFFFF', // White background
+      text_color: '#000000', // Black text
+      theme_color: '#3B82F6', // Blue theme color
+      border_color: '#E5E7EB', // Light gray border
     };
   }
-  const { addToBag, openBag } = useContext(CartFunctionsContext);
 
   // Fetch popular products
-  const { data: popularProducts = [], isLoading, error } = useQuery({
+  const {
+    data: popularProducts = [],
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ['popularProducts', store?.id],
-    queryFn: () => store?.id ? getFilteredProducts(store.id, { sortBy: 'popular', limit: 8 }) : Promise.resolve([]),
+    queryFn: () =>
+      store?.id
+        ? getFilteredProducts(store.id, { sortBy: 'popular', limit: 8 })
+        : Promise.resolve([]),
     enabled: !!store?.id,
   });
 
@@ -90,21 +100,19 @@ export default function HomePage({ store }: HomePageProps) {
   // Extract unique categories from products
   // Categories extraction no longer needed since we removed filter tabs
 
-
-
   if (isLoading) {
     return (
       <div className="py-12">
         {/* Section Title Shimmer */}
         <div className="animate-pulse h-8 w-48 bg-gray-300 rounded mb-8"></div>
-        
+
         {/* Products Grid Shimmer */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6 mb-12">
           {[...Array(8)].map((_, index) => (
             <ShimmerCard key={index} type="product" />
           ))}
         </div>
-        
+
         {/* View All Button Shimmer */}
         <div className="flex justify-center mt-12 mb-8">
           <div className="animate-pulse h-12 w-48 bg-gray-300 rounded-md"></div>
@@ -121,214 +129,199 @@ export default function HomePage({ store }: HomePageProps) {
     );
   }
 
-
-
   return (
     <>
       {/* Full-width Hero Section - Only show if store has hero content */}
-      {storeConfig?.show_hero && createPortal(
-        <div className="w-full overflow-hidden">
-          <div className="relative w-full">
-            {/* Simple overlay */}
-            <div className="absolute inset-0 bg-black/60 z-10"></div>
+      {storeConfig?.show_hero &&
+        createPortal(
+          <div className="w-full overflow-hidden">
+            <div className="relative w-full">
+              {/* Simple overlay */}
+              <div className="absolute inset-0 bg-black/60 z-10"></div>
 
-            {/* Hero Image with minimal effects */}
-            {storeConfig?.hero_image ? (
-              <div className="relative h-[60vh] max-h-[600px] min-h-[400px] overflow-hidden">
-                <img
-                  src={storeConfig?.hero_image}
-                  alt={store?.name}
-                  className="w-full h-full object-cover"
-                  style={{
-                    objectPosition: 'center center'
-                  }}
-                />
-              </div>
-            ) : (
-              <div className="relative h-[60vh] max-h-[600px] min-h-[400px]" style={{
-                background: `linear-gradient(to right, ${storeConfig?.background_color || '#121212'}, ${storeConfig?.background_color ? adjustColorBrightness(storeConfig.background_color, 15) : '#1A1A1A'})`
-              }}>
-                {/* Single subtle accent element */}
+              {/* Hero Image with minimal effects */}
+              {storeConfig?.hero_image ? (
+                <div className="relative h-[60vh] max-h-[600px] min-h-[400px] overflow-hidden">
+                  <img
+                    src={storeConfig?.hero_image}
+                    alt={store?.name}
+                    className="w-full h-full object-cover"
+                    style={{
+                      objectPosition: 'center center',
+                    }}
+                  />
+                </div>
+              ) : (
                 <div
-                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
+                  className="relative h-[60vh] max-h-[600px] min-h-[400px]"
                   style={{
-                    background: `radial-gradient(circle, ${storeConfig?.theme_color || '#FFA726'}15 0%, transparent 70%)`,
-                    filter: 'blur(80px)',
-                    opacity: 0.3
+                    background: `linear-gradient(to right, ${
+                      storeConfig?.background_color || '#121212'
+                    }, ${
+                      storeConfig?.background_color
+                        ? adjustColorBrightness(
+                            storeConfig.background_color,
+                            15
+                          )
+                        : '#1A1A1A'
+                    })`,
                   }}
-                ></div>
-              </div>
-            )}
-
-            {/* Ultra Minimal Hero Content */}
-            <div className="absolute inset-0 flex items-center z-20">
-              <div className="container mx-auto px-6">
-                <div
-                  className={`${storeConfig?.hero_content_alignment === 'center' ? 'mx-auto text-center' : storeConfig?.hero_content_alignment === 'right' ? 'ml-auto text-right' : ''} max-w-xl`}
                 >
-                  {/* Minimal title */}
-                  <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
-                    {storeConfig?.hero_title || 'Discover Our Products'}
-                  </h2>
+                  {/* Single subtle accent element */}
+                  <div
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
+                    style={{
+                      background: `radial-gradient(circle, ${
+                        storeConfig?.theme_color || '#FFA726'
+                      }15 0%, transparent 70%)`,
+                      filter: 'blur(80px)',
+                      opacity: 0.3,
+                    }}
+                  ></div>
+                </div>
+              )}
 
-                  {/* Minimal paragraph */}
-                  <p className="text-base md:text-lg text-white/80 mb-6" style={{ fontWeight: '300' }}>
-                    {storeConfig?.hero_description || 'Explore our collection of high-quality products designed to meet your needs.'}
-                  </p>
+              {/* Ultra Minimal Hero Content */}
+              <div className="absolute inset-0 flex items-center z-20">
+                <div className="container mx-auto px-6">
+                  <div
+                    className={`${
+                      storeConfig?.hero_content_alignment === 'center'
+                        ? 'mx-auto text-center'
+                        : storeConfig?.hero_content_alignment === 'right'
+                        ? 'ml-auto text-right'
+                        : ''
+                    } max-w-xl`}
+                  >
+                    {/* Minimal title */}
+                    <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
+                      {storeConfig?.hero_title || 'Discover Our Products'}
+                    </h2>
 
-                  {/* Minimal button */}
-                  <div className="flex" style={{ justifyContent: storeConfig?.hero_content_alignment === 'center' ? 'center' : storeConfig?.hero_content_alignment === 'right' ? 'flex-end' : 'flex-start' }}>
-                    <button
-                      className="px-6 py-3 rounded-md font-medium text-sm transition-all duration-300 text-white flex items-center gap-2"
-                      style={{
-                        backgroundColor: storeConfig?.theme_color || '#FFA726',
-                        borderRadius: '6px'
-                      }}
-                      onClick={() => document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' })}
+                    {/* Minimal paragraph */}
+                    <p
+                      className="text-base md:text-lg text-white/80 mb-6"
+                      style={{ fontWeight: '300' }}
                     >
-                      Shop Now
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                      </svg>
-                    </button>
+                      {storeConfig?.hero_description ||
+                        'Explore our collection of high-quality products designed to meet your needs.'}
+                    </p>
+
+                    {/* Minimal button */}
+                    <div
+                      className="flex"
+                      style={{
+                        justifyContent:
+                          storeConfig?.hero_content_alignment === 'center'
+                            ? 'center'
+                            : storeConfig?.hero_content_alignment === 'right'
+                            ? 'flex-end'
+                            : 'flex-start',
+                      }}
+                    >
+                      <button
+                        className="px-6 py-3 rounded-md font-medium text-sm transition-all duration-300 text-white flex items-center gap-2"
+                        style={{
+                          backgroundColor:
+                            storeConfig?.theme_color || '#FFA726',
+                          borderRadius: '6px',
+                        }}
+                        onClick={() =>
+                          document
+                            .getElementById('products-section')
+                            ?.scrollIntoView({ behavior: 'smooth' })
+                        }
+                      >
+                        Shop Now
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                          />
+                        </svg>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Subtle gradient for text readability */}
-            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black to-transparent z-10"></div>
-          </div>
-        </div>,
-        document.getElementById('full-width-hero') || document.body
-      )}
+              {/* Subtle gradient for text readability */}
+              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black to-transparent z-10"></div>
+            </div>
+          </div>,
+          document.getElementById('full-width-hero') || document.body
+        )}
 
       {/* Main content starts here */}
-      <div id="products-section" className="py-12 relative" style={{ 
-        zIndex: 1,
-        marginTop: storeConfig?.show_hero ? '0' : '2rem',
-        background: storeConfig?.background_color || '#121212'
-      }}>
+      <div
+        id="products-section"
+        className="pt-0 pb-12 md:py-12 relative"
+        style={{
+          zIndex: 1,
+          marginTop: storeConfig?.show_hero ? '0' : '1rem',
+          background: storeConfig?.background_color || '#121212',
+        }}
+      >
         {/* Decorative elements */}
-        <div className="absolute top-0 left-0 w-48 h-48 bg-gradient-to-br opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
-          style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}></div>
-        <div className="absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl opacity-5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"
-          style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}></div>
+        <div
+          className="hidden md:absolute top-0 left-0 w-48 h-48 bg-gradient-to-br opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
+          style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}
+        ></div>
+        <div
+          className="hidden md:absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl opacity-5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"
+          style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}
+        ></div>
 
         <div className="container mx-auto">
           {/* Popular Products Section */}
           <div className="mb-16">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-bold" style={{ color: storeConfig?.text_color || '#000000' }}>Our Products</h2>
-              <Link 
-                to="/products?sort=popular" 
+              <h2
+                className="text-2xl font-bold"
+                style={{ color: storeConfig?.text_color || '#000000' }}
+              >
+                Our Products
+              </h2>
+              <Link
+                to="/products?sort=popular"
                 className="text-sm font-medium hover:underline flex items-center gap-1"
                 style={{ color: storeConfig?.theme_color || '#3B82F6' }}
               >
                 View all
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-4 w-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
                 </svg>
               </Link>
             </div>
 
-            {popularProducts && popularProducts.length > 0 ? (
+            {popularProducts?.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 {popularProducts.map((product) => (
-              <div
-                key={product.id}
-                className="rounded-lg overflow-hidden shadow-md border transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                style={{
-                  backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF',
-                  color: storeConfig?.text_color || '#000000',
-                  borderColor: storeConfig?.border_color || '#E5E7EB',
-                }}
-                    onClick={() => {
-                      // Always open product modal
-                      window.dispatchEvent(new CustomEvent('openProductModal', { detail: { product } }));
-                    }}
-                  >
-                    {/* Product Image Area with enhanced effects */}
-                    <div className="relative aspect-square overflow-hidden">
-                      {/* Stock indicator */}
-                      <div className="absolute top-3 right-3 z-20">
-                        <span
-                          className={`text-xs font-medium px-2 py-1 rounded-full ${product.stock > 0 ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}
-                        >
-                          {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
-                        </span>
-                      </div>
-
-                      {/* Product image with enhanced hover effects */}
-                      {product.image ? (
-                        <div className="relative w-full h-full overflow-hidden">
-                          {/* Subtle texture overlay */}
-                          <div className="absolute inset-0 opacity-10 z-10 hero-gradient pointer-events-none"></div>
-
-                          <img
-                            src={product.image}
-                            alt={product.name}
-                            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
-                          />
-                        </div>
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                          <svg className="w-16 h-16 text-gray-600 animate-pulse-slower" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                          </svg>
-                        </div>
-                      )}
-
-                      {/* Quick add overlay removed as requested */}
-                    </div>
-
-                    {/* Enhanced Product Info Area with modern design */}
-                    <div className="p-6 relative">
-                      {/* Subtle accent line */}
-                      <div
-                        className="absolute top-0 left-6 right-6 h-[1px] opacity-20"
-                        style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}
-                      ></div>
-
-                      <h3 className="font-bold text-xl mb-1.5 line-clamp-1 group-hover:text-opacity-90 transition-colors duration-300">{product.name}</h3>
-                      <p className="text-sm mb-4 opacity-70 line-clamp-2 group-hover:opacity-90 transition-opacity duration-300">{product.description}</p>
-
-                      <div className="flex justify-between items-center">
-                        <span
-                          className="text-2xl font-bold transition-all duration-300 group-hover:translate-x-1"
-                          style={{ color: storeConfig?.theme_color || '#FFA726' }}
-                        >
-                          {new Intl.NumberFormat(
-                            "en-US",
-                            {
-                              style: "currency",
-                              currency:
-                                store?.currency,
-                            },
-                          ).format(product.price)}
-                        </span>
-
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation(); // Prevent triggering the parent onClick
-                            addToBag(product);
-                            // Open bag slideout
-                            openBag();
-                          }}
-                          className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
-                          style={{
-                            backgroundColor: storeConfig?.theme_color ? `${storeConfig.theme_color}20` : '#FFA72620',
-                            color: storeConfig?.theme_color || '#FFA726',
-                            boxShadow: `0 2px 8px ${storeConfig?.theme_color || '#FFA726'}20`
-                          }}
-                        >
-                          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                          </svg>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    store={store}
+                    storeConfig={storeConfig}
+                  />
                 ))}
               </div>
             ) : (
@@ -337,20 +330,22 @@ export default function HomePage({ store }: HomePageProps) {
               </div>
             )}
           </div>
-          
+
           {/* View All Products Button */}
-          <div className="flex justify-center mb-16">
-            <Link
-              to="/products?sort=popular"
-              className="px-8 py-3 rounded-md font-medium transition-all duration-300 hover:bg-opacity-90 text-center inline-block"
-              style={{
-                backgroundColor: storeConfig?.theme_color || '#3B82F6',
-                color: '#FFFFFF',
-              }}
-            >
-              View All Products
-            </Link>
-          </div>
+          {popularProducts?.length > 4 && (
+            <div className="flex justify-center mb-16">
+              <Link
+                to="/products?sort=popular"
+                className="px-8 py-3 rounded-md font-medium transition-all duration-300 hover:bg-opacity-90 text-center inline-block"
+                style={{
+                  backgroundColor: storeConfig?.theme_color || '#3B82F6',
+                  color: '#FFFFFF',
+                }}
+              >
+                View All Products
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </>

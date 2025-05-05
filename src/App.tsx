@@ -38,9 +38,9 @@ function App() {
               {(store) => (
                 <Routes>
                   <Route index element={<HomePage store={store} />} />
-                  <Route path="products" element={<ProductsPage store={store} />} />
-                  <Route path="product/:productId" element={<ProductsPage store={store} isProductDetail={true} />} />
-                  <Route path="order" element={<OrderConfirmation />} />
+                  <Route path="/products" element={<ProductsPage store={store} />} />
+                  <Route path="/product/:productId" element={<ProductsPage store={store} isProductDetail={true} />} />
+                  <Route path="/order" element={<OrderConfirmation />} />
                   <Route path="*" element={<Navigate to="." replace />} />
                 </Routes>
               )}

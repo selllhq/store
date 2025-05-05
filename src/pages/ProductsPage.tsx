@@ -6,6 +6,7 @@ import { StoreConfigContext } from '../App';
 import { CartFunctionsContext } from '../components/StoreLayout';
 import { Store } from '../types/store';
 import ShimmerCard from '../components/ShimmerCard';
+import ProductCard from '../components/ProductCard';
 
 interface ProductsPageProps {
   store?: Store;
@@ -163,7 +164,7 @@ export default function ProductsPage({ store, isProductDetail = false }: Product
   // If we're in product detail mode and have a current product, show the product detail view
   if (isProductDetail && currentProduct) {
     return (
-      <div className="container mx-auto px-4 py-12">
+      <>
         <div className="mb-6">
           <button 
             onClick={() => navigate('/products')} 
@@ -249,33 +250,81 @@ export default function ProductsPage({ store, isProductDetail = false }: Product
             </button>
           </div>
         </div>
-      </div>
+      </>
     );
   }
 
-  // Otherwise, show the product listing view
   return (
-    <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-8">All Products</h1>
-      
+    <>
+      <h1 className="text-3xl font-bold mt-6 md:mt-12 mb-8">All Products</h1>
+
       {/* Search and Sort Controls */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <select
           value={filters.sortBy}
-          onChange={(e) => handleSortChange(e.target.value as ProductFilters['sortBy'])}
+          onChange={(e) =>
+            handleSortChange(e.target.value as ProductFilters['sortBy'])
+          }
           className="border rounded-md py-3 px-3 text-sm focus:outline-none focus:ring-1 transition-all duration-300"
           style={{
-            backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF',
+            backgroundColor: storeConfig?.background_color
+              ? `${storeConfig.background_color}`
+              : '#FFFFFF',
             color: storeConfig?.text_color || '#000000',
             borderColor: storeConfig?.border_color || '#E5E7EB',
             outlineColor: storeConfig?.theme_color || '#3B82F6',
           }}
         >
-          <option value="newest" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF' }}>Newest</option>
-          <option value="oldest" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF' }}>Oldest</option>
-          <option value="price_asc" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF' }}>Price: Low to High</option>
-          <option value="price_desc" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF' }}>Price: High to Low</option>
-          <option value="popular" style={{ backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF' }}>Popularity</option>
+          <option
+            value="newest"
+            style={{
+              backgroundColor: storeConfig?.background_color
+                ? `${storeConfig.background_color}`
+                : '#FFFFFF',
+            }}
+          >
+            Newest
+          </option>
+          <option
+            value="oldest"
+            style={{
+              backgroundColor: storeConfig?.background_color
+                ? `${storeConfig.background_color}`
+                : '#FFFFFF',
+            }}
+          >
+            Oldest
+          </option>
+          <option
+            value="price_asc"
+            style={{
+              backgroundColor: storeConfig?.background_color
+                ? `${storeConfig.background_color}`
+                : '#FFFFFF',
+            }}
+          >
+            Price: Low to High
+          </option>
+          <option
+            value="price_desc"
+            style={{
+              backgroundColor: storeConfig?.background_color
+                ? `${storeConfig.background_color}`
+                : '#FFFFFF',
+            }}
+          >
+            Price: High to Low
+          </option>
+          <option
+            value="popular"
+            style={{
+              backgroundColor: storeConfig?.background_color
+                ? `${storeConfig.background_color}`
+                : '#FFFFFF',
+            }}
+          >
+            Popularity
+          </option>
         </select>
 
         <div className="relative w-full md:w-64">
@@ -286,10 +335,12 @@ export default function ProductsPage({ store, isProductDetail = false }: Product
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full border rounded-md py-3 px-4 pr-10 text-sm focus:outline-none focus:ring-1 transition-all duration-300"
             style={{
-              backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF',
+              backgroundColor: storeConfig?.background_color
+                ? `${storeConfig.background_color}`
+                : '#FFFFFF',
               color: storeConfig?.text_color || '#000000',
               borderColor: storeConfig?.border_color || '#E5E7EB',
-              outlineColor: storeConfig?.theme_color || '#3B82F6'
+              outlineColor: storeConfig?.theme_color || '#3B82F6',
             }}
             onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
           />
@@ -297,8 +348,19 @@ export default function ProductsPage({ store, isProductDetail = false }: Product
             onClick={handleSearch}
             className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-700 p-1"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
             </svg>
           </button>
         </div>
@@ -309,94 +371,12 @@ export default function ProductsPage({ store, isProductDetail = false }: Product
           {/* Product grid */}
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 mb-12">
             {sortedProducts.slice(0, visibleProducts).map((product) => (
-              <div
+              <ProductCard
                 key={product.id}
-                className="rounded-lg overflow-hidden shadow-md border transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
-                style={{
-                  backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}` : '#FFFFFF',
-                  color: storeConfig?.text_color || '#000000',
-                  borderColor: storeConfig?.border_color || '#E5E7EB',
-                }}
-                onClick={() => {
-                  // Always open product modal
-                  window.dispatchEvent(new CustomEvent('openProductModal', { detail: { product } }));
-                }}
-              >
-                {/* Product Image Area with enhanced effects */}
-                <div className="relative aspect-square overflow-hidden">
-                  {/* Stock indicator */}
-                  <div className="absolute top-3 right-3 z-20">
-                    <span
-                      className={`text-xs font-medium px-2 py-1 rounded-full ${product.stock > 0 ? 'bg-green-500/20 text-green-500' : 'bg-red-500/20 text-red-500'}`}
-                    >
-                      {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
-                    </span>
-                  </div>
-
-                  {/* Product image with subtle hover effect */}
-                  {product.image ? (
-                    <div className="w-full h-full overflow-hidden">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110 group-hover:brightness-110"
-                      />
-                    </div>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
-                      <svg className="w-16 h-16 text-gray-600 animate-pulse-slower" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                      </svg>
-                    </div>
-                  )}
-                </div>
-
-                {/* Enhanced Product Info Area with modern design */}
-                <div className="p-6 relative">
-                  {/* Subtle accent line */}
-                  <div
-                    className="absolute top-0 left-6 right-6 h-[1px] opacity-20"
-                    style={{ backgroundColor: storeConfig?.theme_color || '#3B82F6' }}
-                  ></div>
-
-                  <h3 className="font-bold text-xl mb-1.5 line-clamp-1 group-hover:text-opacity-90 transition-colors duration-300">{product.name}</h3>
-                  <p className="text-sm mb-4 opacity-70 line-clamp-2 group-hover:opacity-90 transition-opacity duration-300">{product.description}</p>
-
-                  <div className="flex justify-between items-center">
-                    <span
-                      className="text-2xl font-bold transition-all duration-300 group-hover:translate-x-1"
-                      style={{ color: storeConfig?.theme_color || '#3B82F6' }}
-                    >
-                      {new Intl.NumberFormat(
-                        "en-US",
-                        {
-                          style: "currency",
-                          currency: store?.currency || 'USD',
-                        },
-                      ).format(product.price)}
-                    </span>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation(); // Prevent triggering the parent onClick
-                        addToBag(product);
-                        // Open bag slideout
-                        openBag();
-                      }}
-                      className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
-                      style={{
-                        backgroundColor: storeConfig?.theme_color ? `${storeConfig.theme_color}20` : '#3B82F620',
-                        color: storeConfig?.theme_color || '#3B82F6',
-                        boxShadow: `0 2px 8px ${storeConfig?.theme_color || '#3B82F6'}20`
-                      }}
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                      </svg>
-                    </button>
-                  </div>
-                </div>
-              </div>
+                product={product}
+                store={store}
+                storeConfig={storeConfig}
+              />
             ))}
           </div>
 
@@ -426,16 +406,23 @@ export default function ProductsPage({ store, isProductDetail = false }: Product
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1"
+                d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+              ></path>
             </svg>
 
             <h3 className="text-xl font-bold mb-2">
-              {filters.search ? "No matching products" : "No products available yet"}
+              {filters.search
+                ? 'No matching products'
+                : 'No products available yet'}
             </h3>
             <p className="text-gray-500 mb-6">
               {filters.search
                 ? "We couldn't find any products that match your search. Try adjusting your search criteria."
-                : "This store is still setting up their inventory. Check back soon for exciting new products!"}
+                : 'This store is still setting up their inventory. Check back soon for exciting new products!'}
             </p>
 
             {filters.search && (
@@ -453,6 +440,6 @@ export default function ProductsPage({ store, isProductDetail = false }: Product
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
