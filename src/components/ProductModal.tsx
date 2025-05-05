@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-
+import { useState, useEffect } from 'react';
 
 interface Product {
   id: string;
@@ -9,7 +8,7 @@ interface Product {
   image?: string;
   images?: string[];
   brand?: string;
-  quantity: 'limited' | 'in_stock' | 'out_of_stock';
+  quantity: 'limited' | 'unlimited';
   quantity_items?: number;
   features?: string[];
 }
@@ -28,9 +27,14 @@ interface ProductModalProps {
   onAddToCart: (product: Product, quantity: number) => void;
 }
 
-export default function ProductModal({ isOpen, onClose, product, storeConfig, store, onAddToCart }: ProductModalProps) {
-  if (!isOpen || !product) return null;
-
+export default function ProductModal({
+  isOpen,
+  onClose,
+  product,
+  storeConfig,
+  store,
+  onAddToCart,
+}: ProductModalProps) {
   // State for quantity and selected image
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -46,8 +50,14 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
 
   // Helper function to get maximum allowed quantity
   const getMaxQuantity = () => {
-    if (isOutOfStock()) return 0;
-    if (product.quantity === 'limited') return product.quantity_items!;
+    if (isOutOfStock()) {
+      return 0;
+    }
+
+    if (product?.quantity === 'limited') {
+      return product?.quantity_items || 0;
+    }
+
     return Infinity;
   };
 
@@ -57,36 +67,47 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
     if (quantity > maxQuantity) {
       setQuantity(Math.max(0, maxQuantity));
     }
-  }, [product.quantity, product.quantity_items, quantity]);
+  }, [product?.quantity, product?.quantity_items, quantity]);
 
   const incrementQuantity = () => {
     const maxQuantity = getMaxQuantity();
     if (quantity < maxQuantity) {
-      setQuantity(prev => prev + 1);
+      setQuantity((prev) => prev + 1);
     }
   };
 
   const decrementQuantity = () => {
     const maxQuantity = getMaxQuantity();
     if (maxQuantity > 0 && quantity > 1) {
-      setQuantity(prev => prev - 1);
+      setQuantity((prev) => prev - 1);
     }
   };
 
   // Helper function to check if product is out of stock
   const isOutOfStock = () => {
-    return product.quantity === 'out_of_stock' ||
-      (product.quantity === 'limited' && product.quantity_items === 0);
+    return (
+      (product?.quantity === 'limited' && product?.quantity_items === 0)
+    );
   };
 
   // Helper function to check if quantity exceeds limit
   const isQuantityLimitReached = (checkQuantity: number = quantity) => {
-    return product.quantity === 'limited' && checkQuantity >= product.quantity_items!;
+    return (
+      product?.quantity === 'limited' &&
+      checkQuantity >= (product?.quantity_items || 0)
+    );
   };
 
   // Convert single image to array format for consistency
-  const images = Array.isArray(product.images) ? product.images :
-    product.image ? [product.image] : [];
+  const images = Array.isArray(product?.images)
+    ? product?.images
+    : product?.image
+    ? [product?.image]
+    : [];
+
+  if (!isOpen || !product) {
+    return null;
+  }
 
   console.log(product, 'product');
 
@@ -103,10 +124,14 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
         <div
           className="relative bg-opacity-95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden transform transition-all duration-500 border border-opacity-10"
           style={{
-            backgroundColor: storeConfig?.background_color ? `${storeConfig.background_color}F8` : '#FFFFFFF8',
+            backgroundColor: storeConfig?.background_color
+              ? `${storeConfig.background_color}F8`
+              : '#FFFFFFF8',
             color: storeConfig?.text_color || '#000000',
             borderColor: storeConfig?.border_color || '#E5E5E5',
-            boxShadow: `0 25px 50px -12px ${storeConfig?.theme_color || '#4CAF50'}20`
+            boxShadow: `0 25px 50px -12px ${
+              storeConfig?.theme_color || '#4CAF50'
+            }20`,
           }}
         >
           {/* Enhanced close button */}
@@ -115,8 +140,19 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10 p-2 rounded-full transition-all duration-300 hover:bg-black/5"
             aria-label="Close modal"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={1.5}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
 
@@ -141,8 +177,19 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
                   </div>
                 ) : (
                   <div className="w-full aspect-square flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                    <svg className="w-20 h-20 text-gray-300 animate-pulse-slower" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    <svg
+                      className="w-20 h-20 text-gray-300 animate-pulse-slower"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1"
+                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
+                      ></path>
                     </svg>
                   </div>
                 )}
@@ -156,12 +203,19 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
                       <button
                         key={index}
                         onClick={() => setSelectedImage(index)}
-                        className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all duration-300 snap-start ${selectedImage === index
-                          ? 'ring-2 ring-offset-1 scale-105 shadow-lg'
-                          : 'opacity-60 hover:opacity-90 hover:scale-105'}`}
+                        className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all duration-300 snap-start ${
+                          selectedImage === index
+                            ? 'ring-2 ring-offset-1 scale-105 shadow-lg'
+                            : 'opacity-60 hover:opacity-90 hover:scale-105'
+                        }`}
                         style={{
                           borderColor: storeConfig?.border_color || '#E5E5E5',
-                          boxShadow: selectedImage === index ? `0 4px 12px ${storeConfig?.theme_color || '#4CAF50'}30` : 'none'
+                          boxShadow:
+                            selectedImage === index
+                              ? `0 4px 12px ${
+                                  storeConfig?.theme_color || '#4CAF50'
+                                }30`
+                              : 'none',
                         }}
                       >
                         <img
@@ -178,26 +232,20 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
               {/* Enhanced stock indicator */}
               <div className="absolute top-4 left-4 z-20">
                 <span
-                  className="text-xs font-medium px-3 py-1.5 rounded-full backdrop-blur-md shadow-lg"
-                  style={{
-                    backgroundColor: isOutOfStock()
-                      ? 'rgba(255, 0, 0, 0.15)'
-                      : `${storeConfig?.theme_color || '#4CAF50'}15`,
-                    color: isOutOfStock()
-                      ? '#FF5252'
-                      : storeConfig?.theme_color || '#4CAF50',
-                    border: `1px solid ${isOutOfStock() ? 'rgba(255, 82, 82, 0.3)' : `${storeConfig?.theme_color || '#4CAF50'}30`}`,
-                    boxShadow: `0 4px 12px ${isOutOfStock() ? 'rgba(255, 0, 0, 0.1)' : `${storeConfig?.theme_color || '#4CAF50'}10`}`
-                  }}
+                  className={`text-xs font-medium px-2 py-1 rounded-full ${
+                    product.quantity === 'unlimited' ||
+                    product.quantity_items > '0'
+                      ? 'bg-green-500/20 text-green-500'
+                      : 'bg-red-500/20 text-red-500'
+                  }`}
                 >
-                  {product.quantity === 'limited'
-                    ? product.quantity_items === 0
-                      ? 'Out of stock'
-                      : `${product.quantity_items} in stock`
-                    : product.quantity === 'in_stock'
-                      ? 'In stock'
-                      : 'Out of stock'
-                  }
+                  {product.quantity === 'unlimited'
+                    ? 'Unlimited'
+                    : parseInt(product.quantity_items || '0') === 0
+                    ? 'Out of stock'
+                    : parseInt(product.quantity_items || '0') <= 5
+                    ? `Only ${product.quantity_items} left`
+                    : `${product.quantity_items} in stock`}
                 </span>
               </div>
             </div>
@@ -205,23 +253,34 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
             {/* Enhanced Product Details with modern design */}
             <div className="w-full md:w-1/2 p-8 md:p-10 flex flex-col relative">
               {/* Subtle accent line */}
-              <div className="absolute top-0 left-10 right-10 h-[1px] opacity-10 hidden md:block"
-                style={{ backgroundColor: storeConfig?.theme_color || '#4CAF50' }}
+              <div
+                className="absolute top-0 left-10 right-10 h-[1px] opacity-10 hidden md:block"
+                style={{
+                  backgroundColor: storeConfig?.theme_color || '#4CAF50',
+                }}
               ></div>
 
               {product.brand && (
-                <div className="mb-2 text-sm font-medium tracking-wide"
+                <div
+                  className="mb-2 text-sm font-medium tracking-wide"
                   style={{ color: storeConfig?.theme_color || '#4CAF50' }}
                 >
                   {product.brand}
                 </div>
               )}
 
-              <h2 className="text-3xl font-bold mb-4 leading-tight">{product.name}</h2>
+              <h2 className="text-3xl font-bold mb-4 leading-tight">
+                {product.name}
+              </h2>
 
               <div className="mb-6">
-                <p className="text-base leading-relaxed"
-                  style={{ color: storeConfig?.text_color ? `${storeConfig.text_color}99` : '#666666' }}
+                <p
+                  className="text-base leading-relaxed"
+                  style={{
+                    color: storeConfig?.text_color
+                      ? `${storeConfig.text_color}99`
+                      : '#666666',
+                  }}
                 >
                   {product.description}
                 </p>
@@ -238,43 +297,81 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
                         className="mr-3 text-sm flex-shrink-0 transition-transform duration-300 group-hover:scale-110"
                         style={{ color: storeConfig?.theme_color || '#4CAF50' }}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 13l4 4L19 7"
+                          />
                         </svg>
                       </span>
-                      <p className="text-sm leading-relaxed" style={{ color: storeConfig?.text_color ? `${storeConfig.text_color}99` : '#666666' }}>{feature}</p>
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{
+                          color: storeConfig?.text_color
+                            ? `${storeConfig.text_color}99`
+                            : '#666666',
+                        }}
+                      >
+                        {feature}
+                      </p>
                     </div>
                   ))}
                 </div>
               )}
 
               <div className="mb-6">
-                <div className="text-sm font-medium mb-2 uppercase tracking-wider opacity-70">Price</div>
+                <div className="text-sm font-medium mb-2 uppercase tracking-wider opacity-70">
+                  Price
+                </div>
                 <div
                   className="text-3xl font-bold"
                   style={{ color: storeConfig?.theme_color || '#4CAF50' }}
                 >
-                  {new Intl.NumberFormat(
-                    "en-US",
-                    {
-                      style: "currency",
-                      currency: store?.currency || 'USD',
-                    },
-                  ).format(product.price)}
+                  {new Intl.NumberFormat('en-US', {
+                    style: 'currency',
+                    currency: store?.currency || 'USD',
+                  }).format(product.price)}
                 </div>
               </div>
 
               <div className="mb-8">
-                <div className="text-sm font-medium mb-3 uppercase tracking-wider opacity-70">Quantity</div>
+                <div className="text-sm font-medium mb-3 uppercase tracking-wider opacity-70">
+                  Quantity
+                </div>
                 <div className="flex items-center">
                   <button
                     onClick={decrementQuantity}
                     disabled={isOutOfStock()}
-                    className={`w-10 h-10 flex items-center justify-center border rounded-l-lg transition-all duration-300 ${isOutOfStock() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/5'}`}
-                    style={{ borderColor: storeConfig?.border_color || '#E5E5E5' }}
+                    className={`w-10 h-10 flex items-center justify-center border rounded-l-lg transition-all duration-300 ${
+                      isOutOfStock()
+                        ? 'opacity-50 cursor-not-allowed'
+                        : 'hover:bg-black/5'
+                    }`}
+                    style={{
+                      borderColor: storeConfig?.border_color || '#E5E5E5',
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M20 12H4"
+                      />
                     </svg>
                   </button>
                   <input
@@ -298,19 +395,40 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
                         setQuantity(value);
                       }
                     }}
-                    className={`w-12 h-10 text-center border-t border-b [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${isOutOfStock() || isQuantityLimitReached() ? 'opacity-50 bg-transparent' : ''}`}
+                    className={`w-12 h-10 text-center border-t border-b [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                      isOutOfStock() || isQuantityLimitReached()
+                        ? 'opacity-50 bg-transparent'
+                        : ''
+                    }`}
                     style={{
-                      borderColor: storeConfig?.border_color || '#E5E5E5'
+                      borderColor: storeConfig?.border_color || '#E5E5E5',
                     }}
                   />
                   <button
                     onClick={incrementQuantity}
                     disabled={isOutOfStock() || isQuantityLimitReached()}
-                    className={`w-10 h-10 flex items-center justify-center border rounded-r-lg transition-all duration-300 ${isOutOfStock() || isQuantityLimitReached() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-black/5'}`}
-                    style={{ borderColor: storeConfig?.border_color || '#E5E5E5' }}
+                    className={`w-10 h-10 flex items-center justify-center border rounded-r-lg transition-all duration-300 ${
+                      isOutOfStock() || isQuantityLimitReached()
+                        ? 'opacity-50 cursor-not-allowed'
+                        : 'hover:bg-black/5'
+                    }`}
+                    style={{
+                      borderColor: storeConfig?.border_color || '#E5E5E5',
+                    }}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 4v16m8-8H4"
+                      />
                     </svg>
                   </button>
                 </div>
@@ -320,15 +438,32 @@ export default function ProductModal({ isOpen, onClose, product, storeConfig, st
                 <button
                   onClick={() => onAddToCart(product, quantity)}
                   disabled={isOutOfStock() || isQuantityLimitReached()}
-                  className={`flex-1 py-4 text-base font-medium rounded-xl text-center transition-all duration-300 flex items-center justify-center gap-2 ${isOutOfStock() || isQuantityLimitReached() ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg hover:translate-y-[-2px]'}`}
+                  className={`flex-1 py-4 text-base font-medium rounded-xl text-center transition-all duration-300 flex items-center justify-center gap-2 ${
+                    isOutOfStock() || isQuantityLimitReached()
+                      ? 'opacity-50 cursor-not-allowed'
+                      : 'hover:shadow-lg hover:translate-y-[-2px]'
+                  }`}
                   style={{
                     backgroundColor: storeConfig?.theme_color || '#4CAF50',
                     color: '#FFFFFF',
-                    boxShadow: `0 4px 15px ${storeConfig?.theme_color || '#4CAF50'}30`
+                    boxShadow: `0 4px 15px ${
+                      storeConfig?.theme_color || '#4CAF50'
+                    }30`,
                   }}
                 >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
                   </svg>
                   Add to Bag
                 </button>
