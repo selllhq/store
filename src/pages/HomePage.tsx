@@ -1,5 +1,4 @@
-import { useContext, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFilteredProducts } from '../services/api';
 import { StoreConfigContext } from '../App';
@@ -63,40 +62,6 @@ export default function HomePage({ store }: HomePageProps) {
     enabled: !!store?.id,
   });
 
-  // This effect moves the hero section outside the container to make it full-width
-  useEffect(() => {
-    if (storeConfig?.show_hero) {
-      // Get the main element (container) and the body element
-      const mainElement = document.querySelector('main');
-      const bodyElement = document.querySelector('body');
-
-      if (mainElement && bodyElement) {
-        // Create or get the hero container
-        let heroContainer = document.getElementById('full-width-hero');
-
-        if (!heroContainer) {
-          heroContainer = document.createElement('div');
-          heroContainer.id = 'full-width-hero';
-          heroContainer.style.width = '100%';
-          heroContainer.style.position = 'relative';
-          heroContainer.style.zIndex = '1';
-          heroContainer.style.marginBottom = '2rem';
-
-          // Insert the hero container after the header but before the main content
-          mainElement.parentNode?.insertBefore(heroContainer, mainElement);
-        }
-      }
-    }
-
-    // Cleanup function
-    return () => {
-      const heroContainer = document.getElementById('full-width-hero');
-      if (heroContainer) {
-        heroContainer.remove();
-      }
-    };
-  }, [storeConfig?.show_hero]);
-
   // Extract unique categories from products
   // Categories extraction no longer needed since we removed filter tabs
 
@@ -129,141 +94,146 @@ export default function HomePage({ store }: HomePageProps) {
     );
   }
 
+  console.log(storeConfig);
+
   return (
     <>
       {/* Full-width Hero Section - Only show if store has hero content */}
-      {storeConfig?.show_hero &&
-        createPortal(
-          <div className="w-full overflow-hidden">
-            <div className="relative w-full">
-              {/* Simple overlay */}
-              <div className="absolute inset-0 bg-black/60 z-10"></div>
+      {storeConfig?.show_hero && (
+        <div
+          className={
+            'w-full overflow-hidden' +
+            (storeConfig?.padded_hero
+              ? ''
+              : ' absolute top-[50px] left-0 w-full z-20')
+          }
+        >
+          <div className="relative w-full">
+            {/* Simple overlay */}
+            <div className="absolute inset-0 bg-black/60 z-10"></div>
 
-              {/* Hero Image with minimal effects */}
-              {storeConfig?.hero_image ? (
-                <div className="relative h-[60vh] max-h-[600px] min-h-[400px] overflow-hidden">
-                  <img
-                    src={storeConfig?.hero_image}
-                    alt={store?.name}
-                    className="w-full h-full object-cover"
-                    style={{
-                      objectPosition: 'center center',
-                    }}
-                  />
-                </div>
-              ) : (
-                <div
-                  className="relative h-[60vh] max-h-[600px] min-h-[400px]"
+            {/* Hero Image with minimal effects */}
+            {storeConfig?.hero_image ? (
+              <div className="relative h-[60vh] max-h-[600px] min-h-[400px] overflow-hidden">
+                <img
+                  src={storeConfig?.hero_image}
+                  alt={store?.name}
+                  className="w-full h-full object-cover"
                   style={{
-                    background: `linear-gradient(to right, ${
-                      storeConfig?.background_color || '#121212'
-                    }, ${
-                      storeConfig?.background_color
-                        ? adjustColorBrightness(
-                            storeConfig.background_color,
-                            15
-                          )
-                        : '#1A1A1A'
-                    })`,
+                    objectPosition: 'center center',
                   }}
+                />
+              </div>
+            ) : (
+              <div
+                className="relative h-[60vh] max-h-[600px] min-h-[400px]"
+                style={{
+                  background: `linear-gradient(to right, ${
+                    storeConfig?.background_color || '#121212'
+                  }, ${
+                    storeConfig?.background_color
+                      ? adjustColorBrightness(storeConfig.background_color, 15)
+                      : '#1A1A1A'
+                  })`,
+                }}
+              >
+                {/* Single subtle accent element */}
+                <div
+                  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
+                  style={{
+                    background: `radial-gradient(circle, ${
+                      storeConfig?.theme_color || '#FFA726'
+                    }15 0%, transparent 70%)`,
+                    filter: 'blur(80px)',
+                    opacity: 0.3,
+                  }}
+                ></div>
+              </div>
+            )}
+
+            {/* Ultra Minimal Hero Content */}
+            <div className="absolute inset-0 flex items-center z-20">
+              <div className="container mx-auto px-6">
+                <div
+                  className={`${
+                    storeConfig?.hero_content_alignment === 'center'
+                      ? 'mx-auto text-center'
+                      : storeConfig?.hero_content_alignment === 'right'
+                      ? 'ml-auto text-right'
+                      : ''
+                  } max-w-xl`}
                 >
-                  {/* Single subtle accent element */}
-                  <div
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
-                    style={{
-                      background: `radial-gradient(circle, ${
-                        storeConfig?.theme_color || '#FFA726'
-                      }15 0%, transparent 70%)`,
-                      filter: 'blur(80px)',
-                      opacity: 0.3,
-                    }}
-                  ></div>
-                </div>
-              )}
+                  {/* Minimal title */}
+                  <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
+                    {storeConfig?.hero_title || 'Discover Our Products'}
+                  </h2>
 
-              {/* Ultra Minimal Hero Content */}
-              <div className="absolute inset-0 flex items-center z-20">
-                <div className="container mx-auto px-6">
-                  <div
-                    className={`${
-                      storeConfig?.hero_content_alignment === 'center'
-                        ? 'mx-auto text-center'
-                        : storeConfig?.hero_content_alignment === 'right'
-                        ? 'ml-auto text-right'
-                        : ''
-                    } max-w-xl`}
+                  {/* Minimal paragraph */}
+                  <p
+                    className="text-base md:text-lg text-white/80 mb-6"
+                    style={{ fontWeight: '300' }}
                   >
-                    {/* Minimal title */}
-                    <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
-                      {storeConfig?.hero_title || 'Discover Our Products'}
-                    </h2>
+                    {storeConfig?.hero_description ||
+                      'Explore our collection of high-quality products designed to meet your needs.'}
+                  </p>
 
-                    {/* Minimal paragraph */}
-                    <p
-                      className="text-base md:text-lg text-white/80 mb-6"
-                      style={{ fontWeight: '300' }}
-                    >
-                      {storeConfig?.hero_description ||
-                        'Explore our collection of high-quality products designed to meet your needs.'}
-                    </p>
-
-                    {/* Minimal button */}
-                    <div
-                      className="flex"
+                  {/* Minimal button */}
+                  <div
+                    className="flex"
+                    style={{
+                      justifyContent:
+                        storeConfig?.hero_content_alignment === 'center'
+                          ? 'center'
+                          : storeConfig?.hero_content_alignment === 'right'
+                          ? 'flex-end'
+                          : 'flex-start',
+                    }}
+                  >
+                    <button
+                      className="px-6 py-3 rounded-md font-medium text-sm transition-all duration-300 text-white flex items-center gap-2"
                       style={{
-                        justifyContent:
-                          storeConfig?.hero_content_alignment === 'center'
-                            ? 'center'
-                            : storeConfig?.hero_content_alignment === 'right'
-                            ? 'flex-end'
-                            : 'flex-start',
+                        backgroundColor: storeConfig?.theme_color || '#FFA726',
+                        borderRadius: '6px',
                       }}
+                      onClick={() =>
+                        document
+                          .getElementById('products-section')
+                          ?.scrollIntoView({ behavior: 'smooth' })
+                      }
                     >
-                      <button
-                        className="px-6 py-3 rounded-md font-medium text-sm transition-all duration-300 text-white flex items-center gap-2"
-                        style={{
-                          backgroundColor:
-                            storeConfig?.theme_color || '#FFA726',
-                          borderRadius: '6px',
-                        }}
-                        onClick={() =>
-                          document
-                            .getElementById('products-section')
-                            ?.scrollIntoView({ behavior: 'smooth' })
-                        }
+                      Shop Now
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
                       >
-                        Shop Now
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M14 5l7 7m0 0l-7 7m7-7H3"
-                          />
-                        </svg>
-                      </button>
-                    </div>
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M14 5l7 7m0 0l-7 7m7-7H3"
+                        />
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
-
-              {/* Subtle gradient for text readability */}
-              <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black to-transparent z-10"></div>
             </div>
-          </div>,
-          document.getElementById('full-width-hero') || document.body
-        )}
+
+            {/* Subtle gradient for text readability */}
+            <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black to-transparent z-10"></div>
+          </div>
+        </div>
+      )}
 
       {/* Main content starts here */}
       <div
-        id="products-section"
-        className="pt-0 pb-12 md:py-12 relative"
+        className={
+          'pt-0 pb-12 md:py-12 relative' +
+          (storeConfig?.padded_hero ? '' : ' !pt-[540px]')
+        }
         style={{
           zIndex: 1,
           marginTop: storeConfig?.show_hero ? '0' : '1rem',
@@ -280,7 +250,7 @@ export default function HomePage({ store }: HomePageProps) {
           style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}
         ></div>
 
-        <div className="container mx-auto">
+        <div className="container mx-auto" id="products-section">
           {/* Popular Products Section */}
           <div className="mb-16">
             <div className="flex justify-between items-center mb-6">
@@ -314,7 +284,7 @@ export default function HomePage({ store }: HomePageProps) {
             </div>
 
             {popularProducts?.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {popularProducts.map((product) => (
                   <ProductCard
                     key={product.id}

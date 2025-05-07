@@ -85,8 +85,8 @@ export default function BagSlideout({
 
       {/* Slideout Panel */}
       <div
-        className={`fixed top-0 left-0 md:left-auto md:right-0 max-w-md z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0 h-screen md:h-full w-screen md:w-full' : 'translate-x-full w-full h-full'
+        className={`fixed top-0 left-0 sm:left-auto sm:right-0 sm:max-w-md z-50 transform transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0 h-screen sm:h-full w-screen sm:w-full' : 'translate-x-full w-full h-full'
         } shadow-2xl`}
         style={{
           backgroundColor: storeConfig?.background_color || '#1E1E1E',

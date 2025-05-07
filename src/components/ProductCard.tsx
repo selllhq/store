@@ -8,6 +8,10 @@ const ProductCard: React.FC<any> = ({
 }) => {
   const { addToBag, openBag } = useContext(CartFunctionsContext);
 
+  console.log("ProductCard", product);
+
+  const productImage = (product.images ? JSON.parse(product.images) : [])[0] ?? null;
+
   return (
     <div
       key={product.id}
@@ -50,13 +54,13 @@ const ProductCard: React.FC<any> = ({
         </div>
 
         {/* Product image with enhanced hover effects */}
-        {product.image ? (
+        {productImage ? (
           <div className="relative w-full h-full overflow-hidden">
             {/* Subtle texture overlay */}
             <div className="absolute inset-0 opacity-10 z-10 hero-gradient pointer-events-none"></div>
 
             <img
-              src={product.image}
+              src={productImage}
               alt={product.name}
               className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
             />

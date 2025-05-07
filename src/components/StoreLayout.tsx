@@ -268,7 +268,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
   return (
     <StoreConfigContext.Provider value={storeConfig}>
       <div
-        className="min-h-screen font-sans"
+        className="min-h-screen font-sans relative"
         style={{
           backgroundColor: storeConfig?.background_color || '#FFFFFF',
           color: storeConfig?.text_color || '#1A1A1A',
@@ -372,14 +372,14 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
             <div className="md:hidden py-3 px-4 space-y-2">
               <Link
                 to="/"
-                className="block px-4 py-2 text-sm font-medium hover:bg-gray-50 rounded-lg"
+                className="block px-4 py-2 text-sm font-medium hover:bg-gray-50/10 rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Home
               </Link>
               <Link
                 to="/products"
-                className="block px-4 py-2 text-sm font-medium hover:bg-gray-50 rounded-lg"
+                className="block px-4 py-2 text-sm font-medium hover:bg-gray-50/10 rounded-lg"
                 onClick={() => setMobileMenuOpen(false)}
               >
                 Catalog
@@ -389,7 +389,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
                   setIsAboutModalOpen(true);
                   setMobileMenuOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 text-sm font-medium hover:bg-gray-50 rounded-lg"
+                className="w-full text-left px-4 py-2 text-sm font-medium hover:bg-gray-50/10 rounded-lg"
               >
                 About
               </button>
@@ -398,7 +398,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
                   setIsBagOpen(true);
                   setMobileMenuOpen(false);
                 }}
-                className="w-full text-left px-4 py-2 text-sm font-medium hover:bg-gray-50 rounded-lg flex items-center justify-between"
+                className="w-full text-left px-4 py-2 text-sm font-medium hover:bg-gray-50/10 rounded-lg flex items-center justify-between"
               >
                 <span>Bag</span>
                 <span className="bg-gray-900 text-white text-xs px-2 py-1 rounded-full">
