@@ -71,6 +71,7 @@ export default function BagSlideout({
     (sum, item) => sum + item.price * Number(item.cartQuantity),
     0
   );
+
   const shipping = 0; // Can be calculated based on store settings
 
   return (

@@ -24,7 +24,6 @@ const ProductCard: React.FC<any> = ({
         borderColor: storeConfig?.border_color || '#E5E7EB',
       }}
       onClick={() => {
-        // Always open product modal
         window.dispatchEvent(
           new CustomEvent('openProductModal', {
             detail: { product },

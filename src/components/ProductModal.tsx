@@ -85,9 +85,7 @@ export default function ProductModal({
 
   // Helper function to check if product is out of stock
   const isOutOfStock = () => {
-    return (
-      (product?.quantity === 'limited' && product?.quantity_items === 0)
-    );
+    return product?.quantity === 'limited' && product?.quantity_items === 0;
   };
 
   // Helper function to check if quantity exceeds limit
@@ -98,16 +96,12 @@ export default function ProductModal({
     );
   };
 
-  // Convert single image to array format for consistency
-  const images = Array.isArray(product?.images)
-    ? product?.images
-    : product?.image
-    ? [product?.image]
-    : [];
-
   if (!isOpen || !product) {
     return null;
   }
+
+  // Convert single image to array format for consistency
+  const images = product?.images ? JSON.parse(product.images) : [];
 
   console.log(product, 'product');
 
@@ -234,16 +228,16 @@ export default function ProductModal({
                 <span
                   className={`text-xs font-medium px-2 py-1 rounded-full ${
                     product.quantity === 'unlimited' ||
-                    product.quantity_items > '0'
+                    (product.quantity_items ?? 0) > 0
                       ? 'bg-green-500/20 text-green-500'
                       : 'bg-red-500/20 text-red-500'
                   }`}
                 >
                   {product.quantity === 'unlimited'
                     ? 'Unlimited'
-                    : parseInt(product.quantity_items || '0') === 0
+                    : (product.quantity_items ?? 0) === 0
                     ? 'Out of stock'
-                    : parseInt(product.quantity_items || '0') <= 5
+                    : (product.quantity_items ?? 0) <= 5
                     ? `Only ${product.quantity_items} left`
                     : `${product.quantity_items} in stock`}
                 </span>

@@ -122,7 +122,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
             id: product.id,
             name: product.name,
             price: product.price,
-            image: product.image,
+            image: (product.images ? JSON.parse(product.images) : [])[0] ?? null,
             cartQuantity: quantity,
             quantity: product.quantity,
             quantity_items: product.quantity_items,
@@ -130,6 +130,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
         ];
       }
     });
+
     setIsBagOpen(true);
   };
 
