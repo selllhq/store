@@ -182,6 +182,8 @@ export default function OrderConfirmation() {
       </div>
     );
   }
+
+  console.log('Order Details:', orderDetails);
   
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl">
@@ -198,7 +200,7 @@ export default function OrderConfirmation() {
           <p className="text-md text-gray-500">Order #{orderDetails.id}</p>
         )}
       </div>
-      
+
       {orderDetails ? (
         <>
           {/* Order summary cards */}
@@ -206,7 +208,7 @@ export default function OrderConfirmation() {
             {/* Order Information Card */}
             <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm" 
               style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
-              <div className="p-4 border-b border-gray-200 bg-gray-50" 
+              <div className="p-4 border-b border-gray-200 bg-gray-50/10" 
                 style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
                 <h3 className="font-medium">Order Information</h3>
               </div>
@@ -220,7 +222,7 @@ export default function OrderConfirmation() {
             {/* Payment Information Card */}
             <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm"
               style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
-              <div className="p-4 border-b border-gray-200 bg-gray-50"
+              <div className="p-4 border-b border-gray-200 bg-gray-50/10"
                 style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
                 <h3 className="font-medium">Payment Information</h3>
               </div>
@@ -257,7 +259,7 @@ export default function OrderConfirmation() {
           {orderDetails.items && orderDetails.items.length > 0 && (
             <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-8"
               style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
-              <div className="p-4 border-b border-gray-200 bg-gray-50"
+              <div className="p-4 border-b border-gray-200 bg-gray-50/10"
                 style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
                 <h3 className="font-medium">Items</h3>
               </div>
@@ -286,24 +288,27 @@ export default function OrderConfirmation() {
           {/* Order Summary Card */}
           <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-8"
             style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
-            <div className="p-4 border-b border-gray-200 bg-gray-50"
+            <div className="p-4 border-b border-gray-200 bg-gray-50/10"
               style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
               <h3 className="font-medium">Order Summary</h3>
             </div>
             <div className="p-6 space-y-4">
               <div className="flex justify-between">
                 <span className="text-gray-600">Subtotal</span>
-                <span>${typeof orderDetails.total === 'number' ? (orderDetails.total * 0.9).toFixed(2) : orderDetails.total}</span>
+                <span>{typeof orderDetails.total === 'number' ? (orderDetails.total * 0.9).toFixed(2) : orderDetails.total}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-600">Tax</span>
-                <span>${typeof orderDetails.total === 'number' ? (orderDetails.total * 0.1).toFixed(2) : orderDetails.total}</span>
+                <span>0</span>
               </div>
               <div className="flex justify-between pt-4 border-t border-gray-200" 
                 style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}>
                 <span className="font-semibold">Total</span>
                 <span className="font-semibold" style={{ color: storeConfig?.theme_color || '#FFA726' }}>
-                  ${typeof orderDetails.total === 'number' ? orderDetails.total.toFixed(2) : orderDetails.total}
+                  {Number(orderDetails.total).toLocaleString('en-US', {
+                    style: 'currency',
+                    currency: storeConfig?.currency || 'USD',
+                  })}
                 </span>
               </div>
             </div>
@@ -313,14 +318,14 @@ export default function OrderConfirmation() {
           <div className="flex justify-between mb-8">
             <Link 
               to="/" 
-              className="px-6 py-2 border border-gray-300 rounded-md font-medium transition-all duration-200 hover:bg-gray-50"
+              className="px-6 py-2 border border-gray-300 rounded-md font-medium transition-all duration-200 hover:bg-gray-50/20 cursor-pointer"
               style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
             >
               Back to Home
             </Link>
             <button 
               onClick={handleContinueShopping}
-              className="px-6 py-2 rounded-md font-medium transition-all duration-200 text-white"
+              className="px-6 py-2 rounded-md font-medium transition-all duration-200 text-white cursor-pointer"
               style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}
             >
               Continue Shopping

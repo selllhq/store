@@ -108,11 +108,13 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
       if (existingItemIndex >= 0) {
         // Product exists, update quantity
         const updatedItems = [...prevItems];
+
         updatedItems[existingItemIndex] = {
           ...updatedItems[existingItemIndex],
           cartQuantity:
             (updatedItems[existingItemIndex].cartQuantity || 1) + quantity,
         };
+
         return updatedItems;
       } else {
         // Product doesn't exist, add new item
@@ -172,6 +174,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
   });
 
   let storeConfig;
+
   try {
     storeConfig = JSON.parse(store?.config || '{}');
 

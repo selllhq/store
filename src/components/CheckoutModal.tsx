@@ -341,7 +341,7 @@ export default function CheckoutModal({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3 rounded font-medium transition-all duration-200 flex items-center justify-center"
+                    className="w-full py-3 rounded font-medium transition-all duration-200 flex items-center justify-center cursor-pointer "
                     style={{
                       backgroundColor: storeConfig?.theme_color || '#FFA726',
                       color: '#FFFFFF',
@@ -435,7 +435,7 @@ export default function CheckoutModal({
                   <div className="flex gap-3">
                     <button
                       type="button"
-                      className="flex-1 py-3 rounded font-medium transition-all duration-200 border"
+                      className="flex-1 py-3 rounded font-medium transition-all duration-200 border cursor-pointer"
                       style={{
                         borderColor: storeConfig?.theme_color || '#FFA726',
                         color: storeConfig?.theme_color || '#FFA726',
@@ -451,7 +451,7 @@ export default function CheckoutModal({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 py-3 rounded font-medium transition-all duration-200 flex items-center justify-center"
+                      className="flex-1 py-3 rounded font-medium transition-all duration-200 flex items-center justify-center cursor-pointer"
                       style={{
                         backgroundColor: storeConfig?.theme_color || '#FFA726',
                         color: '#FFFFFF',
