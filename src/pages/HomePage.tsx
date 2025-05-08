@@ -232,7 +232,7 @@ export default function HomePage({ store }: HomePageProps) {
       <div
         className={
           'pt-0 pb-12 md:py-12 relative' +
-          (storeConfig?.padded_hero ? '' : ' !pt-[540px]')
+          (storeConfig?.padded_hero ? '' : ' pt-[540px] md:pt-[600px]')
         }
         style={{
           zIndex: 1,
