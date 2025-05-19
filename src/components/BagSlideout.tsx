@@ -1,7 +1,9 @@
-import { useContext, useState } from 'react';
-import { StoreConfigContext } from '../App';
-import CheckoutModal from './CheckoutModal';
-import { CartItem as BagItem, CartItem } from '../types/cart';
+/** @format */
+
+import { useContext, useState } from "react";
+import { StoreConfigContext } from "../App";
+import CheckoutModal from "./CheckoutModal";
+import { CartItem as BagItem, CartItem } from "../types/cart";
 
 interface BagSlideoutProps {
   isOpen: boolean;
@@ -20,7 +22,7 @@ export default function BagSlideout({
   isOpen,
   onClose,
   cartItems = [],
-  currency = 'USD',
+  currency = "USD",
   updateQuantity,
   removeItem,
   isLoading = false,
@@ -33,9 +35,9 @@ export default function BagSlideout({
 
   // Helper function to check if stock is available
   const isOutOfStock = (item: BagItem) => {
-    if (item.quantity === 'unlimited') return false;
+    if (item.quantity === "unlimited") return false;
     return (
-      item.quantity === 'limited' && parseInt(item.quantity_items || '0') === 0
+      item.quantity === "limited" && parseInt(item.quantity_items || "0") === 0
     );
   };
 
@@ -44,10 +46,10 @@ export default function BagSlideout({
     item: BagItem,
     checkQuantity: number = Number(item.cartQuantity)
   ) => {
-    console.log('check', checkQuantity, item.quantity_items);
-    if (item.quantity === 'unlimited') return false;
+    // console.log("check", checkQuantity, item.quantity_items);
+    if (item.quantity === "unlimited") return false;
     return (
-      item.quantity === 'limited' &&
+      item.quantity === "limited" &&
       checkQuantity >= Number(item.quantity_items)
     );
   };
@@ -55,8 +57,8 @@ export default function BagSlideout({
   // Helper function to get maximum allowed quantity
   const getMaxQuantity = (item: CartItem) => {
     if (isOutOfStock(item)) return 0;
-    if (item.quantity === 'limited')
-      return parseInt(item.quantity_items || '0');
+    if (item.quantity === "limited")
+      return parseInt(item.quantity_items || "0");
     return Infinity;
   };
 
@@ -79,7 +81,7 @@ export default function BagSlideout({
       {/* Backdrop */}
       <div
         className={`fixed inset-0 bg-black/50 z-40 transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={onClose}
       ></div>
@@ -87,15 +89,17 @@ export default function BagSlideout({
       {/* Slideout Panel */}
       <div
         className={`fixed top-0 left-0 sm:left-auto sm:right-0 sm:max-w-md z-50 transform transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0 h-screen sm:h-full w-screen sm:w-full' : 'translate-x-full w-full h-full'
+          isOpen
+            ? "translate-x-0 h-screen sm:h-full w-screen sm:w-full"
+            : "translate-x-full w-full h-full"
         } shadow-2xl`}
         style={{
-          backgroundColor: storeConfig?.background_color || '#1E1E1E',
-          color: storeConfig?.text_color || '#FFFFFF',
+          backgroundColor: storeConfig?.background_color || "#1E1E1E",
+          color: storeConfig?.text_color || "#FFFFFF",
           borderLeft: `1px solid ${
             storeConfig?.border_color
               ? `${storeConfig.border_color}40`
-              : 'rgba(42, 42, 42, 0.25)'
+              : "rgba(42, 42, 42, 0.25)"
           }`,
         }}
       >
@@ -105,9 +109,9 @@ export default function BagSlideout({
           style={{
             borderColor: storeConfig?.border_color
               ? `${storeConfig.border_color}40`
-              : 'rgba(42, 42, 42, 0.25)',
-            backdropFilter: 'blur(8px)',
-            position: 'sticky',
+              : "rgba(42, 42, 42, 0.25)",
+            backdropFilter: "blur(8px)",
+            position: "sticky",
             top: 0,
             zIndex: 10,
           }}
@@ -119,7 +123,7 @@ export default function BagSlideout({
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
-              style={{ color: storeConfig?.theme_color || '#FFA726' }}
+              style={{ color: storeConfig?.theme_color || "#FFA726" }}
             >
               <path
                 strokeLinecap="round"
@@ -131,7 +135,7 @@ export default function BagSlideout({
             <h2 className="text-xl font-semibold tracking-tight">
               {cartItems.length > 0 ? (
                 <>
-                  {cartItems.length} {cartItems.length === 1 ? 'item' : 'items'}{' '}
+                  {cartItems.length} {cartItems.length === 1 ? "item" : "items"}{" "}
                   in bag
                 </>
               ) : (
@@ -169,7 +173,7 @@ export default function BagSlideout({
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
                 viewBox="0 0 24 24"
-                style={{ color: storeConfig?.theme_color || '#FFA726' }}
+                style={{ color: storeConfig?.theme_color || "#FFA726" }}
               >
                 <circle
                   className="opacity-25"
@@ -192,7 +196,8 @@ export default function BagSlideout({
           ) : cartItems.length > 0 ? (
             <div className="py-2 space-y-4">
               {cartItems.map((item) => {
-                console.log('item', item);
+                console.log("item", item);
+                // @cr34t1ve address the point for this later
 
                 return (
                   <div
@@ -201,11 +206,11 @@ export default function BagSlideout({
                     style={{
                       backgroundColor: storeConfig?.border_color
                         ? `${storeConfig.border_color}10`
-                        : 'rgba(42, 42, 42, 0.1)',
+                        : "rgba(42, 42, 42, 0.1)",
                       borderBottom: `1px solid ${
                         storeConfig?.border_color
                           ? `${storeConfig.border_color}20`
-                          : 'rgba(42, 42, 42, 0.1)'
+                          : "rgba(42, 42, 42, 0.1)"
                       }`,
                     }}
                   >
@@ -215,7 +220,7 @@ export default function BagSlideout({
                       style={{
                         backgroundColor: storeConfig?.border_color
                           ? `${storeConfig.border_color}40`
-                          : 'rgba(42, 42, 42, 0.25)',
+                          : "rgba(42, 42, 42, 0.25)",
                       }}
                     >
                       {item.image ? (
@@ -254,7 +259,7 @@ export default function BagSlideout({
                           <p
                             className="text-sm font-medium"
                             style={{
-                              color: storeConfig?.theme_color || '#FFA726',
+                              color: storeConfig?.theme_color || "#FFA726",
                             }}
                           >
                             {currency} {Number(item.price).toFixed(2)}
@@ -292,31 +297,31 @@ export default function BagSlideout({
                             className="text-xs font-medium px-3 py-1 rounded-full"
                             style={{
                               backgroundColor: isOutOfStock(item)
-                                ? 'rgba(255, 0, 0, 0.1)'
-                                : item.quantity === 'unlimited'
-                                ? `${storeConfig?.theme_color || '#4CAF50'}15`
-                                : parseInt(item.quantity_items || '0') <= 5
-                                ? 'rgba(255, 152, 0, 0.1)'
-                                : `${storeConfig?.theme_color || '#4CAF50'}15`,
+                                ? "rgba(255, 0, 0, 0.1)"
+                                : item.quantity === "unlimited"
+                                ? `${storeConfig?.theme_color || "#4CAF50"}15`
+                                : parseInt(item.quantity_items || "0") <= 5
+                                ? "rgba(255, 152, 0, 0.1)"
+                                : `${storeConfig?.theme_color || "#4CAF50"}15`,
                               color: isOutOfStock(item)
-                                ? '#FF0000'
-                                : item.quantity === 'unlimited'
-                                ? storeConfig?.theme_color || '#4CAF50'
-                                : parseInt(item.quantity_items || '0') <= 5
-                                ? '#FF9800'
-                                : storeConfig?.theme_color || '#4CAF50',
+                                ? "#FF0000"
+                                : item.quantity === "unlimited"
+                                ? storeConfig?.theme_color || "#4CAF50"
+                                : parseInt(item.quantity_items || "0") <= 5
+                                ? "#FF9800"
+                                : storeConfig?.theme_color || "#4CAF50",
                             }}
                           >
-                            {item.quantity === 'unlimited'
-                              ? 'Unlimited'
-                              : parseInt(item.quantity_items || '0') === 0
-                              ? 'Out of stock'
-                              : parseInt(item.quantity_items || '0') <= 5
+                            {item.quantity === "unlimited"
+                              ? "Unlimited"
+                              : parseInt(item.quantity_items || "0") === 0
+                              ? "Out of stock"
+                              : parseInt(item.quantity_items || "0") <= 5
                               ? `Only ${item.quantity_items} left`
                               : `${item.quantity_items} in stock`}
                           </span>
                           <span className="font-semibold">
-                            {currency}{' '}
+                            {currency}{" "}
                             {(item.price * Number(item.cartQuantity)).toFixed(
                               2
                             )}
@@ -329,18 +334,18 @@ export default function BagSlideout({
                               border: `1px solid ${
                                 storeConfig?.border_color
                                   ? `${storeConfig.border_color}40`
-                                  : 'rgba(42, 42, 42, 0.25)'
+                                  : "rgba(42, 42, 42, 0.25)"
                               }`,
                               backgroundColor: storeConfig?.border_color
                                 ? `${storeConfig.border_color}10`
-                                : 'rgba(42, 42, 42, 0.1)',
+                                : "rgba(42, 42, 42, 0.1)",
                             }}
                           >
                             <button
                               className={`w-9 h-9 flex items-center justify-center transition-colors hover:bg-gray-800 ${
                                 isOutOfStock(item)
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : ''
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
                               }`}
                               onClick={() => {
                                 if (
@@ -403,16 +408,16 @@ export default function BagSlideout({
                               className={`w-10 h-9 text-center bg-transparent border-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none font-medium ${
                                 isOutOfStock(item) ||
                                 isQuantityLimitReached(item)
-                                  ? 'opacity-50 bg-transparent'
-                                  : ''
+                                  ? "opacity-50 bg-transparent"
+                                  : ""
                               }`}
                             />
                             <button
                               className={`w-9 h-9 flex items-center justify-center transition-colors hover:bg-gray-800 ${
                                 isOutOfStock(item) ||
                                 isQuantityLimitReached(item)
-                                  ? 'opacity-50 cursor-not-allowed'
-                                  : ''
+                                  ? "opacity-50 cursor-not-allowed"
+                                  : ""
                               }`}
                               onClick={() => {
                                 if (
@@ -459,14 +464,14 @@ export default function BagSlideout({
           ) : (
             <div
               className="flex flex-col items-center justify-center h-full p-8 text-center"
-              style={{ color: storeConfig?.text_color || '#FFFFFF' }}
+              style={{ color: storeConfig?.text_color || "#FFFFFF" }}
             >
               <div
                 className="w-24 h-24 rounded-full flex items-center justify-center mb-6"
                 style={{
                   backgroundColor: storeConfig?.theme_color
                     ? `${storeConfig.theme_color}15`
-                    : 'rgba(42, 42, 42, 0.2)',
+                    : "rgba(42, 42, 42, 0.2)",
                 }}
               >
                 <svg
@@ -475,7 +480,7 @@ export default function BagSlideout({
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
-                  style={{ color: storeConfig?.theme_color || '#FFA726' }}
+                  style={{ color: storeConfig?.theme_color || "#FFA726" }}
                 >
                   <path
                     strokeLinecap="round"
@@ -494,19 +499,19 @@ export default function BagSlideout({
                 onClick={onClose}
                 className="px-6 py-3.5 w-full rounded-lg font-medium text-sm transition-all duration-300 hover:shadow-lg"
                 style={{
-                  backgroundColor: storeConfig?.theme_color || '#FFA726',
-                  color: '#000000',
-                  transform: 'translateY(0)',
+                  backgroundColor: storeConfig?.theme_color || "#FFA726",
+                  color: "#000000",
+                  transform: "translateY(0)",
                 }}
                 onMouseOver={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.transform = "translateY(-2px)";
                   e.currentTarget.style.boxShadow = storeConfig?.theme_color
                     ? `0 8px 20px -4px ${storeConfig.theme_color}40`
-                    : '0 8px 20px -4px rgba(255, 167, 38, 0.4)';
+                    : "0 8px 20px -4px rgba(255, 167, 38, 0.4)";
                 }}
                 onMouseOut={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = 'none';
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "none";
                 }}
               >
                 Continue Shopping
@@ -520,8 +525,8 @@ export default function BagSlideout({
           <div
             className="absolute bottom-0 left-0 right-0 border-t p-4 space-y-4"
             style={{
-              backgroundColor: storeConfig?.background_color || '#1E1E1E',
-              borderColor: storeConfig?.border_color || '#2A2A2A',
+              backgroundColor: storeConfig?.background_color || "#1E1E1E",
+              borderColor: storeConfig?.border_color || "#2A2A2A",
             }}
           >
             <div className="space-y-1">
@@ -538,15 +543,15 @@ export default function BagSlideout({
               <button
                 className="w-full py-3 font-medium rounded transition-colors text-white"
                 style={{
-                  backgroundColor: storeConfig?.theme_color || '#FFA726',
-                  filter: 'brightness(1)',
+                  backgroundColor: storeConfig?.theme_color || "#FFA726",
+                  filter: "brightness(1)",
                 }}
                 onClick={() => setIsCheckoutModalOpen(true)}
                 onMouseOver={(e) =>
-                  (e.currentTarget.style.filter = 'brightness(0.9)')
+                  (e.currentTarget.style.filter = "brightness(0.9)")
                 }
                 onMouseOut={(e) =>
-                  (e.currentTarget.style.filter = 'brightness(1)')
+                  (e.currentTarget.style.filter = "brightness(1)")
                 }
               >
                 Checkout
@@ -555,18 +560,18 @@ export default function BagSlideout({
                 onClick={onClose}
                 className="w-full py-3 border font-medium rounded transition-colors"
                 style={{
-                  borderColor: storeConfig?.theme_color || '#2A2A2A',
-                  backgroundColor: 'transparent',
-                  filter: 'brightness(1)',
+                  borderColor: storeConfig?.theme_color || "#2A2A2A",
+                  backgroundColor: "transparent",
+                  filter: "brightness(1)",
                 }}
                 onMouseOver={(e) =>
                   (e.currentTarget.style.backgroundColor =
                     storeConfig?.theme_color
                       ? `${storeConfig.theme_color}22`
-                      : '#2A2A2A')
+                      : "#2A2A2A")
                 }
                 onMouseOut={(e) =>
-                  (e.currentTarget.style.backgroundColor = 'transparent')
+                  (e.currentTarget.style.backgroundColor = "transparent")
                 }
               >
                 Keep Shopping

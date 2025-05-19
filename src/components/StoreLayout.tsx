@@ -1,18 +1,20 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { StoreConfigContext } from '../App';
-import AboutModal from './AboutModal';
-import BagSlideout from './BagSlideout';
-import ProductModal from './ProductModal';
-import { getStore, getStoreProducts } from '../services/api';
-import SEOHead from './SEO/SEOHead';
-import StoreSchema from './SEO/StoreSchema';
-import ProductSchema from './SEO/ProductSchema';
-import ShimmerCard from './ShimmerCard';
+/** @format */
+
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { StoreConfigContext } from "../App";
+import AboutModal from "./AboutModal";
+import BagSlideout from "./BagSlideout";
+import ProductModal from "./ProductModal";
+import { getStore, getStoreProducts } from "../services/api";
+import SEOHead from "./SEO/SEOHead";
+import StoreSchema from "./SEO/StoreSchema";
+import ProductSchema from "./SEO/ProductSchema";
+import ShimmerCard from "./ShimmerCard";
 
 // Import the Store type from types
-import { Store as StoreType } from '../types/store';
+import { Store as StoreType } from "../types/store";
 
 // Import icons
 // Using inline SVG instead of react-icons to avoid dependency issues
@@ -83,17 +85,17 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
     };
 
     // Add event listeners
-    window.addEventListener('openProductModal', handleOpenProductModal);
-    window.addEventListener('closeProductModal', handleCloseProductModal);
-    window.addEventListener('openBag', handleOpenBag);
-    window.addEventListener('popstate', handleRouteChange);
+    window.addEventListener("openProductModal", handleOpenProductModal);
+    window.addEventListener("closeProductModal", handleCloseProductModal);
+    window.addEventListener("openBag", handleOpenBag);
+    window.addEventListener("popstate", handleRouteChange);
 
     // Remove event listeners on cleanup
     return () => {
-      window.removeEventListener('openProductModal', handleOpenProductModal);
-      window.removeEventListener('closeProductModal', handleCloseProductModal);
-      window.removeEventListener('openBag', handleOpenBag);
-      window.removeEventListener('popstate', handleRouteChange);
+      window.removeEventListener("openProductModal", handleOpenProductModal);
+      window.removeEventListener("closeProductModal", handleCloseProductModal);
+      window.removeEventListener("openBag", handleOpenBag);
+      window.removeEventListener("popstate", handleRouteChange);
     };
   }, []);
 
@@ -124,7 +126,8 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
             id: product.id,
             name: product.name,
             price: product.price,
-            image: (product.images ? JSON.parse(product.images) : [])[0] ?? null,
+            image:
+              (product.images ? JSON.parse(product.images) : [])[0] ?? null,
             cartQuantity: quantity,
             quantity: product.quantity,
             quantity_items: product.quantity_items,
@@ -160,14 +163,14 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
     isLoading,
     error,
   } = useQuery<StoreType>({
-    queryKey: ['store', storeName],
+    queryKey: ["store", storeName],
     queryFn: () => getStore(storeName),
     enabled: !!storeName,
   });
 
   // Fetch products data to pass to HomePage
   const { data: products = [] } = useQuery({
-    queryKey: ['products', store?.id],
+    queryKey: ["products", store?.id],
     queryFn: () =>
       store?.id ? getStoreProducts(store.id) : Promise.resolve([]),
     enabled: !!store?.id,
@@ -176,43 +179,43 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
   let storeConfig;
 
   try {
-    storeConfig = JSON.parse(store?.config || '{}');
+    storeConfig = JSON.parse(store?.config || "{}");
 
     // Set default colors if store.config is null or empty
     if (!store?.config || Object.keys(storeConfig).length === 0) {
       storeConfig = {
-        background_color: '#FFFFFF', // White background
-        text_color: '#000000', // Black text
-        theme_color: '#3B82F6', // Blue theme color
-        border_color: '#E5E7EB', // Light gray border
+        background_color: "#FFFFFF", // White background
+        text_color: "#000000", // Black text
+        theme_color: "#3B82F6", // Blue theme color
+        border_color: "#E5E7EB", // Light gray border
       };
     }
   } catch (error) {
     // Fallback to default colors if JSON parsing fails
     storeConfig = {
-      background_color: '#FFFFFF',
-      text_color: '#000000',
-      theme_color: '#3B82F6',
-      border_color: '#E5E7EB',
+      background_color: "#FFFFFF",
+      text_color: "#000000",
+      theme_color: "#3B82F6",
+      border_color: "#E5E7EB",
     };
   }
 
   useEffect(() => {
     if (store?.theme) {
       document.documentElement.style.setProperty(
-        '--primary-color',
+        "--primary-color",
         storeConfig?.theme_color
       );
       document.documentElement.style.setProperty(
-        '--secondary-color',
+        "--secondary-color",
         store.theme.secondaryColor
       );
       document.documentElement.style.setProperty(
-        '--background-color',
+        "--background-color",
         storeConfig?.background_color
       );
       document.documentElement.style.setProperty(
-        '--text-color',
+        "--text-color",
         storeConfig?.text_color
       );
     }
@@ -274,17 +277,17 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
       <div
         className="min-h-screen font-sans relative"
         style={{
-          backgroundColor: storeConfig?.background_color || '#FFFFFF',
-          color: storeConfig?.text_color || '#1A1A1A',
-          borderColor: storeConfig?.border_color || '#E5E5E515',
+          backgroundColor: storeConfig?.background_color || "#FFFFFF",
+          color: storeConfig?.text_color || "#1A1A1A",
+          borderColor: storeConfig?.border_color || "#E5E5E515",
         }}
       >
         {/* Navigation - Laravel style navbar */}
         <header
           style={{
-            backgroundColor: storeConfig?.background_color || '#FFFFFF',
-            color: storeConfig?.text_color || '#1A1A1A',
-            borderColor: storeConfig?.border_color || '#E5E5E515',
+            backgroundColor: storeConfig?.background_color || "#FFFFFF",
+            color: storeConfig?.text_color || "#1A1A1A",
+            borderColor: storeConfig?.border_color || "#E5E5E515",
           }}
           className="sticky top-0 z-50 shadow-sm border-b"
         >
@@ -302,7 +305,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
                 to="/"
                 className="text-xl font-semibold hover:text-gray-700 transition-colors"
               >
-                {store?.name || 'Store Name'}
+                {store?.name || "Store Name"}
               </Link>
             </div>
 
@@ -415,7 +418,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
 
         {/* SEO Components */}
         <SEOHead
-          title={selectedProduct ? selectedProduct.name : ''}
+          title={selectedProduct ? selectedProduct.name : ""}
           description={store?.description || storeConfig?.store_description}
           image={
             selectedProduct
@@ -425,7 +428,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
           store={store}
           storeConfig={storeConfig}
           url={`${window.location.origin}${currentPath}`}
-          type={selectedProduct ? 'product' : 'website'}
+          type={selectedProduct ? "product" : "website"}
         />
 
         {/* Store Schema for organization data */}
@@ -478,6 +481,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
           removeItem={removeFromBag}
           storeId={store?.id}
           storeName={store?.name}
+          currency={store?.currency}
         />
 
         {/* Product Modal */}
@@ -502,7 +506,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
           style={{
             borderColor: storeConfig?.border_color
               ? `${storeConfig.border_color}15`
-              : '#E5E5E515',
+              : "#E5E5E515",
           }}
         >
           <div className="container mx-auto px-4 sm:px-6">
@@ -528,18 +532,18 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
                 <button
                   onClick={() => setIsAboutModalOpen(true)}
                   className="text-sm font-medium hover:opacity-80 transition-all duration-200 mb-1"
-                  style={{ color: storeConfig?.theme_color || '#0070F3' }}
+                  style={{ color: storeConfig?.theme_color || "#0070F3" }}
                 >
                   About this store
                 </button>
                 <p className="text-sm opacity-70">
-                  Powered by{' '}
+                  Powered by{" "}
                   <a
                     href="https://selll.online"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-medium hover:underline"
-                    style={{ color: storeConfig?.theme_color || '#0070F3' }}
+                    style={{ color: storeConfig?.theme_color || "#0070F3" }}
                   >
                     Selll
                   </a>
