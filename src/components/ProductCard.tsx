@@ -1,16 +1,15 @@
+/** @format */
+
 import { useContext } from "react";
 import { CartFunctionsContext } from "./StoreLayout";
 
-const ProductCard: React.FC<any> = ({
-  product,
-  store,
-  storeConfig,
-}) => {
+const ProductCard: React.FC<any> = ({ product, store, storeConfig }) => {
   const { addToBag, openBag } = useContext(CartFunctionsContext);
 
-  console.log("ProductCard", product);
+  // console.log("ProductCard", product);
 
-  const productImage = (product.images ? JSON.parse(product.images) : [])[0] ?? null;
+  const productImage =
+    (product.images ? JSON.parse(product.images) : [])[0] ?? null;
 
   return (
     <div
@@ -19,13 +18,13 @@ const ProductCard: React.FC<any> = ({
       style={{
         backgroundColor: storeConfig?.background_color
           ? `${storeConfig.background_color}`
-          : '#FFFFFF',
-        color: storeConfig?.text_color || '#000000',
-        borderColor: storeConfig?.border_color || '#E5E7EB',
+          : "#FFFFFF",
+        color: storeConfig?.text_color || "#000000",
+        borderColor: storeConfig?.border_color || "#E5E7EB",
       }}
       onClick={() => {
         window.dispatchEvent(
-          new CustomEvent('openProductModal', {
+          new CustomEvent("openProductModal", {
             detail: { product },
           })
         );
@@ -37,16 +36,16 @@ const ProductCard: React.FC<any> = ({
         <div className="absolute top-3 right-3 z-20">
           <span
             className={`text-xs font-medium px-2 py-1 rounded-full ${
-              product.quantity === 'unlimited' || product.quantity_items > '0'
-                ? 'bg-green-500/20 text-green-500'
-                : 'bg-red-500/20 text-red-500'
+              product.quantity === "unlimited" || product.quantity_items > "0"
+                ? "bg-green-500/20 text-green-500"
+                : "bg-red-500/20 text-red-500"
             }`}
           >
-            {product.quantity === 'unlimited'
-              ? 'Unlimited'
-              : parseInt(product.quantity_items || '0') === 0
-              ? 'Out of stock'
-              : parseInt(product.quantity_items || '0') <= 5
+            {product.quantity === "unlimited"
+              ? "Unlimited"
+              : parseInt(product.quantity_items || "0") === 0
+              ? "Out of stock"
+              : parseInt(product.quantity_items || "0") <= 5
               ? `Only ${product.quantity_items} left`
               : `${product.quantity_items} in stock`}
           </span>
@@ -92,7 +91,7 @@ const ProductCard: React.FC<any> = ({
         <div
           className="absolute top-0 left-6 right-6 h-[1px] opacity-20"
           style={{
-            backgroundColor: storeConfig?.theme_color || '#FFA726',
+            backgroundColor: storeConfig?.theme_color || "#FFA726",
           }}
         ></div>
 
@@ -107,11 +106,11 @@ const ProductCard: React.FC<any> = ({
           <span
             className="text-2xl font-bold transition-all duration-300 group-hover:translate-x-1"
             style={{
-              color: storeConfig?.theme_color || '#FFA726',
+              color: storeConfig?.theme_color || "#FFA726",
             }}
           >
-            {new Intl.NumberFormat('en-US', {
-              style: 'currency',
+            {new Intl.NumberFormat("en-US", {
+              style: "currency",
               currency: store?.currency,
             }).format(product.price)}
           </span>
@@ -127,9 +126,9 @@ const ProductCard: React.FC<any> = ({
             style={{
               backgroundColor: storeConfig?.theme_color
                 ? `${storeConfig.theme_color}20`
-                : '#FFA72620',
-              color: storeConfig?.theme_color || '#FFA726',
-              boxShadow: `0 2px 8px ${storeConfig?.theme_color || '#FFA726'}20`,
+                : "#FFA72620",
+              color: storeConfig?.theme_color || "#FFA726",
+              boxShadow: `0 2px 8px ${storeConfig?.theme_color || "#FFA726"}20`,
             }}
           >
             <svg

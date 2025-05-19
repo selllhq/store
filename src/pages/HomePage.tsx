@@ -1,16 +1,18 @@
-import { useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { getFilteredProducts } from '../services/api';
-import { StoreConfigContext } from '../App';
-import { Store } from '../types/store';
-import { useQuery } from '@tanstack/react-query';
-import ShimmerCard from '../components/ShimmerCard';
-import ProductCard from '../components/ProductCard';
+/** @format */
+
+import { useContext } from "react";
+import { Link } from "react-router-dom";
+import { getFilteredProducts } from "../services/api";
+import { StoreConfigContext } from "../App";
+import { Store } from "../types/store";
+import { useQuery } from "@tanstack/react-query";
+import ShimmerCard from "../components/ShimmerCard";
+import ProductCard from "../components/ProductCard";
 
 // Helper function to adjust color brightness
 const adjustColorBrightness = (hex: string, percent: number): string => {
   // Remove the # if present
-  hex = hex.replace('#', '');
+  hex = hex.replace("#", "");
 
   // Convert hex to RGB
   const r = parseInt(hex.substring(0, 2), 16);
@@ -23,11 +25,11 @@ const adjustColorBrightness = (hex: string, percent: number): string => {
   const adjustedB = Math.min(255, Math.max(0, b + (b * percent) / 100));
 
   // Convert back to hex
-  return `#${Math.round(adjustedR).toString(16).padStart(2, '0')}${Math.round(
+  return `#${Math.round(adjustedR).toString(16).padStart(2, "0")}${Math.round(
     adjustedG
   )
     .toString(16)
-    .padStart(2, '0')}${Math.round(adjustedB).toString(16).padStart(2, '0')}`;
+    .padStart(2, "0")}${Math.round(adjustedB).toString(16).padStart(2, "0")}`;
 };
 
 interface HomePageProps {
@@ -41,10 +43,10 @@ export default function HomePage({ store }: HomePageProps) {
   // Set default colors if storeConfig is empty
   if (Object.keys(storeConfig).length === 0) {
     storeConfig = {
-      background_color: '#FFFFFF', // White background
-      text_color: '#000000', // Black text
-      theme_color: '#3B82F6', // Blue theme color
-      border_color: '#E5E7EB', // Light gray border
+      background_color: "#FFFFFF", // White background
+      text_color: "#000000", // Black text
+      theme_color: "#3B82F6", // Blue theme color
+      border_color: "#E5E7EB", // Light gray border
     };
   }
 
@@ -54,10 +56,10 @@ export default function HomePage({ store }: HomePageProps) {
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['popularProducts', store?.id],
+    queryKey: ["popularProducts", store?.id],
     queryFn: () =>
       store?.id
-        ? getFilteredProducts(store.id, { sortBy: 'popular', limit: 8 })
+        ? getFilteredProducts(store.id, { sortBy: "popular", limit: 8 })
         : Promise.resolve([]),
     enabled: !!store?.id,
   });
@@ -94,7 +96,10 @@ export default function HomePage({ store }: HomePageProps) {
     );
   }
 
-  console.log(storeConfig);
+  const padHero =
+    storeConfig?.padded_hero && !storeConfig?.show_hero
+      ? "pt-[540px] md:pt-[600px]"
+      : "";
 
   return (
     <>
@@ -102,10 +107,10 @@ export default function HomePage({ store }: HomePageProps) {
       {storeConfig?.show_hero && (
         <div
           className={
-            'w-full overflow-hidden' +
+            "w-full overflow-hidden" +
             (storeConfig?.padded_hero
-              ? ''
-              : ' absolute top-[50px] left-0 w-full z-20')
+              ? ""
+              : " absolute top-[50px] left-0 w-full z-20")
           }
         >
           <div className="relative w-full">
@@ -120,7 +125,7 @@ export default function HomePage({ store }: HomePageProps) {
                   alt={store?.name}
                   className="w-full h-full object-cover"
                   style={{
-                    objectPosition: 'center center',
+                    objectPosition: "center center",
                   }}
                 />
               </div>
@@ -129,11 +134,11 @@ export default function HomePage({ store }: HomePageProps) {
                 className="relative h-[60vh] max-h-[600px] min-h-[400px]"
                 style={{
                   background: `linear-gradient(to right, ${
-                    storeConfig?.background_color || '#121212'
+                    storeConfig?.background_color || "#121212"
                   }, ${
                     storeConfig?.background_color
                       ? adjustColorBrightness(storeConfig.background_color, 15)
-                      : '#1A1A1A'
+                      : "#1A1A1A"
                   })`,
                 }}
               >
@@ -142,9 +147,9 @@ export default function HomePage({ store }: HomePageProps) {
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
                   style={{
                     background: `radial-gradient(circle, ${
-                      storeConfig?.theme_color || '#FFA726'
+                      storeConfig?.theme_color || "#FFA726"
                     }15 0%, transparent 70%)`,
-                    filter: 'blur(80px)',
+                    filter: "blur(80px)",
                     opacity: 0.3,
                   }}
                 ></div>
@@ -156,25 +161,25 @@ export default function HomePage({ store }: HomePageProps) {
               <div className="container mx-auto px-6">
                 <div
                   className={`${
-                    storeConfig?.hero_content_alignment === 'center'
-                      ? 'mx-auto text-center'
-                      : storeConfig?.hero_content_alignment === 'right'
-                      ? 'ml-auto text-right'
-                      : ''
+                    storeConfig?.hero_content_alignment === "center"
+                      ? "mx-auto text-center"
+                      : storeConfig?.hero_content_alignment === "right"
+                      ? "ml-auto text-right"
+                      : ""
                   } max-w-xl`}
                 >
                   {/* Minimal title */}
                   <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
-                    {storeConfig?.hero_title || 'Discover Our Products'}
+                    {storeConfig?.hero_title || "Discover Our Products"}
                   </h2>
 
                   {/* Minimal paragraph */}
                   <p
                     className="text-base md:text-lg text-white/80 mb-6"
-                    style={{ fontWeight: '300' }}
+                    style={{ fontWeight: "300" }}
                   >
                     {storeConfig?.hero_description ||
-                      'Explore our collection of high-quality products designed to meet your needs.'}
+                      "Explore our collection of high-quality products designed to meet your needs."}
                   </p>
 
                   {/* Minimal button */}
@@ -182,23 +187,23 @@ export default function HomePage({ store }: HomePageProps) {
                     className="flex"
                     style={{
                       justifyContent:
-                        storeConfig?.hero_content_alignment === 'center'
-                          ? 'center'
-                          : storeConfig?.hero_content_alignment === 'right'
-                          ? 'flex-end'
-                          : 'flex-start',
+                        storeConfig?.hero_content_alignment === "center"
+                          ? "center"
+                          : storeConfig?.hero_content_alignment === "right"
+                          ? "flex-end"
+                          : "flex-start",
                     }}
                   >
                     <button
                       className="px-6 py-3 rounded-md font-medium text-sm transition-all duration-300 text-white flex items-center gap-2"
                       style={{
-                        backgroundColor: storeConfig?.theme_color || '#FFA726',
-                        borderRadius: '6px',
+                        backgroundColor: storeConfig?.theme_color || "#FFA726",
+                        borderRadius: "6px",
                       }}
                       onClick={() =>
                         document
-                          .getElementById('products-section')
-                          ?.scrollIntoView({ behavior: 'smooth' })
+                          .getElementById("products-section")
+                          ?.scrollIntoView({ behavior: "smooth" })
                       }
                     >
                       Shop Now
@@ -230,24 +235,21 @@ export default function HomePage({ store }: HomePageProps) {
 
       {/* Main content starts here */}
       <div
-        className={
-          'pt-0 pb-12 md:py-12 relative' +
-          (storeConfig?.padded_hero ? '' : ' pt-[540px] md:pt-[600px]')
-        }
+        className={"pt-0 pb-12 md:py-12 relative" + padHero}
         style={{
           zIndex: 1,
-          marginTop: storeConfig?.show_hero ? '0' : '1rem',
-          background: storeConfig?.background_color || '#121212',
+          marginTop: storeConfig?.show_hero ? "0" : "1rem",
+          background: storeConfig?.background_color || "#121212",
         }}
       >
         {/* Decorative elements */}
         <div
           className="hidden md:absolute top-0 left-0 w-48 h-48 bg-gradient-to-br opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"
-          style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}
+          style={{ backgroundColor: storeConfig?.theme_color || "#FFA726" }}
         ></div>
         <div
           className="hidden md:absolute bottom-0 right-0 w-64 h-64 bg-gradient-to-tl opacity-5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3"
-          style={{ backgroundColor: storeConfig?.theme_color || '#FFA726' }}
+          style={{ backgroundColor: storeConfig?.theme_color || "#FFA726" }}
         ></div>
 
         <div className="container mx-auto" id="products-section">
@@ -256,14 +258,14 @@ export default function HomePage({ store }: HomePageProps) {
             <div className="flex justify-between items-center mb-6">
               <h2
                 className="text-2xl font-bold"
-                style={{ color: storeConfig?.text_color || '#000000' }}
+                style={{ color: storeConfig?.text_color || "#000000" }}
               >
                 Our Products
               </h2>
               <Link
                 to="/products?sort=popular"
                 className="text-sm font-medium hover:underline flex items-center gap-1"
-                style={{ color: storeConfig?.theme_color || '#3B82F6' }}
+                style={{ color: storeConfig?.theme_color || "#3B82F6" }}
               >
                 View all
                 <svg
@@ -308,8 +310,8 @@ export default function HomePage({ store }: HomePageProps) {
                 to="/products?sort=popular"
                 className="px-8 py-3 rounded-md font-medium transition-all duration-300 hover:bg-opacity-90 text-center inline-block"
                 style={{
-                  backgroundColor: storeConfig?.theme_color || '#3B82F6',
-                  color: '#FFFFFF',
+                  backgroundColor: storeConfig?.theme_color || "#3B82F6",
+                  color: "#FFFFFF",
                 }}
               >
                 View All Products
