@@ -443,7 +443,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
           />
         )}
 
-        <main className="container mx-auto px-4 sm:px-6 py-4 md:py-8">
+        <main className="wrapper ">
           {/* Share products data and cart functions with child components via context */}
           <ProductsContext.Provider value={products}>
             <CartFunctionsContext.Provider

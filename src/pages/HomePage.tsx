@@ -101,16 +101,17 @@ export default function HomePage({ store }: HomePageProps) {
       ? "pt-[540px] md:pt-[600px]"
       : "";
 
+
   return (
     <>
       {/* Full-width Hero Section - Only show if store has hero content */}
       {storeConfig?.show_hero && (
         <div
           className={
-            "w-full overflow-hidden" +
+            "full-bleed" +
             (storeConfig?.padded_hero
-              ? ""
-              : " absolute top-[50px] left-0 w-full z-20")
+              ? "absolute top-[50px] left-0 w-full z-20"
+              : " ")
           }
         >
           <div className="relative w-full">
