@@ -160,14 +160,6 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
     );
   };
 
-  // Fetch products data to pass to HomePage
-  const { data: products = [] } = useQuery({
-    queryKey: ["products", store?.id],
-    queryFn: () =>
-      store?.id ? getStoreProducts(store.id) : Promise.resolve([]),
-    enabled: !!store?.id,
-  });
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">

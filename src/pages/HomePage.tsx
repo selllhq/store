@@ -7,29 +7,7 @@ import { Store, StoreConfig } from "../types/store";
 import { useQuery } from "@tanstack/react-query";
 import ShimmerCard from "../components/ShimmerCard";
 import ProductCard from "../components/ProductCard";
-
-// Helper function to adjust color brightness
-const adjustColorBrightness = (hex: string, percent: number): string => {
-  // Remove the # if present
-  hex = hex.replace("#", "");
-
-  // Convert hex to RGB
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-
-  // Adjust brightness
-  const adjustedR = Math.min(255, Math.max(0, r + (r * percent) / 100));
-  const adjustedG = Math.min(255, Math.max(0, g + (g * percent) / 100));
-  const adjustedB = Math.min(255, Math.max(0, b + (b * percent) / 100));
-
-  // Convert back to hex
-  return `#${Math.round(adjustedR).toString(16).padStart(2, "0")}${Math.round(
-    adjustedG
-  )
-    .toString(16)
-    .padStart(2, "0")}${Math.round(adjustedB).toString(16).padStart(2, "0")}`;
-};
+import { adjustColorBrightness } from "../utils/helpers";
 
 interface HomePageProps {
   store?: Store;
@@ -39,7 +17,6 @@ export default function HomePage({}: HomePageProps) {
   const { store } = useStoreConfig();
   const storeConfig = store.config as StoreConfig;
 
-  // Fetch popular products
   const {
     data: popularProducts = [],
     isLoading,
