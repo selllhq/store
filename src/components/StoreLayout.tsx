@@ -1,7 +1,7 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, Outlet } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import AboutModal from "./AboutModal";
 import BagSlideout from "./BagSlideout";
@@ -14,7 +14,8 @@ import ShimmerCard from "./ShimmerCard";
 
 // Import the Store type from types
 import { StoreConfig } from "../types/store";
-import { useStoreConfig } from "../contexts";
+import { CartContext, useStoreConfig } from "../contexts";
+import { CartContextType } from "../types/cart";
 
 // Import icons
 // Using inline SVG instead of react-icons to avoid dependency issues
@@ -51,14 +52,14 @@ export const CartFunctionsContext = React.createContext<{
   openBag: () => {},
 });
 
-export default function StoreLayout({ children }: StoreLayoutProps) {
+export default function StoreLayout() {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const [isBagOpen, setIsBagOpen] = useState(false);
-  const [bagItems, setBagItems] = useState<any[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { cart } = useContext(CartContext) as CartContextType;
   const { store, isLoading, error } = useStoreConfig();
   const storeConfig = store.config as StoreConfig;
 
@@ -101,64 +102,7 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
     };
   }, []);
 
-  // Bag management functions
-  const addToBag = (product: any, quantity: number = 1) => {
-    setBagItems((prevItems) => {
-      // Check if product already exists in bag
-      const existingItemIndex = prevItems.findIndex(
-        (item) => item.id === product.id
-      );
 
-      if (existingItemIndex >= 0) {
-        // Product exists, update quantity
-        const updatedItems = [...prevItems];
-
-        updatedItems[existingItemIndex] = {
-          ...updatedItems[existingItemIndex],
-          cartQuantity:
-            (updatedItems[existingItemIndex].cartQuantity || 1) + quantity,
-        };
-
-        return updatedItems;
-      } else {
-        // Product doesn't exist, add new item
-        return [
-          ...prevItems,
-          {
-            id: product.id,
-            name: product.name,
-            price: product.price,
-            image:
-              (product.images ? JSON.parse(product.images) : [])[0] ?? null,
-            cartQuantity: quantity,
-            quantity: product.quantity,
-            quantity_items: product.quantity_items,
-          },
-        ];
-      }
-    });
-
-    setIsBagOpen(true);
-  };
-
-  const updateBagItemQuantity = (productId: string, newQuantity: number) => {
-    if (newQuantity <= 0) {
-      removeFromBag(productId);
-      return;
-    }
-
-    setBagItems((prevItems) => {
-      return prevItems.map((item) =>
-        item.id === productId ? { ...item, cartQuantity: newQuantity } : item
-      );
-    });
-  };
-
-  const removeFromBag = (productId: string) => {
-    setBagItems((prevItems) =>
-      prevItems.filter((item) => item.id !== productId)
-    );
-  };
 
   if (isLoading) {
     return (
@@ -275,9 +219,9 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
                 aria-label="Shopping Bag"
               >
                 <BagIcon />
-                {bagItems.length > 0 && (
+                {cart.items.length > 0 && (
                   <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-gray-900 text-white text-xs flex items-center justify-center font-medium">
-                    {bagItems.length}
+                    {cart.items.length}
                   </span>
                 )}
               </button>
@@ -348,7 +292,7 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
               >
                 <span>Bag</span>
                 <span className="bg-gray-900 text-white text-xs px-2 py-1 rounded-full">
-                  {bagItems.length}
+                  {cart.items.length}
                 </span>
               </button>
             </div>
@@ -383,31 +327,20 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
         )}
 
         <main className="wrapper ">
-              {children(store)}
+              <Outlet />
         </main>
 
         {/* About Modal */}
         <AboutModal
           isOpen={isAboutModalOpen}
           onClose={() => setIsAboutModalOpen(false)}
-          store={{
-            name: store?.name,
-            description: store?.description,
-            email: storeConfig?.email,
-            phone: storeConfig?.phone,
-            instagram: storeConfig?.instagram,
-            twitter: storeConfig?.twitter,
-          }}
-          storeConfig={storeConfig}
+          store={store}
         />
 
         {/* Bag Slideout */}
         <BagSlideout
           isOpen={isBagOpen}
           onClose={() => setIsBagOpen(false)}
-          cartItems={bagItems}
-          updateQuantity={updateBagItemQuantity}
-          removeItem={removeFromBag}
           storeId={store?.id}
           storeName={store?.name}
           currency={store?.currency}
@@ -421,12 +354,6 @@ export default function StoreLayout({ children }: StoreLayoutProps) {
             setSelectedProduct(null);
           }}
           product={selectedProduct}
-          storeConfig={storeConfig}
-          store={store}
-          onAddToCart={(product, quantity) => {
-            addToBag(product, quantity);
-            setIsProductModalOpen(false);
-          }}
         />
 
         {/* Modern, Minimal Footer */}

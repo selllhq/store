@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import StoreLayout from './components/StoreLayout';
 import HomePage from './pages/HomePage';
@@ -6,6 +6,7 @@ import OrderConfirmation from './pages/OrderConfirmation';
 import ProductsPage from './pages/ProductsPage';
 import { StoreConfigProvider } from './contexts/StoreConfigContext';
 import { CartProvider } from './contexts';
+import { routes } from './routes';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,11 +27,14 @@ function App() {
     return null;
   }
 
+  const router = createBrowserRouter(routes);
+
   return (
     <QueryClientProvider client={queryClient}>
       <StoreConfigProvider storeName={storeName}>
         <CartProvider>
-        <BrowserRouter>
+          <RouterProvider router={router} />
+        {/* <BrowserRouter>
           <Routes>
             <Route path="/*" element={
               <StoreLayout storeName={isLocalhost ? 'demo-store' : storeName}>
@@ -46,7 +50,7 @@ function App() {
               </StoreLayout>
             } />
           </Routes>
-        </BrowserRouter>
+        </BrowserRouter> */}
         </CartProvider>
       </StoreConfigProvider>
     </QueryClientProvider>

@@ -1,4 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { CartContext, StoreConfigContext, StoreConfigContextType } from '../contexts';
+import { CartContextType } from '../types/cart';
+import { StoreConfig } from '../types/store';
 
 interface Product {
   id: string;
@@ -11,33 +14,26 @@ interface Product {
   quantity: 'limited' | 'unlimited';
   quantity_items?: number;
   features?: string[];
+  stock: number;
 }
 
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   product: Product;
-  storeConfig: {
-    background_color?: string;
-    text_color?: string;
-    theme_color?: string;
-    border_color?: string;
-  };
-  store: any;
-  onAddToCart: (product: Product, quantity: number) => void;
 }
 
 export default function ProductModal({
   isOpen,
   onClose,
   product,
-  storeConfig,
-  store,
-  onAddToCart,
 }: ProductModalProps) {
   // State for quantity and selected image
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
+  const { addToCart } = useContext(CartContext) as CartContextType;
+  const { store } = useContext(StoreConfigContext) as StoreConfigContextType;
+  const storeConfig = store.config as StoreConfig;
 
   // Reset quantity and selected image when modal is opened with a new product
   useEffect(() => {
@@ -430,7 +426,7 @@ export default function ProductModal({
 
               <div className="flex space-x-4 mt-auto">
                 <button
-                  onClick={() => onAddToCart(product, quantity)}
+                  onClick={() => addToCart(product, quantity)}
                   disabled={isOutOfStock() || isQuantityLimitReached()}
                   className={`flex-1 py-4 text-base font-medium rounded-xl text-center transition-all duration-300 flex items-center justify-center gap-2 ${
                     isOutOfStock() || isQuantityLimitReached()

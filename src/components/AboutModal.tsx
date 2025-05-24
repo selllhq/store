@@ -1,3 +1,9 @@
+import { StoreConfigContextType } from "../contexts/StoreConfigContext";
+
+import { useContext } from "react";
+import { StoreConfigContext } from "../contexts";
+import { StoreConfig } from "../types/store";
+
 interface AboutModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -17,7 +23,9 @@ interface AboutModalProps {
   };
 }
 
-export default function AboutModal({ isOpen, onClose, store, storeConfig }: AboutModalProps) {
+export default function AboutModal({ isOpen, onClose }: AboutModalProps) {
+  const { store } = useContext(StoreConfigContext) as StoreConfigContextType;
+  const storeConfig = store.config as StoreConfig;
   if (!isOpen) return null;
 
   return (
@@ -66,32 +74,32 @@ export default function AboutModal({ isOpen, onClose, store, storeConfig }: Abou
           
           {/* Contact Info */}
           <div className="space-y-4">
-            {store?.email && (
+            {storeConfig?.email && (
               <div className="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" style={{ color: storeConfig?.theme_color || '#FFA726' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <a 
-                  href={`mailto:${store.email}`} 
+                  href={`mailto:${storeConfig.email}`} 
                   className="hover:opacity-80 transition-opacity duration-300"
                   style={{ color: storeConfig?.theme_color || '#FFA726' }}
                 >
-                  {store.email}
+                  {storeConfig.email}
                 </a>
               </div>
             )}
             
-            {store?.phone && (
+            {storeConfig?.phone && (
               <div className="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" style={{ color: storeConfig?.theme_color || '#FFA726' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
                 <a 
-                  href={`tel:${store.phone}`} 
+                  href={`tel:${storeConfig.phone}`} 
                   className="hover:opacity-80 transition-opacity duration-300"
                   style={{ color: storeConfig?.theme_color || '#FFA726' }}
                 >
-                  {store.phone}
+                  {storeConfig.phone}
                 </a>
               </div>
             )}
@@ -102,9 +110,9 @@ export default function AboutModal({ isOpen, onClose, store, storeConfig }: Abou
         <div className="p-6 flex justify-end gap-4 border-t border-opacity-10"
           style={{ borderColor: storeConfig?.border_color || '#2A2A2A' }}
         >
-          {store?.instagram && (
+          {storeConfig?.instagram && (
             <a 
-              href={`https://instagram.com/${store.instagram}`} 
+              href={`https://instagram.com/${storeConfig.instagram}`} 
               target="_blank" 
               rel="noopener noreferrer"
               className="p-2 rounded-full transition-all duration-300 hover:scale-110"
@@ -119,9 +127,9 @@ export default function AboutModal({ isOpen, onClose, store, storeConfig }: Abou
             </a>
           )}
           
-          {store?.twitter && (
+          {storeConfig?.twitter && (
             <a 
-              href={`https://twitter.com/${store.twitter}`} 
+              href={`https://twitter.com/${storeConfig.twitter}`} 
               target="_blank" 
               rel="noopener noreferrer"
               className="p-2 rounded-full transition-all duration-300 hover:scale-110"
@@ -137,18 +145,18 @@ export default function AboutModal({ isOpen, onClose, store, storeConfig }: Abou
           )}
           
           {/* Default contact info if store doesn't provide any */}
-          {!store?.email && !store?.phone && (
+          {!storeConfig?.email && !storeConfig?.phone && (
             <>
               <div className="flex items-center gap-3">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" style={{ color: storeConfig?.theme_color || '#FFA726' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
                 <a 
-                  href="mailto:osemuix@gmail.com" 
+                  href="mailto:info@selll.online" 
                   className="hover:opacity-80 transition-opacity duration-300"
                   style={{ color: storeConfig?.theme_color || '#FFA726' }}
                 >
-                  osemuix@gmail.com
+                  info@selll.online
                 </a>
               </div>
               
@@ -161,7 +169,7 @@ export default function AboutModal({ isOpen, onClose, store, storeConfig }: Abou
                   className="hover:opacity-80 transition-opacity duration-300"
                   style={{ color: storeConfig?.theme_color || '#FFA726' }}
                 >
-                  +233530405191
+                  +233504766732
                 </a>
               </div>
             </>

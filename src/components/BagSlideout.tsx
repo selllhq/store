@@ -11,10 +11,7 @@ import { getCartTotal } from "../contexts/CartContext";
 interface BagSlideoutProps {
   isOpen: boolean;
   onClose: () => void;
-  cartItems: BagItem[];
   currency?: string;
-  updateQuantity?: (productId: string, quantity: number) => void;
-  removeItem?: (productId: string) => void;
   isLoading?: boolean;
   storeId?: string;
   storeName?: string;
