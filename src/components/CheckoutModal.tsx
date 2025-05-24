@@ -1,8 +1,8 @@
 import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { StoreConfigContext } from '../App';
 import { CartItem } from '../types/cart';
 import * as apiService from '../services/api';
+import { StoreConfigContext } from '../contexts/StoreConfigContext';
 
 interface CheckoutModalProps {
   isOpen: boolean;

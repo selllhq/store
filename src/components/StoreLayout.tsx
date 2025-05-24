@@ -3,18 +3,18 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { StoreConfigContext } from "../App";
 import AboutModal from "./AboutModal";
 import BagSlideout from "./BagSlideout";
 import ProductModal from "./ProductModal";
-import { getStore, getStoreProducts } from "../services/api";
+import {  getStoreProducts } from "../services/api";
 import SEOHead from "./SEO/SEOHead";
 import StoreSchema from "./SEO/StoreSchema";
 import ProductSchema from "./SEO/ProductSchema";
 import ShimmerCard from "./ShimmerCard";
 
 // Import the Store type from types
-import { Store as StoreType } from "../types/store";
+import { StoreConfig } from "../types/store";
+import { useStoreConfig } from "../contexts";
 
 // Import icons
 // Using inline SVG instead of react-icons to avoid dependency issues
@@ -51,7 +51,7 @@ export const CartFunctionsContext = React.createContext<{
   openBag: () => {},
 });
 
-export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
+export default function StoreLayout({ children }: StoreLayoutProps) {
   const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const [isBagOpen, setIsBagOpen] = useState(false);
   const [bagItems, setBagItems] = useState<any[]>([]);
@@ -59,6 +59,8 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [currentPath, setCurrentPath] = useState(window.location.pathname);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { store, isLoading, error } = useStoreConfig();
+  const storeConfig = store.config as StoreConfig;
 
   // Event listeners for custom events
   useEffect(() => {
@@ -158,16 +160,6 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
     );
   };
 
-  const {
-    data: store,
-    isLoading,
-    error,
-  } = useQuery<StoreType>({
-    queryKey: ["store", storeName],
-    queryFn: () => getStore(storeName),
-    enabled: !!storeName,
-  });
-
   // Fetch products data to pass to HomePage
   const { data: products = [] } = useQuery({
     queryKey: ["products", store?.id],
@@ -175,51 +167,6 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
       store?.id ? getStoreProducts(store.id) : Promise.resolve([]),
     enabled: !!store?.id,
   });
-
-  let storeConfig;
-
-  try {
-    storeConfig = JSON.parse(store?.config || "{}");
-
-    // Set default colors if store.config is null or empty
-    if (!store?.config || Object.keys(storeConfig).length === 0) {
-      storeConfig = {
-        background_color: "#FFFFFF", // White background
-        text_color: "#000000", // Black text
-        theme_color: "#3B82F6", // Blue theme color
-        border_color: "#E5E7EB", // Light gray border
-      };
-    }
-  } catch (error) {
-    // Fallback to default colors if JSON parsing fails
-    storeConfig = {
-      background_color: "#FFFFFF",
-      text_color: "#000000",
-      theme_color: "#3B82F6",
-      border_color: "#E5E7EB",
-    };
-  }
-
-  useEffect(() => {
-    if (store?.theme) {
-      document.documentElement.style.setProperty(
-        "--primary-color",
-        storeConfig?.theme_color
-      );
-      document.documentElement.style.setProperty(
-        "--secondary-color",
-        store.theme.secondaryColor
-      );
-      document.documentElement.style.setProperty(
-        "--background-color",
-        storeConfig?.background_color
-      );
-      document.documentElement.style.setProperty(
-        "--text-color",
-        storeConfig?.text_color
-      );
-    }
-  }, [store?.theme]);
 
   if (isLoading) {
     return (
@@ -273,7 +220,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
   }
 
   return (
-    <StoreConfigContext.Provider value={storeConfig}>
+    <>
       <div
         className="min-h-screen font-sans relative"
         style={{
@@ -444,17 +391,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
         )}
 
         <main className="wrapper ">
-          {/* Share products data and cart functions with child components via context */}
-          <ProductsContext.Provider value={products}>
-            <CartFunctionsContext.Provider
-              value={{
-                addToBag: addToBag,
-                openBag: () => setIsBagOpen(true),
-              }}
-            >
               {children(store)}
-            </CartFunctionsContext.Provider>
-          </ProductsContext.Provider>
         </main>
 
         {/* About Modal */}
@@ -505,7 +442,7 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
           className="mt-24 border-t py-12"
           style={{
             borderColor: storeConfig?.border_color
-              ? `${storeConfig.border_color}15`
+              ? `${storeConfig?.border_color}15`
               : "#E5E5E515",
           }}
         >
@@ -581,6 +518,6 @@ export default function StoreLayout({ children, storeName }: StoreLayoutProps) {
       `,
         }}
       />
-    </StoreConfigContext.Provider>
+    </>
   );
 }

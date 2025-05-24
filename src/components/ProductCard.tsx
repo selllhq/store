@@ -1,12 +1,11 @@
 /** @format */
 
 import { useContext } from "react";
-import { CartFunctionsContext } from "./StoreLayout";
+import { CartContext } from "../contexts";
+import { CartContextType } from "../types/cart";
 
 const ProductCard: React.FC<any> = ({ product, store, storeConfig }) => {
-  const { addToBag, openBag } = useContext(CartFunctionsContext);
-
-  // console.log("ProductCard", product);
+  const { addToCart } = useContext(CartContext) as CartContextType;
 
   const productImage =
     (product.images ? JSON.parse(product.images) : [])[0] ?? null;
@@ -118,9 +117,7 @@ const ProductCard: React.FC<any> = ({ product, store, storeConfig }) => {
           <button
             onClick={(e) => {
               e.stopPropagation(); // Prevent triggering the parent onClick
-              addToBag(product);
-              // Open bag slideout
-              openBag();
+              addToCart(product, 1);
             }}
             className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
             style={{

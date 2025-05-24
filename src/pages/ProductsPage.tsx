@@ -2,34 +2,26 @@ import { useState, useContext, useEffect } from 'react';
 import { useNavigate, useParams, useSearchParams, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ProductFilters, getFilteredProducts, getStoreProducts } from '../services/api';
-import { StoreConfigContext } from '../App';
-import { CartFunctionsContext } from '../components/StoreLayout';
-import { Store } from '../types/store';
+import {  useStoreConfig } from '../contexts/StoreConfigContext';
+import { Store, StoreConfig } from '../types/store';
 import ShimmerCard from '../components/ShimmerCard';
 import ProductCard from '../components/ProductCard';
+import { CartContext } from '../contexts';
+import { CartContextType } from '../types/cart';
 
 interface ProductsPageProps {
   store?: Store;
   isProductDetail?: boolean;
 }
 
-export default function ProductsPage({ store, isProductDetail = false }: ProductsPageProps) {
-  let storeConfig = useContext(StoreConfigContext) || {};
+export default function ProductsPage({isProductDetail = false }: ProductsPageProps) {
+  const { store } = useStoreConfig();
+  const storeConfig = store.config as StoreConfig;
   const navigate = useNavigate();
   const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   
-  // Set default colors if storeConfig is empty
-  if (Object.keys(storeConfig).length === 0) {
-    storeConfig = {
-      background_color: '#FFFFFF',  // White background
-      text_color: '#000000',       // Black text
-      theme_color: '#3B82F6',      // Blue theme color
-      border_color: '#E5E7EB'      // Light gray border
-    };
-  }
-  
-  const { addToBag, openBag } = useContext(CartFunctionsContext);
+  const { addToCart } = useContext(CartContext) as CartContextType;
   const [filters, setFilters] = useState<ProductFilters>({
     sortBy: (searchParams.get('sort') as ProductFilters['sortBy']) || 'newest'
   });
@@ -233,8 +225,7 @@ export default function ProductsPage({ store, isProductDetail = false }: Product
 
             <button
               onClick={() => {
-                addToBag(currentProduct);
-                openBag();
+                addToCart(currentProduct, 1);
               }}
               className="w-full py-3 rounded-md font-medium transition-all duration-300 hover:bg-opacity-90 flex items-center justify-center gap-2"
               style={{

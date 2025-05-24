@@ -14,7 +14,7 @@ export interface CartItem {
 
 export interface CartState {
   items: CartItem[];
-  isOpen: boolean;
+  isOpen?: boolean;
 }
 
 export interface CartContextType {
@@ -23,7 +23,4 @@ export interface CartContextType {
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
-  openCart: () => void;
-  closeCart: () => void;
-  toggleCart: () => void;
 }

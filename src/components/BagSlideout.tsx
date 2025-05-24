@@ -1,9 +1,12 @@
 /** @format */
 
 import { useContext, useState } from "react";
-import { StoreConfigContext } from "../App";
+import { StoreConfigContext, StoreConfigContextType } from '../contexts/StoreConfigContext';
 import CheckoutModal from "./CheckoutModal";
-import { CartItem as BagItem, CartItem } from "../types/cart";
+import { CartItem as BagItem, CartContextType, CartItem } from "../types/cart";
+import { CartContext } from "../contexts";
+import { StoreConfig } from "../types/store";
+import { getCartTotal } from "../contexts/CartContext";
 
 interface BagSlideoutProps {
   isOpen: boolean;
@@ -21,16 +24,15 @@ interface BagSlideoutProps {
 export default function BagSlideout({
   isOpen,
   onClose,
-  cartItems = [],
   currency = "USD",
-  updateQuantity,
-  removeItem,
   isLoading = false,
   storeId,
   storeName,
   clearBag,
 }: BagSlideoutProps) {
-  const storeConfig = useContext(StoreConfigContext) || {};
+  const { store } = useContext(StoreConfigContext) as StoreConfigContextType;
+  const storeConfig = store.config as StoreConfig;
+  const { cart, removeFromCart, updateQuantity } = useContext(CartContext) as CartContextType;
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
 
   // Helper function to check if stock is available
@@ -46,7 +48,6 @@ export default function BagSlideout({
     item: BagItem,
     checkQuantity: number = Number(item.cartQuantity)
   ) => {
-    // console.log("check", checkQuantity, item.quantity_items);
     if (item.quantity === "unlimited") return false;
     return (
       item.quantity === "limited" &&
@@ -68,13 +69,6 @@ export default function BagSlideout({
     }
     onClose();
   };
-
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * Number(item.cartQuantity),
-    0
-  );
-
-  const shipping = 0; // Can be calculated based on store settings
 
   return (
     <>
@@ -133,9 +127,9 @@ export default function BagSlideout({
               />
             </svg>
             <h2 className="text-xl font-semibold tracking-tight">
-              {cartItems.length > 0 ? (
+              {cart.items.length > 0 ? (
                 <>
-                  {cartItems.length} {cartItems.length === 1 ? "item" : "items"}{" "}
+                  {cart.items.length} {cart.items.length === 1 ? "item" : "items"}{" "}
                   in bag
                 </>
               ) : (
@@ -193,9 +187,9 @@ export default function BagSlideout({
                 Loading bag items...
               </p>
             </div>
-          ) : cartItems.length > 0 ? (
+          ) : cart.items.length > 0 ? (
             <div className="py-2 space-y-4">
-              {cartItems.map((item) => {
+              {cart.items.map((item) => {
                 console.log("item", item);
                 // @cr34t1ve address the point for this later
 
@@ -272,7 +266,7 @@ export default function BagSlideout({
                         </div>
                         <button
                           className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-gray-800 ml-2 flex-shrink-0"
-                          onClick={() => removeItem && removeItem(item.id)}
+                          onClick={() => removeFromCart(item.id)}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -521,7 +515,7 @@ export default function BagSlideout({
         </div>
 
         {/* Footer with Totals and Checkout */}
-        {!isLoading && cartItems.length > 0 && (
+        {!isLoading && cart.items.length > 0 && (
           <div
             className="absolute bottom-0 left-0 right-0 border-t p-4 space-y-4"
             style={{
@@ -532,10 +526,7 @@ export default function BagSlideout({
             <div className="space-y-1">
               <div className="flex justify-between">
                 <span className="font-medium">
-                  {currency} {total.toFixed(2)}
-                </span>
-                <span className="text-right text-gray-400">
-                  Shipping: {currency} {shipping.toFixed(2)}
+                  {currency} {getCartTotal(cart.items).toFixed(2)}
                 </span>
               </div>
             </div>
@@ -585,7 +576,7 @@ export default function BagSlideout({
       <CheckoutModal
         isOpen={isCheckoutModalOpen}
         onClose={() => setIsCheckoutModalOpen(false)}
-        cartItems={cartItems}
+        cartItems={cart.items}
         currency={currency}
         storeId={storeId}
         storeName={storeName}

@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
-import { StoreConfigContext } from '../App';
 import * as apiService from '../services/api';
 import { Order } from '../services/api';
 import { Store } from '../types/store';
 import { format } from 'date-fns';
+import { StoreConfigContext } from '../contexts/StoreConfigContext';
 
 // Using the Order interface from api.ts
 

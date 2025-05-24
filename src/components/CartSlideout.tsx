@@ -1,7 +1,7 @@
 /** @format */
 
 import { useContext, useState } from "react";
-import { StoreConfigContext } from "../App";
+import { StoreConfigContext } from '../providers/useStoreConfig';
 import CheckoutModal from "./CheckoutModal";
 import { CartItem } from "../types/cart";
 

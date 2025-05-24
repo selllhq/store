@@ -1,10 +1,9 @@
 /** @format */
 
-import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { getFilteredProducts } from "../services/api";
-import { StoreConfigContext } from "../App";
-import { Store } from "../types/store";
+import {  useStoreConfig } from '../contexts/StoreConfigContext';
+import { Store, StoreConfig } from "../types/store";
 import { useQuery } from "@tanstack/react-query";
 import ShimmerCard from "../components/ShimmerCard";
 import ProductCard from "../components/ProductCard";
@@ -33,22 +32,12 @@ const adjustColorBrightness = (hex: string, percent: number): string => {
 };
 
 interface HomePageProps {
-  storeConfig?: any;
   store?: Store;
 }
 
-export default function HomePage({ store }: HomePageProps) {
-  let storeConfig = useContext(StoreConfigContext) || {};
-
-  // Set default colors if storeConfig is empty
-  if (Object.keys(storeConfig).length === 0) {
-    storeConfig = {
-      background_color: "#FFFFFF", // White background
-      text_color: "#000000", // Black text
-      theme_color: "#3B82F6", // Blue theme color
-      border_color: "#E5E7EB", // Light gray border
-    };
-  }
+export default function HomePage({}: HomePageProps) {
+  const { store } = useStoreConfig();
+  const storeConfig = store.config as StoreConfig;
 
   // Fetch popular products
   const {
@@ -63,9 +52,6 @@ export default function HomePage({ store }: HomePageProps) {
         : Promise.resolve([]),
     enabled: !!store?.id,
   });
-
-  // Extract unique categories from products
-  // Categories extraction no longer needed since we removed filter tabs
 
   if (isLoading) {
     return (
