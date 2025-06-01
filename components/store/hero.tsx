@@ -1,18 +1,20 @@
-import { useStore } from "@/context/StoreContext";
+import { Store, StoreConfig } from "@/@types/store";
 import { adjustColorBrightness } from "@/lib/utils";
 
-export default function Hero() {
-  const { store, config } = useStore();
-
-  console.log(config)
-
+export default function Hero({
+  store,
+  storeConfig
+}: {
+  store: Store,
+  storeConfig?: StoreConfig
+}) {
   return (
     <>
-      {config?.show_hero && (
+      {storeConfig?.show_hero && (
         <div
           className={
             'full-bleed' +
-            (config?.padded_hero
+            (storeConfig?.padded_hero
               ? 'absolute top-[50px] left-0 w-full z-20'
               : ' ')
           }
@@ -20,10 +22,10 @@ export default function Hero() {
           <div className="relative w-full">
             <div className="absolute inset-0 bg-black/60 z-10"></div>
 
-            {config?.hero_image ? (
+            {storeConfig?.hero_image ? (
               <div className="relative h-[60vh] max-h-[600px] min-h-[400px] overflow-hidden">
                 <img
-                  src={config?.hero_image}
+                  src={storeConfig?.hero_image}
                   alt={store?.name}
                   className="w-full h-full object-cover"
                   style={{
@@ -36,10 +38,10 @@ export default function Hero() {
                 className="relative h-[60vh] max-h-[600px] min-h-[400px]"
                 style={{
                   background: `linear-gradient(to right, ${
-                    config?.background_color || '#121212'
+                    storeConfig?.background_color || '#121212'
                   }, ${
-                    config?.background_color
-                      ? adjustColorBrightness(config.background_color, 15)
+                    storeConfig?.background_color
+                      ? adjustColorBrightness(storeConfig.background_color, 15)
                       : '#1A1A1A'
                   })`,
                 }}
@@ -48,7 +50,7 @@ export default function Hero() {
                   className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] rounded-full"
                   style={{
                     background: `radial-gradient(circle, ${
-                      config?.theme_color || '#FFA726'
+                      storeConfig?.theme_color || '#FFA726'
                     }15 0%, transparent 70%)`,
                     filter: 'blur(80px)',
                     opacity: 0.3,
@@ -61,22 +63,22 @@ export default function Hero() {
               <div className="container mx-auto px-6">
                 <div
                   className={`${
-                    config?.hero_content_alignment === 'center'
+                    storeConfig?.hero_content_alignment === 'center'
                       ? 'mx-auto text-center'
-                      : config?.hero_content_alignment === 'right'
+                      : storeConfig?.hero_content_alignment === 'right'
                       ? 'ml-auto text-right'
                       : ''
                   } max-w-xl`}
                 >
                   <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
-                    {config?.hero_title || 'Discover Our Products'}
+                    {storeConfig?.hero_title || 'Discover Our Products'}
                   </h2>
 
                   <p
                     className="text-base md:text-lg text-white/80 mb-6"
                     style={{ fontWeight: '300' }}
                   >
-                    {config?.hero_description ||
+                    {storeConfig?.hero_description ||
                       'Explore our collection of high-quality products designed to meet your needs.'}
                   </p>
 
@@ -84,9 +86,9 @@ export default function Hero() {
                     className="flex"
                     style={{
                       justifyContent:
-                        config?.hero_content_alignment === 'center'
+                        storeConfig?.hero_content_alignment === 'center'
                           ? 'center'
-                          : config?.hero_content_alignment === 'right'
+                          : storeConfig?.hero_content_alignment === 'right'
                           ? 'flex-end'
                           : 'flex-start',
                     }}
@@ -94,7 +96,7 @@ export default function Hero() {
                     <button
                       className="px-6 py-3 rounded-md font-medium text-sm transition-all duration-300 text-white flex items-center gap-2"
                       style={{
-                        backgroundColor: config?.theme_color || '#FFA726',
+                        backgroundColor: storeConfig?.theme_color || '#FFA726',
                         borderRadius: '6px',
                       }}
                       onClick={() =>

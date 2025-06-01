@@ -1,99 +1,102 @@
 'use client';
 
-import Image from "next/image";
-import Hero from "@/components/store/hero";
-import { useStore } from "@/context/StoreContext";
+import Hero from '@/components/store/hero';
+import ProductCard from '@/components/store/product-card';
+import { useStore } from '@/context/StoreContext';
+import { useProducts } from '@/data/product';
 
 export default function Home() {
-  const { store } = useStore();
+  const { store, config } = useStore();
+  const { isLoading, products } = useProducts(store.id);
 
   return (
-    <div className="font-[family-name:var(--font-bricolage)]">
-      <Hero />
-      <main className="max-w-7xl mx-auto">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        
-        <p>Welcome to {store?.name}</p>
+    <div
+      className="font-[family-name:var(--font-bricolage)]"
+      style={{
+        backgroundColor: config?.background_color || '#FFFFFF',
+        color: config?.text_color || '#000000',
+        minHeight: '100vh',
+        paddingBottom: '4rem',
+      }}
+    >
+      <Hero store={store} storeConfig={config} />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      <main className="container mx-auto px-4 sm:px-6 py-10">
+        <div id="products-section">
+          <h2
+            className="text-2xl font-bold"
+            style={{ color: config?.text_color || '#000000' }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+            Our Products
+          </h2>
+
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {isLoading && (
+              <div className="col-span-full text-center py-10">
+                <p className="text-lg text-gray-500">Loading products...</p>
+              </div>
+            )}
+
+            {products?.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                storeConfig={config}
+              />
+            ))}
+          </div>
         </div>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      <footer
+        className="mt-24 border-t py-12"
+        style={{
+          borderColor: config?.border_color
+            ? `${config.border_color}15`
+            : '#E5E5E515',
+        }}
+      >
+        <div className="container mx-auto px-4 sm:px-6">
+          <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex flex-col items-center md:items-start gap-2">
+              <div className="flex items-center gap-2">
+                {store?.logo && (
+                  <img
+                    src={store.logo}
+                    alt={`${store.name} logo`}
+                    className="h-8 w-auto object-contain rounded-md"
+                  />
+                )}
+                <h2 className="font-semibold text-lg">{store?.name}</h2>
+              </div>
+              <p className="text-sm opacity-70">
+                &copy; {new Date().getFullYear()} {store?.name}. All rights
+                reserved.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-center md:items-end gap-2">
+              <button
+                className="text-sm font-medium hover:opacity-80 transition-all duration-200 mb-1"
+                style={{ color: config?.theme_color || '#0070F3' }}
+              >
+                About this store
+              </button>
+              <p className="text-sm opacity-70">
+                Powered by{' '}
+                <a
+                  href="https://selll.online"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium hover:underline"
+                  style={{ color: config?.theme_color || '#0070F3' }}
+                >
+                  Selll
+                </a>
+              </p>
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   );

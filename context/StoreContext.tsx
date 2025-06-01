@@ -2,6 +2,7 @@
 
 import { Store, StoreConfig } from '@/@types/store';
 import { createContext, useContext } from 'react';
+import useSWR, { SWRConfig } from 'swr';
 
 export const StoreContext = createContext({});
 
@@ -18,7 +19,17 @@ export const StoreProvider: React.FC<
       }}
       {...props}
     >
-      {children}
+      <SWRConfig
+        value={{
+          fetcher: (resource, init) =>
+            fetch(
+              `${process.env.NEXT_PUBLIC_API_BASEURL}${resource}`,
+              init
+            ).then((res) => res.json()),
+        }}
+      >
+        {children}
+      </SWRConfig>
     </StoreContext.Provider>
   );
 };

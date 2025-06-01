@@ -9,7 +9,14 @@ export default function TopNav() {
   const { store, config } = useStore();
 
   return (
-    <header className="sticky top-0 z-50 shadow-sm border-b">
+    <header
+      className="sticky top-0 z-50 shadow-sm border-b"
+      style={{
+        backgroundColor: config?.background_color || '#FFFFFF',
+        color: config?.text_color || '#000000',
+        borderColor: config?.border_color || '#E5E5EB',
+      }}
+    >
       <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center">
           {store.logo && config.show_store_logo && (
@@ -50,10 +57,10 @@ export default function TopNav() {
 
         <Button
           variant="ghost"
-          className="relative p-2 hover:text-gray-900 transition-colors"
+          className="relative p-2 hover:bg-gray-400/10 transition-colors"
           aria-label="Shopping Bag"
         >
-          <BagIcon className="size-5 md:size-6" />
+          <BagIcon color={config.text_color} className="size-5 md:size-6" />
         </Button>
       </div>
     </header>
