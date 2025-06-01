@@ -1,6 +1,6 @@
 import { Bricolage_Grotesque } from 'next/font/google';
 import { getSubdomainFromHeaders } from '../lib/subdomain';
-import StoreNotFound from '../components/StoreNotFound';
+import StoreNotFound from '../components/store-not-found';
 
 import './globals.css';
 
