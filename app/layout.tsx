@@ -4,9 +4,10 @@ import StoreNotFound from '../components/store-not-found';
 
 import './globals.css';
 import { StoreProvider } from '@/context/StoreContext';
+import TopNav from '@/components/store/topnav';
 
 const bricolageGrotesque = Bricolage_Grotesque({
-  variable: '--font-bricolage-grotesque',
+  variable: '--font-bricolage',
   subsets: ['latin'],
 });
 
@@ -71,7 +72,10 @@ export default async function RootLayout({
         {!storeData ? (
           <StoreNotFound />
         ) : (
-          <StoreProvider store={storeData}>{children}</StoreProvider>
+          <StoreProvider store={storeData}>
+            <TopNav />
+            {children}
+          </StoreProvider>
         )}
       </body>
     </html>

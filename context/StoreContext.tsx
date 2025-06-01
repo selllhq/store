@@ -27,7 +27,7 @@ export const useStore = () => {
   const { store } = useContext<{ store?: Store }>(StoreContext);
 
   return {
-    store,
+    store: store!,
     config: (store?.config ? JSON.parse(store.config) : {}) as StoreConfig,
   };
 };
