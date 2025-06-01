@@ -3,6 +3,7 @@ import { getSubdomainFromHeaders } from '../lib/subdomain';
 import StoreNotFound from '../components/store-not-found';
 
 import './globals.css';
+import { StoreProvider } from '@/context/StoreContext';
 
 const bricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage-grotesque',
@@ -67,7 +68,11 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${bricolageGrotesque.variable} antialiased`}>
-        {!storeData ? <StoreNotFound /> : children}
+        {!storeData ? (
+          <StoreNotFound />
+        ) : (
+          <StoreProvider store={storeData}>{children}</StoreProvider>
+        )}
       </body>
     </html>
   );

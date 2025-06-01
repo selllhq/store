@@ -1,5 +1,6 @@
 'use client';
 
+import { Store, StoreConfig } from '@/@types/store';
 import { createContext, useContext } from 'react';
 
 export const StoreContext = createContext({});
@@ -23,14 +24,10 @@ export const StoreProvider: React.FC<
 };
 
 export const useStore = () => {
-  const { store }: any = useContext(StoreContext);
-
-  if (!store) {
-    return null;
-  }
+  const { store } = useContext<{ store?: Store }>(StoreContext);
 
   return {
     store,
-    config: store.config ? JSON.parse(store.config) : {},
+    config: (store?.config ? JSON.parse(store.config) : {}) as StoreConfig,
   };
 };
