@@ -1,7 +1,7 @@
 'use client';
 
-import { useStore } from '@/context/StoreContext';
 import Link from 'next/link';
+import { useStore } from '@/context/StoreContext';
 import { Button } from '../ui/button';
 import BagIcon from '../icons/bag';
 
@@ -17,6 +17,12 @@ export default function TopNav() {
         borderColor: config?.border_color || '#E5E5EB',
       }}
     >
+      {store?.status === 'sandbox' && (
+        <div className="bg-red-400 text-white text-center font-semibold py-2">
+          This store has not yet been activated, you will not be able to make
+          purchases until it is activated.
+        </div>
+      )}
       <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
         <div className="flex items-center">
           {store.logo && config.show_store_logo && (

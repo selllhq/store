@@ -1,8 +1,9 @@
 'use client';
 
-import { Store, StoreConfig } from '@/@types/store';
+import { SWRConfig } from 'swr';
 import { createContext, useContext } from 'react';
-import useSWR, { SWRConfig } from 'swr';
+
+import type { Store, StoreConfig } from '@/@types/store';
 
 export const StoreContext = createContext({});
 
