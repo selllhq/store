@@ -9,6 +9,7 @@ import ProductCard from '@/components/store/product-card';
 import ProductFilters from '@/components/store/product-filters';
 import ProductCategory from '@/components/store/product-category';
 import { Button } from '@/components/ui/button';
+import ProductModal from '@/components/modals/product-modal';
 
 export default function Home() {
   const { store, config } = useStore();
@@ -49,7 +50,7 @@ export default function Home() {
             </div>
           </div>
 
-          {(categories?.length || 0) > 0 && (
+          {(categories?.length || 0) > 1 && (
             <div className="flex flex-wrap items-center -mt-6 mb-8 gap-4">
               {categories!.map((category) => (
                 <ProductCategory
@@ -166,6 +167,8 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      <ProductModal storeConfig={config} />
     </div>
   );
 }

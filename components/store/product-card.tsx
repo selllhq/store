@@ -3,6 +3,7 @@
 import { Product } from '@/@types/product';
 import { StoreConfig } from '@/@types/store';
 import { useRouter } from 'next/navigation';
+import { Button } from '../ui/button';
 
 export default function ProductCard({
   product,
@@ -32,7 +33,7 @@ export default function ProductCard({
         if (storeConfig?.open_product_in_popup) {
           window.dispatchEvent(
             new CustomEvent('openProductModal', {
-              detail: { product, storeConfig },
+              detail: { product },
             })
           );
           return;
@@ -118,7 +119,15 @@ export default function ProductCard({
             }).format(Number(product.price))}
           </span>
 
-          <button
+          <Button
+            onClick={(e) => {
+              e.stopPropagation();
+              window.dispatchEvent(
+                new CustomEvent('addToCart', {
+                  detail: { product },
+                })
+              );
+            }}
             className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
             style={{
               backgroundColor: storeConfig?.theme_color
@@ -142,7 +151,7 @@ export default function ProductCard({
                 d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
               />
             </svg>
-          </button>
+          </Button>
         </div>
       </div>
     </div>
