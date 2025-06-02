@@ -47,3 +47,17 @@ export interface StoreOwner {
     created_at: string;
     updated_at: string;
 }
+
+export interface StoreCustomer {
+  id: number;
+  store_id: number;
+  name: string;
+  email: string;
+  phone: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}

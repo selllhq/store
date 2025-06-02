@@ -6,7 +6,7 @@ import { Button } from '../ui/button';
 import { checkoutBag } from '@/data/order';
 
 import type { Store, StoreConfig } from '@/@types/store';
-import type { BagItem, CheckoutCustomer } from '@/@types/bag';
+import type { BagItem, CheckoutCustomer } from '@/@types/order';
 
 export default function CheckoutModal({
   show,

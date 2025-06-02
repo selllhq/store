@@ -1,5 +1,17 @@
+import useSWR from 'swr';
+
 import type { Store } from '@/@types/store';
-import type { BagItem, CheckoutCustomer, CheckoutResponse } from '@/@types/bag';
+import type { BagItem, CheckoutCustomer, CheckoutResponse, Order } from '@/@types/order';
+
+export function useOrder(id: Store['id'], orderId: string) {
+  const { data, error, isLoading } = useSWR(`/stores/${id}/orders/${orderId}`);
+
+  return {
+    order: data as Order | undefined,
+    isLoading,
+    isError: error,
+  };
+}
 
 export const checkoutBag = async (data: {
   store: Store;

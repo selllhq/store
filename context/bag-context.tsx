@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 
-import type { BagItem } from '@/@types/bag';
+import type { BagItem } from '@/@types/order';
 import type { Product } from '@/@types/product';
 
 export const BagContext = createContext({});
