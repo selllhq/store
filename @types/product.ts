@@ -20,11 +20,21 @@ export type ProductImages = string[];
 export type ProductSortOptions = 'price-asc' | 'price-desc' | 'created_at-desc' | 'created_at-asc' | 'popular';
 export interface ProductFilters {
   search?: string;
-  category?: string;
+  category?: number;
   sortBy?: ProductSortOptions;
   page?: number;
   limit?: number;
   [key: string]: any;
+}
+
+export interface ProductCategory {
+  id: number;
+  store_id: number;
+  title: string;
+  description: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CartItem {

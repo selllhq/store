@@ -14,11 +14,9 @@ import type { ProductFilters as ProductFiltersType } from '@/@types/product';
 
 export default function ProductFilters({
   storeConfig,
-  filters,
   setFilters,
 }: {
   storeConfig?: StoreConfig;
-  filters: ProductFiltersType;
   setFilters: React.Dispatch<React.SetStateAction<ProductFiltersType>>;
 }) {
   const handleSearch = useCallback(

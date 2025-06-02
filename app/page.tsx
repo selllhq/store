@@ -2,14 +2,18 @@
 
 import { ShimmerCard } from './loading';
 import { useProducts } from '@/data/product';
+import { useCategories } from '@/data/category';
 import { useStore } from '@/context/StoreContext';
 import Hero from '@/components/store/hero';
 import ProductCard from '@/components/store/product-card';
 import ProductFilters from '@/components/store/product-filters';
+import { Button } from '@/components/ui/button';
+import ProductCategory from '@/components/store/product-category';
 
 export default function Home() {
   const { store, config } = useStore();
   const { isLoading, products, filters, setFilters } = useProducts(store.id);
+  const { categories } = useCategories(store.id);
 
   return (
     <div
@@ -36,14 +40,24 @@ export default function Home() {
               {((products?.length || 0) > 0 ||
                 filters.search ||
                 filters.category) && (
-                <ProductFilters
-                  filters={filters}
-                  setFilters={setFilters}
-                  storeConfig={config}
-                />
+                <ProductFilters setFilters={setFilters} storeConfig={config} />
               )}
             </div>
           </div>
+
+          {(categories?.length || 0) > 0 && (
+            <div className="flex flex-wrap items-center -mt-6 mb-8 gap-4">
+              {categories!.map((category) => (
+                <ProductCategory
+                  key={category.id}
+                  storeConfig={config}
+                  filters={filters}
+                  category={category}
+                  setFilters={setFilters}
+                />
+              ))}
+            </div>
+          )}
 
           <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
             {isLoading && (

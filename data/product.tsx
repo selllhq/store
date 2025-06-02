@@ -8,7 +8,6 @@ import type { Product, ProductFilters } from '@/@types/product';
 export function useProducts(id: Store['id']) {
   const [filters, setFilters] = useState<ProductFilters>({
     search: '',
-    category: '',
     sortBy: 'created_at-desc',
   });
 
