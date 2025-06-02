@@ -17,13 +17,14 @@ export interface Product {
 }
 
 export type ProductImages = string[];
-
-export interface ProductSortOptions {
-    price_asc: 'price-asc';
-    price_desc: 'price-desc';
-    newest: 'created_at-desc';
-    oldest: 'created_at-asc';
-    popular: 'popular';
+export type ProductSortOptions = 'price-asc' | 'price-desc' | 'created_at-desc' | 'created_at-asc' | 'popular';
+export interface ProductFilters {
+  search?: string;
+  category?: string;
+  sortBy?: ProductSortOptions;
+  page?: number;
+  limit?: number;
+  [key: string]: any;
 }
 
 export interface CartItem {

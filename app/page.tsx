@@ -4,10 +4,12 @@ import Hero from '@/components/store/hero';
 import ProductCard from '@/components/store/product-card';
 import { useStore } from '@/context/StoreContext';
 import { useProducts } from '@/data/product';
+import { ShimmerCard } from './loading';
+import ProductFilters from '@/components/store/product-filters';
 
 export default function Home() {
   const { store, config } = useStore();
-  const { isLoading, products } = useProducts(store.id);
+  const { isLoading, products, filters, setFilters } = useProducts(store.id);
 
   return (
     <div
@@ -21,29 +23,49 @@ export default function Home() {
     >
       <Hero store={store} storeConfig={config} />
 
-      <main className="container mx-auto px-4 sm:px-6 py-10">
-        <div id="products-section">
-          <h2
-            className="text-2xl font-bold"
-            style={{ color: config?.text_color || '#000000' }}
-          >
-            Our Products
-          </h2>
+      <main className="container mx-auto mt-16 px-4 sm:px-6 py-10">
+        <div id="products-section" className="scroll-m-28">
+          <div className="flex justify-between items-center mb-8 gap-4">
+            <h2
+              className="text-3xl font-bold"
+              style={{ color: config?.text_color || '#000000' }}
+            >
+              Our Products
+            </h2>
+            <div>
+              {(products?.length || 0) > 0 && (
+                <ProductFilters filters={filters} setFilters={setFilters} storeConfig={config} />
+              )}
+            </div>
+          </div>
 
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
             {isLoading && (
-              <div className="col-span-full text-center py-10">
-                <p className="text-lg text-gray-500">Loading products...</p>
+              <>
+                {[...Array(8)].map((_, index) => (
+                  <ShimmerCard key={index} type="product" />
+                ))}
+              </>
+            )}
+
+            {!isLoading && products?.length === 0 && (
+              <div className="col-span-4 text-center text-gray-500">
+                No products found.
               </div>
             )}
 
-            {products?.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                storeConfig={config}
-              />
-            ))}
+            {(products?.length || 0) > 0 && (
+              <>
+                {products?.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    storeConfig={config}
+                    currency={store.currency}
+                  />
+                ))}
+              </>
+            )}
           </div>
         </div>
       </main>
