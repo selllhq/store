@@ -2,6 +2,7 @@
 
 import { SWRConfig } from 'swr';
 import { createContext, useContext } from 'react';
+import { Toaster } from '@/components/ui/sonner';
 
 import type { Store, StoreConfig } from '@/@types/store';
 
@@ -30,6 +31,7 @@ export const StoreProvider: React.FC<
         }}
       >
         {children}
+        <Toaster />
       </SWRConfig>
     </StoreContext.Provider>
   );

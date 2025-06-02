@@ -5,3 +5,18 @@ export interface BagItem {
     product: Product;
     quantity: number;
 }
+
+export interface CheckoutCustomer {
+  name: string;
+  email: string;
+  phone: string;
+  address?: string;
+  city?: string;
+  country?: string;
+  notes?: string;
+}
+
+export interface CheckoutResponse {
+  id: string;
+  url: string;
+}
