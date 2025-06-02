@@ -1,11 +1,13 @@
+import { useCallback } from 'react';
+import debounce from 'lodash.debounce';
 import { ListFilterPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
 import { Input } from '@/components/ui/input';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 
 import type { StoreConfig } from '@/@types/store';
 import type { ProductFilters as ProductFiltersType } from '@/@types/product';
@@ -19,6 +21,16 @@ export default function ProductFilters({
   filters: ProductFiltersType;
   setFilters: React.Dispatch<React.SetStateAction<ProductFiltersType>>;
 }) {
+  const handleSearch = useCallback(
+    debounce((value: string) => {
+      setFilters((prev) => ({
+        ...prev,
+        search: value,
+      }));
+    }, 300),
+    []
+  );
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -47,7 +59,11 @@ export default function ProductFilters({
             Find Your Perfect Products
           </h3>
 
-          <Input type="text" placeholder="Search by name or description" />
+          <Input
+            type="text"
+            placeholder="Search by name or description"
+            onChange={(e) => handleSearch(e.target.value)}
+          />
         </div>
       </PopoverContent>
     </Popover>

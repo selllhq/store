@@ -1,10 +1,10 @@
 'use client';
 
+import { ShimmerCard } from './loading';
+import { useProducts } from '@/data/product';
+import { useStore } from '@/context/StoreContext';
 import Hero from '@/components/store/hero';
 import ProductCard from '@/components/store/product-card';
-import { useStore } from '@/context/StoreContext';
-import { useProducts } from '@/data/product';
-import { ShimmerCard } from './loading';
 import ProductFilters from '@/components/store/product-filters';
 
 export default function Home() {
@@ -33,8 +33,14 @@ export default function Home() {
               Our Products
             </h2>
             <div>
-              {(products?.length || 0) > 0 && (
-                <ProductFilters filters={filters} setFilters={setFilters} storeConfig={config} />
+              {((products?.length || 0) > 0 ||
+                filters.search ||
+                filters.category) && (
+                <ProductFilters
+                  filters={filters}
+                  setFilters={setFilters}
+                  storeConfig={config}
+                />
               )}
             </div>
           </div>
