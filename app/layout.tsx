@@ -3,8 +3,9 @@ import { getSubdomainFromHeaders } from '../lib/subdomain';
 import StoreNotFound from '../components/store-not-found';
 
 import './globals.css';
-import { StoreProvider } from '@/context/StoreContext';
+import { StoreProvider } from '@/context/store-context';
 import TopNav from '@/components/store/topnav';
+import { BagProvider } from '@/context/bag-context';
 
 const bricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage',
@@ -73,8 +74,10 @@ export default async function RootLayout({
           <StoreNotFound />
         ) : (
           <StoreProvider store={storeData}>
-            <TopNav />
-            {children}
+            <BagProvider>
+              <TopNav />
+              {children}
+            </BagProvider>
           </StoreProvider>
         )}
       </body>

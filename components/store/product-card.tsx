@@ -33,10 +33,9 @@ export default function ProductCard({
         if (storeConfig?.open_product_in_popup) {
           window.dispatchEvent(
             new CustomEvent('openProductModal', {
-              detail: { product },
+              detail: { product, quantity: 1 },
             })
           );
-          return;
         } else {
           router.push(`/product/${product.id}`);
         }
@@ -123,8 +122,8 @@ export default function ProductCard({
             onClick={(e) => {
               e.stopPropagation();
               window.dispatchEvent(
-                new CustomEvent('addToCart', {
-                  detail: { product },
+                new CustomEvent('addToBag', {
+                  detail: { product, image: productImage, quantity: 1 },
                 })
               );
             }}

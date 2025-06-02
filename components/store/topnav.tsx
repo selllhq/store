@@ -1,47 +1,47 @@
 'use client';
 
 import Link from 'next/link';
-import { useStore } from '@/context/StoreContext';
-import { Button } from '../ui/button';
-import BagIcon from '../icons/bag';
+import { useStore } from '@/context/store-context';
+import Bag from './bag';
 
 export default function TopNav() {
   const { store, config } = useStore();
 
   return (
-    <header
-      className="sticky top-0 z-50 shadow-sm border-b"
-      style={{
-        backgroundColor: config?.background_color || '#FFFFFF',
-        color: config?.text_color || '#000000',
-        borderColor: config?.border_color || '#E5E5EB',
-      }}
-    >
-      {store?.status === 'sandbox' && (
-        <div className="bg-red-400 text-white text-center font-semibold py-2">
-          This store has not yet been activated, you will not be able to make
-          purchases until it is activated.
-        </div>
-      )}
-      <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center">
-          {store.logo && config.show_store_logo && (
-            <img
-              alt={`${store.name} logo`}
-              className="h-8 w-auto object-contain mr-3"
-              src={store.logo}
-            />
-          )}
-          <Link
-            className="text-xl font-semibold hover:text-gray-700 transition-colors"
-            href="/"
-            data-discover="true"
-          >
-            {store.name}
-          </Link>
-        </div>
+    <>
+      <header
+        className="sticky top-0 z-50 shadow-sm border-b"
+        style={{
+          backgroundColor: config?.background_color || '#FFFFFF',
+          color: config?.text_color || '#000000',
+          borderColor: config?.border_color || '#E5E5EB',
+        }}
+      >
+        {store?.status === 'sandbox' && (
+          <div className="bg-red-400 text-white text-center font-semibold py-2">
+            This store has not yet been activated, you will not be able to make
+            purchases until it is activated.
+          </div>
+        )}
+        <div className="container mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center">
+            {store.logo && config.show_store_logo && (
+              <img
+                alt={`${store.name} logo`}
+                className="h-8 w-auto object-contain mr-3"
+                src={store.logo}
+              />
+            )}
+            <Link
+              className="text-xl font-semibold hover:text-gray-700 transition-colors"
+              href="/"
+              data-discover="true"
+            >
+              {store.name}
+            </Link>
+          </div>
 
-        {/* <div className="hidden md:flex items-center space-x-8">
+          {/* <div className="hidden md:flex items-center space-x-8">
           <a
             className="text-sm font-medium transition-colors"
             href="/"
@@ -61,14 +61,11 @@ export default function TopNav() {
           </button>
         </div> */}
 
-        <Button
-          variant="ghost"
-          className="relative p-2 hover:bg-gray-400/10 transition-colors"
-          aria-label="Shopping Bag"
-        >
-          <BagIcon color={config.text_color} className="size-5 md:size-6" />
-        </Button>
-      </div>
-    </header>
+          
+          <Bag store={store} storeConfig={config} />
+        </div>
+      </header>
+
+    </>
   );
 }

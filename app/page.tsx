@@ -3,7 +3,7 @@
 import { ShimmerCard } from './loading';
 import { useProducts } from '@/data/product';
 import { useCategories } from '@/data/category';
-import { useStore } from '@/context/StoreContext';
+import { useStore } from '@/context/store-context';
 import Hero from '@/components/store/hero';
 import ProductCard from '@/components/store/product-card';
 import ProductFilters from '@/components/store/product-filters';
@@ -168,7 +168,7 @@ export default function Home() {
         </div>
       </footer>
 
-      <ProductModal storeConfig={config} />
+      <ProductModal store={store} storeConfig={config} />
     </div>
   );
 }

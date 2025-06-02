@@ -1,11 +1,11 @@
-import { Product } from '@/@types/product';
-import { StoreConfig } from '@/@types/store';
 import { X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useProductCartFunctions } from '@/data/product';
 import { Button } from '../ui/button';
 import BagIcon from '../icons/bag';
 
+import type { Product } from '@/@types/product';
+import type { Store, StoreConfig } from '@/@types/store';
 declare global {
   interface WindowEventMap {
     openProductModal: CustomEvent;
@@ -13,14 +13,15 @@ declare global {
 }
 
 export default function ProductModal({
+  store,
   storeConfig,
 }: {
+  store: Store
   storeConfig?: StoreConfig;
 }) {
-  const router = useRouter();
-  const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [product, setProduct] = useState<Product | null>(null);
+  const [product, setProduct] = useState<Product | undefined>();
+  const functions = useProductCartFunctions(product);
 
   const images = product?.images ? JSON.parse(product?.images) : [];
 
@@ -38,40 +39,11 @@ export default function ProductModal({
 
   if (!product) return null;
 
-  const isOutOfStock = () => {
-    return (
-      product.quantity === 'limited' &&
-      parseInt(product.quantity_items || '0') === 0
-    );
-  };
-
-  const isQuantityLimitReached = () => {
-    return (
-      product.quantity === 'limited' &&
-      quantity === parseInt(product.quantity_items)
-    );
-  };
-
-  const incrementQuantity = () => {
-    if (
-      quantity < parseInt(product.quantity_items) ||
-      product.quantity === 'unlimited'
-    ) {
-      setQuantity((prev) => prev + 1);
-    }
-  };
-
-  const decrementQuantity = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
-    }
-  };
-
   return (
     <div
       className="fixed w-screen h-screen left-0 top-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md transition-all duration-500"
       onClick={() => {
-        setProduct(null);
+        setProduct(undefined);
       }}
     >
       <div
@@ -88,11 +60,12 @@ export default function ProductModal({
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10 p-2 rounded-full transition-all duration-300 hover:bg-black/5"
           aria-label="Close modal"
           onClick={() => {
-            setProduct(null);
+            setProduct(undefined);
           }}
         >
           <X className="h-6 w-6" />
         </Button>
+
         <div className="aspect-square flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
           {images.length > 0 ? (
             <div className="relative w-full h-full p-6 flex items-center justify-center overflow-hidden">
@@ -124,6 +97,58 @@ export default function ProductModal({
           )}
         </div>
 
+        {images.length > 1 && (
+          <div className="absolute bottom-4 left-4 right-4 z-20">
+            <div className="flex gap-2 overflow-x-auto pb-2 px-2 -mx-2 snap-x">
+              {images.map((image: string, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all duration-300 snap-start ${
+                    selectedImage === index
+                      ? 'ring-2 ring-offset-1 scale-105 shadow-lg'
+                      : 'opacity-60 hover:opacity-90 hover:scale-105'
+                  }`}
+                  style={{
+                    borderColor: storeConfig?.border_color || '#E5E5E5',
+                    boxShadow:
+                      selectedImage === index
+                        ? `0 4px 12px ${
+                            storeConfig?.theme_color || '#4CAF50'
+                          }30`
+                        : 'none',
+                  }}
+                >
+                  <img
+                    src={image}
+                    alt={`${product.name} - Thumbnail ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="absolute top-4 left-4 z-20">
+          <span
+            className={`text-xs font-medium px-2 py-1 rounded-full ${
+              product.quantity === 'unlimited' ||
+              (parseInt(product.quantity_items) ?? 0) > 0
+                ? 'bg-green-500/20 text-green-500'
+                : 'bg-red-500/20 text-red-500'
+            }`}
+          >
+            {product.quantity === 'unlimited'
+              ? 'Unlimited'
+              : (parseInt(product.quantity_items) ?? 0) === 0
+              ? 'Out of stock'
+              : (parseInt(product.quantity_items) ?? 0) <= 5
+              ? `Only ${product.quantity_items} left`
+              : `${product.quantity_items} in stock`}
+          </span>
+        </div>
+
         <div className="flex flex-col p-6 md:p-10">
           <h2 className="text-3xl font-bold mb-4 leading-tight">
             {product.name}
@@ -152,7 +177,7 @@ export default function ProductModal({
             >
               {new Intl.NumberFormat('en-US', {
                 style: 'currency',
-                currency: storeConfig?.currency || 'USD',
+                currency: store?.currency || 'USD',
               }).format(Number(product.price))}
             </div>
           </div>
@@ -163,10 +188,10 @@ export default function ProductModal({
             </div>
             <div className="flex items-center">
               <button
-                onClick={decrementQuantity}
-                disabled={isOutOfStock()}
+                onClick={functions.decrement}
+                disabled={functions.isOutOfStock()}
                 className={`w-10 h-10 flex items-center justify-center border rounded-l-lg transition-all duration-300 ${
-                  isOutOfStock()
+                  functions.isOutOfStock()
                     ? 'opacity-50 cursor-not-allowed'
                     : 'hover:bg-black/5'
                 }`}
@@ -191,36 +216,23 @@ export default function ProductModal({
               </button>
               <input
                 type="number"
-                value={quantity}
+                value={functions.quantity}
                 min={1}
                 max={
                   product.quantity === 'limited'
                     ? product.quantity_items
                     : undefined
                 }
-                disabled={isOutOfStock() || isQuantityLimitReached()}
+                disabled={functions.isOutOfStock() || functions.isQuantityLimitReached()}
                 onChange={(e) => {
                   const value = parseInt(e.target.value);
 
-                  if (isNaN(value)) {
-                    return;
+                  if (functions.validate(value)) {
+                    functions.setQuantity(value);
                   }
-
-                  if (value <= 0) {
-                    setQuantity(1);
-                  }
-
-                  if (
-                    product.quantity === 'limited' &&
-                    value > parseInt(product.quantity_items)
-                  ) {
-                    setQuantity(parseInt(product.quantity_items));
-                  }
-
-                  setQuantity(value);
                 }}
                 className={`w-12 h-10 text-center border-t border-b [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
-                  isOutOfStock() || isQuantityLimitReached()
+                  functions.isOutOfStock() || functions.isQuantityLimitReached()
                     ? 'opacity-50 bg-transparent'
                     : ''
                 }`}
@@ -229,10 +241,10 @@ export default function ProductModal({
                 }}
               />
               <button
-                onClick={incrementQuantity}
-                disabled={isOutOfStock() || isQuantityLimitReached()}
+                onClick={functions.increment}
+                disabled={functions.isOutOfStock() || functions.isQuantityLimitReached()}
                 className={`w-10 h-10 flex items-center justify-center border rounded-r-lg transition-all duration-300 ${
-                  isOutOfStock() || isQuantityLimitReached()
+                  functions.isOutOfStock() || functions.isQuantityLimitReached()
                     ? 'opacity-50 cursor-not-allowed'
                     : 'hover:bg-black/5'
                 }`}
@@ -261,16 +273,16 @@ export default function ProductModal({
           <Button
             onClick={() => {
               window.dispatchEvent(
-                new CustomEvent('addToCart', {
-                  detail: { product },
+                new CustomEvent('addToBag', {
+                  detail: { product, quantity: functions.quantity, image: images[0] },
                 })
               );
 
-              setProduct(null);
+              setProduct(undefined);
             }}
-            disabled={isOutOfStock() || isQuantityLimitReached()}
+            disabled={functions.isOutOfStock() || functions.isQuantityLimitReached()}
             className={`w-full flex-1 py-4 text-base mt-auto max-h-12 h-full font-medium rounded-md text-center transition-all duration-300 flex items-center justify-center gap-2 ${
-              isOutOfStock() || isQuantityLimitReached()
+              functions.isOutOfStock() || functions.isQuantityLimitReached()
                 ? 'opacity-50 cursor-not-allowed'
                 : 'hover:shadow-lg hover:translate-y-[-1px]'
             }`}
