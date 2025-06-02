@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import debounce from 'lodash.debounce';
-import { ListFilterPlus } from 'lucide-react';
+import { Check, ListFilterPlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -14,9 +14,11 @@ import type { ProductFilters as ProductFiltersType } from '@/@types/product';
 
 export default function ProductFilters({
   storeConfig,
+  filters,
   setFilters,
 }: {
   storeConfig?: StoreConfig;
+  filters: ProductFiltersType;
   setFilters: React.Dispatch<React.SetStateAction<ProductFiltersType>>;
 }) {
   const handleSearch = useCallback(
@@ -28,6 +30,34 @@ export default function ProductFilters({
     }, 300),
     []
   );
+
+  const productFilters = [
+    {
+      name: 'Newest',
+      value: 'created_at-desc',
+      icon: '🆕',
+    },
+    {
+      name: 'Oldest',
+      value: 'created_at-asc',
+      icon: '🕰️',
+    },
+    {
+      name: 'Most Popular',
+      value: 'popular',
+      icon: '🔥',
+    },
+    {
+      name: 'Price: Low to High',
+      value: 'price-asc',
+      icon: '💲',
+    },
+    {
+      name: 'Price: High to Low',
+      value: 'price-desc',
+      icon: '💰',
+    },
+  ];
 
   return (
     <Popover>
@@ -62,6 +92,37 @@ export default function ProductFilters({
             placeholder="Search by name or description"
             onChange={(e) => handleSearch(e.target.value)}
           />
+
+          <div className="mt-4">
+            <h4 className="font-semibold text-xs mb-2">Sort By</h4>
+            <ul className="space-y-1">
+              {productFilters.map((filter) => (
+                <li key={filter.value}>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start text-left text-sm"
+                    onClick={() => {
+                      setFilters((prev) => ({
+                        ...prev,
+                        sortBy: filter.value,
+                      }));
+                    }}
+                  >
+                    <span className="mr-2">{filter.icon}</span>
+                    {filter.name}
+
+                    <Check
+                      className={`ml-auto size-4 ${
+                        filter.value === filters.sortBy
+                          ? 'text-blue-500'
+                          : 'hidden'
+                      }`}
+                    />
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
       </PopoverContent>
     </Popover>

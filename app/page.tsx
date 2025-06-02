@@ -7,8 +7,8 @@ import { useStore } from '@/context/StoreContext';
 import Hero from '@/components/store/hero';
 import ProductCard from '@/components/store/product-card';
 import ProductFilters from '@/components/store/product-filters';
-import { Button } from '@/components/ui/button';
 import ProductCategory from '@/components/store/product-category';
+import { Button } from '@/components/ui/button';
 
 export default function Home() {
   const { store, config } = useStore();
@@ -40,7 +40,11 @@ export default function Home() {
               {((products?.length || 0) > 0 ||
                 filters.search ||
                 filters.category) && (
-                <ProductFilters setFilters={setFilters} storeConfig={config} />
+                <ProductFilters
+                  filters={filters}
+                  setFilters={setFilters}
+                  storeConfig={config}
+                />
               )}
             </div>
           </div>
@@ -70,7 +74,29 @@ export default function Home() {
 
             {!isLoading && products?.length === 0 && (
               <div className="col-span-4 text-center text-gray-500">
-                No products found.
+                No products found.{' '}
+                {filters.search
+                  ? `Try searching for something else.`
+                  : filters.category
+                  ? `Check for products in other categories.`
+                  : ''}
+                <br />
+                {(filters.search || filters.category) && (
+                  <Button
+                    variant="link"
+                    style={{
+                      color: config?.theme_color || '#0070F3',
+                    }}
+                    onClick={() =>
+                      setFilters({
+                        search: '',
+                        category: undefined,
+                      })
+                    }
+                  >
+                    Clear Filters
+                  </Button>
+                )}
               </div>
             )}
 
