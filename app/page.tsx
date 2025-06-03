@@ -5,9 +5,9 @@ import { useProducts } from '@/data/product';
 import { useCategories } from '@/data/category';
 import { useStore } from '@/context/store-context';
 import Hero from '@/components/store/hero';
-import ProductCard from '@/components/store/product-card';
-import ProductFilters from '@/components/store/product-filters';
-import ProductCategory from '@/components/store/product-category';
+import ProductCard from '@/components/product/product-card';
+import ProductFilters from '@/components/product/product-filters';
+import ProductCategory from '@/components/product/product-category';
 import { Button } from '@/components/ui/button';
 import ProductModal from '@/components/modals/product-modal';
 

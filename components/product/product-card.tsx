@@ -37,7 +37,7 @@ export default function ProductCard({
             })
           );
         } else {
-          router.push(`/product/${product.id}`);
+          router.push(`/products/${product.id}`);
         }
       }}
     >

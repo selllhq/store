@@ -1,35 +1,19 @@
 import { Bricolage_Grotesque } from 'next/font/google';
-import { getSubdomainFromHeaders } from '../lib/subdomain';
-import StoreNotFound from '../components/store-not-found';
 
 import './globals.css';
+import { getStore } from '@/lib/http';
 import { StoreProvider } from '@/context/store-context';
 import TopNav from '@/components/store/topnav';
 import { BagProvider } from '@/context/bag-context';
+import StoreNotFound from '@/components/store/store-not-found';
 
 const bricolageGrotesque = Bricolage_Grotesque({
   variable: '--font-bricolage',
   subsets: ['latin'],
 });
 
-async function getStore(subdomain: string | null) {
-  if (!subdomain) {
-    return null;
-  }
-
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_BASEURL}/stores/${subdomain}`
-  );
-
-  if (!res.ok) {
-    return null;
-  }
-
-  return res.json();
-}
-
 export const generateMetadata = async () => {
-  const store = await getStore(await getSubdomainFromHeaders());
+  const store = await getStore();
 
   if (!store) {
     return {
@@ -40,9 +24,9 @@ export const generateMetadata = async () => {
 
   return {
     icons: {
-      icon: new URL(store.logo),
-      apple: new URL(store.logo),
-      shortcut: new URL(store.logo),
+      icon: store.logo ? new URL(store.logo) : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
+      apple: store.logo ? new URL(store.logo) : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
+      shortcut: store.logo ? new URL(store.logo) : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
     },
     title: `${store.name} | Shop Online`,
     description: store.description,
@@ -65,7 +49,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const storeData = await getStore(await getSubdomainFromHeaders());
+  const storeData = await getStore();
 
   return (
     <html lang="en">

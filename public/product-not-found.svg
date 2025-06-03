@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Product Not Found</title>
+    <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g transform="translate(40, 40)">
+            <!-- Shopping bag outline -->
+            <rect x="10" y="25" width="100" height="90" rx="8" stroke="#6366F1" stroke-width="4" fill="white"/>
+            <!-- Bag handles -->
+            <path d="M30,25 C30,10 50,10 50,25" stroke="#6366F1" stroke-width="4" fill="none"/>
+            <path d="M70,25 C70,10 90,10 90,25" stroke="#6366F1" stroke-width="4" fill="none"/>
+            <!-- Product outline -->
+            <rect x="35" y="45" width="50" height="50" rx="4" stroke="#6366F1" stroke-width="3" stroke-dasharray="6,3" fill="white"/>
+            <!-- Question mark -->
+            <text x="60" y="80" font-family="Arial" font-size="35" font-weight="bold" fill="#6366F1" text-anchor="middle">?</text>
+            <!-- X mark -->
+            <circle cx="110" cy="20" r="15" fill="#EF4444"/>
+            <path d="M103,13 L117,27 M117,13 L103,27" stroke="white" stroke-width="3" stroke-linecap="round"/>
+        </g>
+    </g>
+</svg>

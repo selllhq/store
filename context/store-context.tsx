@@ -10,7 +10,7 @@ export const StoreContext = createContext({});
 
 export const StoreProvider: React.FC<
   React.PropsWithChildren<{
-    store?: string;
+    store?: Store;
     children: React.ReactNode;
   }>
 > = ({ children, ...props }) => {

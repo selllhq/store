@@ -19,14 +19,37 @@ function getSubdomain(hostname: string): string | null {
   return null;
 }
 
-export function middleware(request: NextRequest) {
+async function getStore(subdomain: string | null) {
+  if (!subdomain) {
+    return null;
+  }
+
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_BASEURL}/stores/${subdomain}`
+  );
+
+  if (!res.ok) {
+    return null;
+  }
+
+  return res.json();
+}
+
+export async function middleware(request: NextRequest) {
   const hostname = request.headers.get('host') || '';
   const subdomain = getSubdomain(hostname);
 
   const requestHeaders = new Headers(request.headers);
 
   if (subdomain) {
-    requestHeaders.set('x-subdomain', subdomain);
+    const storeData = await getStore(subdomain);
+
+    if (storeData) {
+      requestHeaders.set('SELLL_STORE_CONFIG', storeData.config || '{}');
+      delete storeData.config;
+  
+      requestHeaders.set('SELLL_STORE', storeData?.id ? JSON.stringify(storeData) : '{}');
+    }
   }
 
   return NextResponse.next({
