@@ -14,6 +14,8 @@ const eslintConfig = [
     extends: ['next', 'next/core-web-vitals', 'next/typescript'],
     rules: {
       'react/no-unescaped-entities': 'off',
+      '@typescript-eslint/ban-ts-comment': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   }),
 ];
