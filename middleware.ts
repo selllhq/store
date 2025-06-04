@@ -46,7 +46,7 @@ export async function middleware(request: NextRequest) {
     if (storeData) {
       const response = NextResponse.next();
 
-      response.cookies.set('SELLL_STORE_CONFiG', encode(storeData?.config || '{}'));
+      response.cookies.set('SELLL_STORE_CONFIG', encode(storeData?.config || '{}'));
       delete storeData.config;
   
       response.cookies.set('SELLL_STORE', encode(storeData?.id ? JSON.stringify(storeData) : '{}'));
