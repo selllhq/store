@@ -6,8 +6,12 @@ import ProductNotFound from '@/components/product/product-not-found';
 import { Button } from '@/components/ui/button';
 
 import type { StoreConfig } from '@/@types/store';
+import { Product } from '@/@types/product';
 
-async function getProduct(storeId: number, id: string) {
+async function getProduct(
+  storeId: number,
+  id: string
+): Promise<Product | null> {
   const res = await fetch(
     `${process.env.NEXT_PUBLIC_API_BASEURL}/stores/${storeId}/products/${id}`
   );
@@ -18,6 +22,59 @@ async function getProduct(storeId: number, id: string) {
 
   return res.json();
 }
+
+export const generateMetadata = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const store = await getStore();
+
+  if (!store) {
+    return {
+      title: 'Store not found',
+      description: 'Store not found',
+    };
+  }
+
+  const product = await getProduct(store.id, (await params).id);
+
+  if (!product) {
+    return {
+      title: 'Product not found',
+      description: 'Product not found',
+    };
+  }
+
+  const images = product?.images ? JSON.parse(product?.images) : [];
+
+  return {
+    icons: {
+      icon: images[0]
+        ? new URL(images[0])
+        : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
+      apple: images[0]
+        ? new URL(images[0])
+        : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
+      shortcut: images[0]
+        ? new URL(images[0])
+        : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
+    },
+    title: `${product.name} by ${store.name}`,
+    description: product.description,
+    openGraph: {
+      title: `${product.name} by ${store.name}`,
+      description: product.description,
+      images: [
+        {
+          url: images[0],
+          width: 672,
+          height: 346,
+        },
+      ],
+    },
+  };
+};
 
 export default async function ProductPage({
   params,
