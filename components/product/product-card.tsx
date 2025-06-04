@@ -101,57 +101,64 @@ export default function ProductCard({
         <h3 className="font-bold text-xl mb-1.5 line-clamp-1 group-hover:text-opacity-90 transition-colors duration-300">
           {product.name}
         </h3>
-        <p className="text-sm mb-4 opacity-70 line-clamp-2 group-hover:opacity-90 transition-opacity duration-300">
-          {product.description}
-        </p>
 
-        <div className="flex justify-between items-center">
-          <span
-            className="text-2xl font-bold transition-all duration-300 group-hover:translate-x-1"
-            style={{
-              color: storeConfig?.theme_color || '#FFA726',
-            }}
-          >
-            {new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency,
-            }).format(Number(product.price))}
-          </span>
+        {storeConfig?.show_product_description && (
+          <p className="text-sm mb-4 opacity-70 line-clamp-2 group-hover:opacity-90 transition-opacity duration-300">
+            {product.description}
+          </p>
+        )}
 
-          <Button
-            onClick={(e) => {
-              e.stopPropagation();
-              window.dispatchEvent(
-                new CustomEvent('addToBag', {
-                  detail: { product, image: productImage, quantity: 1 },
-                })
-              );
-            }}
-            className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
-            style={{
-              backgroundColor: storeConfig?.theme_color
-                ? `${storeConfig.theme_color}20`
-                : '#FFA72620',
-              color: storeConfig?.theme_color || '#FFA726',
-              boxShadow: `0 2px 8px ${storeConfig?.theme_color || '#FFA726'}20`,
-            }}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+        {storeConfig?.show_product_price && (
+          <div className="flex justify-between items-center">
+            <span
+              className="text-2xl font-bold transition-all duration-300 group-hover:translate-x-1"
+              style={{
+                color: storeConfig?.theme_color || '#FFA726',
+              }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={1.5}
-                d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-              />
-            </svg>
-          </Button>
-        </div>
+              {new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency,
+              }).format(Number(product.price))}
+            </span>
+
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                window.dispatchEvent(
+                  new CustomEvent('addToBag', {
+                    detail: { product, image: productImage, quantity: 1 },
+                  })
+                );
+              }}
+              className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
+              style={{
+                backgroundColor: storeConfig?.theme_color
+                  ? `${storeConfig.theme_color}20`
+                  : '#FFA72620',
+                color: storeConfig?.theme_color || '#FFA726',
+                boxShadow: `0 2px 8px ${
+                  storeConfig?.theme_color || '#FFA726'
+                }20`,
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                />
+              </svg>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -32,13 +32,15 @@ export default function TopNav() {
                 src={store.logo}
               />
             )}
-            <Link
-              className="text-xl font-semibold hover:text-gray-700 transition-colors"
-              href="/"
-              data-discover="true"
-            >
-              {store.name}
-            </Link>
+            {config.show_store_name && (
+              <Link
+                className="text-xl font-semibold hover:text-gray-700 transition-colors"
+                href="/"
+                data-discover="true"
+              >
+                {store.name}
+              </Link>
+            )}
           </div>
 
           {/* <div className="hidden md:flex items-center space-x-8">
@@ -61,11 +63,9 @@ export default function TopNav() {
           </button>
         </div> */}
 
-          
           <Bag store={store} storeConfig={config} />
         </div>
       </header>
-
     </>
   );
 }

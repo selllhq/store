@@ -331,7 +331,7 @@ export default function Home() {
       </main>
 
       <footer
-        className="mt-24 border-t py-12"
+        className="mt-24 border-t pt-12"
         style={{
           borderColor: config?.border_color
             ? `${config.border_color}15`
@@ -351,6 +351,9 @@ export default function Home() {
                 )}
                 <h2 className="font-semibold text-lg">{store?.name}</h2>
               </div>
+              {config?.show_store_description && store?.description && (
+                <p className="text-sm opacity-70">{store?.description}</p>
+              )}
               <p className="text-sm opacity-70">
                 &copy; {new Date().getFullYear()} {store?.name}. All rights
                 reserved.
