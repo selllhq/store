@@ -103,9 +103,10 @@ export default function ProductCard({
         </h3>
 
         {storeConfig?.show_product_description && (
-          <p className="text-sm mb-4 opacity-70 line-clamp-2 group-hover:opacity-90 transition-opacity duration-300">
-            {product.description}
-          </p>
+          <p
+            className="text-sm mb-4 opacity-70 line-clamp-2 group-hover:opacity-90 transition-opacity duration-300"
+            dangerouslySetInnerHTML={{ __html: product.description }}
+          ></p>
         )}
 
         {storeConfig?.show_product_price && (

@@ -123,3 +123,19 @@
     @apply bg-background text-foreground;
   }
 }
+
+ul.list-node {
+  @apply list-disc;
+}
+
+ul.list-node li {
+  @apply list-item ml-6;
+}
+
+ol.list-node {
+  @apply list-decimal;
+}
+
+ol.list-node li {
+  @apply list-item ml-6;
+}
