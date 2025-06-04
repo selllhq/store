@@ -106,7 +106,7 @@ export default async function ProductPage({
       }}
     >
       <main className="container mx-auto px-4 sm:px-6 py-10">
-        <div className="grid md:grid-cols-2 gap-10">
+        <div className="grid md:grid-cols-2 gap-10 relative">
           <ProductInfo store={store} product={product} storeConfig={config} />
         </div>
 

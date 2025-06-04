@@ -7,6 +7,7 @@ import type { Store, StoreConfig } from '@/@types/store';
 import { Minus, X } from 'lucide-react';
 import { getProductCartFunctions } from '@/data/product';
 import CheckoutModal from '../modals/checkout-modal';
+import Link from 'next/link';
 
 declare global {
   interface WindowEventMap {
@@ -450,8 +451,11 @@ export default function Bag({
                   >
                     Checkout
                   </button>
-                  <button
-                    onClick={() => setShow(false)}
+                  <Button
+                    asChild
+                    onClick={() => {
+                      setShow(false);
+                    }}
                     className="w-full py-3 border font-medium rounded transition-colors"
                     style={{
                       borderColor: storeConfig?.theme_color || '#2A2A2A',
@@ -468,8 +472,16 @@ export default function Bag({
                       (e.currentTarget.style.backgroundColor = 'transparent')
                     }
                   >
-                    Keep Shopping
-                  </button>
+                    <Link
+                      href="/"
+                      style={{
+                        color: storeConfig?.text_color || '#FFFFFF',
+                        textDecoration: 'none',
+                      }}
+                    >
+                      Keep Shopping
+                    </Link>
+                  </Button>
                 </div>
               </div>
             </div>
