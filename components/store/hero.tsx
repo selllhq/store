@@ -82,46 +82,49 @@ export default function Hero({
                       'Explore our collection of high-quality products designed to meet your needs.'}
                   </p>
 
-                  <div
-                    className="flex"
-                    style={{
-                      justifyContent:
-                        storeConfig?.hero_content_alignment === 'center'
-                          ? 'center'
-                          : storeConfig?.hero_content_alignment === 'right'
-                          ? 'flex-end'
-                          : 'flex-start',
-                    }}
-                  >
-                    <button
-                      className="px-6 py-3 rounded-md font-medium text-sm transition-all duration-300 text-white flex items-center gap-2"
+                  {storeConfig?.show_hero_button && (
+                    <div
+                      className="flex"
                       style={{
-                        backgroundColor: storeConfig?.theme_color || '#FFA726',
-                        borderRadius: '6px',
+                        justifyContent:
+                          storeConfig?.hero_content_alignment === 'center'
+                            ? 'center'
+                            : storeConfig?.hero_content_alignment === 'right'
+                            ? 'flex-end'
+                            : 'flex-start',
                       }}
-                      onClick={() =>
-                        document
-                          .getElementById('products-section')
-                          ?.scrollIntoView({ behavior: 'smooth' })
-                      }
                     >
-                      Shop Now
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-4 w-4"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
+                      <button
+                        className="px-6 py-3 rounded-md font-medium text-sm transition-all duration-300 text-white flex items-center gap-2"
+                        style={{
+                          backgroundColor:
+                            storeConfig?.theme_color || '#FFA726',
+                          borderRadius: '6px',
+                        }}
+                        onClick={() =>
+                          document
+                            .getElementById('products-section')
+                            ?.scrollIntoView({ behavior: 'smooth' })
+                        }
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M14 5l7 7m0 0l-7 7m7-7H3"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+                        {storeConfig?.hero_button_text || 'Shop Now'}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M14 5l7 7m0 0l-7 7m7-7H3"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
