@@ -123,41 +123,44 @@ export default function ProductCard({
               }).format(Number(product.price))}
             </span>
 
-            <Button
-              onClick={(e) => {
-                e.stopPropagation();
-                window.dispatchEvent(
-                  new CustomEvent('addToBag', {
-                    detail: { product, image: productImage, quantity: 1 },
-                  })
-                );
-              }}
-              className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
-              style={{
-                backgroundColor: storeConfig?.theme_color
-                  ? `${storeConfig.theme_color}20`
-                  : '#FFA72620',
-                color: storeConfig?.theme_color || '#FFA726',
-                boxShadow: `0 2px 8px ${
-                  storeConfig?.theme_color || '#FFA726'
-                }20`,
-              }}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            {(product.quantity === 'unlimited' ||
+              parseInt(product.quantity_items || '0') > 0) && (
+              <Button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.dispatchEvent(
+                    new CustomEvent('addToBag', {
+                      detail: { product, image: productImage, quantity: 1 },
+                    })
+                  );
+                }}
+                className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
+                style={{
+                  backgroundColor: storeConfig?.theme_color
+                    ? `${storeConfig.theme_color}20`
+                    : '#FFA72620',
+                  color: storeConfig?.theme_color || '#FFA726',
+                  boxShadow: `0 2px 8px ${
+                    storeConfig?.theme_color || '#FFA726'
+                  }20`,
+                }}
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={1.5}
-                  d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                />
-              </svg>
-            </Button>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                  />
+                </svg>
+              </Button>
+            )}
           </div>
         )}
       </div>
