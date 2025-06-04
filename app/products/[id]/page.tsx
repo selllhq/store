@@ -22,7 +22,7 @@ async function getProduct(storeId: number, id: string) {
 export default async function ProductPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const store = await getStore();
 
@@ -30,7 +30,7 @@ export default async function ProductPage({
     redirect('/');
   }
 
-  const product = await getProduct(store.id, params.id);
+  const product = await getProduct(store.id, (await params).id);
 
   if (!product) {
     return <ProductNotFound />;
@@ -50,13 +50,9 @@ export default async function ProductPage({
     >
       <main className="container mx-auto px-4 sm:px-6 py-10">
         <div className="grid md:grid-cols-2 gap-10">
-          <ProductInfo
-            store={store}
-            product={product}
-            storeConfig={config}
-          />
+          <ProductInfo store={store} product={product} storeConfig={config} />
         </div>
-        
+
         <div className="mt-10 max-w-xs mx-auto">
           <Button
             asChild
