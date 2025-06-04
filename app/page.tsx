@@ -10,6 +10,7 @@ import ProductFilters from '@/components/product/product-filters';
 import ProductCategory from '@/components/product/product-category';
 import { Button } from '@/components/ui/button';
 import ProductModal from '@/components/modals/product-modal';
+import AboutStoreModal from '@/components/modals/about-store-modal';
 
 export default function Home() {
   const { store, config } = useStore();
@@ -361,12 +362,7 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col items-center md:items-end gap-2">
-              <button
-                className="text-sm font-medium hover:opacity-80 transition-all duration-200 mb-1"
-                style={{ color: config?.theme_color || '#0070F3' }}
-              >
-                About this store
-              </button>
+              <AboutStoreModal store={store} storeConfig={config} />
               <p className="text-sm opacity-70">
                 Powered by{' '}
                 <a
