@@ -425,8 +425,14 @@ export default function Bag({
                   </div>
                 </div>
                 <div className="space-y-2">
+                  {store.status !== 'live' && (
+                    <small className="text-red-500 text-sm mb-2 block">
+                      You will not be able to checkout as the store is not live.
+                    </small>
+                  )}
                   <button
-                    className="w-full py-3 font-medium rounded transition-colors text-white"
+                    className="w-full py-3 font-medium rounded transition-colors text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={store.status !== 'live'}
                     style={{
                       backgroundColor: storeConfig?.theme_color || '#FFA726',
                       filter: 'brightness(1)',
