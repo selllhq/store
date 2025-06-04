@@ -13,7 +13,7 @@ export default function ProductInfo({
     product,
     store,
     storeConfig,
-    layout = 'modal',
+    // layout = 'modal',
     onAddToBag,
 }: {
     product: Product;
