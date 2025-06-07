@@ -232,9 +232,12 @@ export default function Bag({
                             }).format(Number(item.product.price))}
                           </p>
                           {item.product.description && (
-                            <p className="text-sm text-gray-400 mt-1 line-clamp-2">
-                              {item.product.description}
-                            </p>
+                            <p
+                              className="text-sm text-gray-400 mt-1 line-clamp-2"
+                              dangerouslySetInnerHTML={{
+                                __html: item.product.description,
+                              }}
+                            ></p>
                           )}
                         </div>
                         <button
