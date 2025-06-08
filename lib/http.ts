@@ -37,8 +37,6 @@ export async function getStore(): Promise<Store | null> {
     ? JSON.parse(decode(storeConfigCookie) ?? '{}')
     : {};
 
-  console.log('Store Config:', storeConfig);
-
   if (!storeConfig?.theme_color) {
     storeConfig = {
       ...defaultStoreConfig,
