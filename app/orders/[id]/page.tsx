@@ -166,7 +166,10 @@ export default function OrderPage() {
             </svg>
           </div>
           <h1 className="text-3xl font-bold mb-2">Thank You for Your Order!</h1>
-          <p className="text-lg mb-2">Your order has been confirmed.</p>
+          <p className="text-lg mb-2">
+            Your order has been{' '}
+            {order?.status === 'completed' ? 'delivered!' : 'confirmed'}.
+          </p>
           <p className="text-md text-gray-500">Order #{order?.id}</p>
         </div>
 
