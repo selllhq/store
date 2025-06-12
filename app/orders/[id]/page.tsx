@@ -350,7 +350,7 @@ export default function OrderPage() {
           </div>
         </div>
 
-        {order?.status === 'completed' && (
+        {order?.status === 'paid' && (
           <div
             className="border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-8"
             style={{ borderColor: config?.border_color || '#E5E7EB' }}
