@@ -30,7 +30,7 @@ export default function Home() {
       <Hero store={store} storeConfig={config} />
 
       <main
-        className="container mx-auto px-4 sm:px-6 py-10"
+        className="container mx-auto px-4 sm:px-6"
         style={{
           marginTop: config?.show_hero ? 64 : 0,
         }}
