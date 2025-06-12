@@ -148,7 +148,6 @@ export default function OrderPage() {
       }}
     >
       <div className="container mx-auto px-4 py-12 max-w-4xl">
-        {/* Header section */}
         <div className="text-center mb-8">
           <div className="w-16 h-16 mx-auto mb-4 rounded-full flex items-center justify-center bg-green-50">
             <svg
@@ -350,6 +349,52 @@ export default function OrderPage() {
             </div>
           </div>
         </div>
+
+        {order?.status === 'completed' && (
+          <div
+            className="border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-8"
+            style={{ borderColor: config?.border_color || '#E5E7EB' }}
+          >
+            <div
+              className="p-4 border-b border-gray-200 bg-gray-50/10"
+              style={{ borderColor: config?.border_color || '#E5E7EB' }}
+            >
+              <h3 className="font-medium">Order Shipping/Delivery</h3>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="flex justify-between">
+                <span className="text-gray-600">Status</span>
+                <span>Pending</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-600">Estimated Delivery Date</span>
+                <span>
+                  {(order?.shipping_updates?.length || 0) > 0
+                    ? dayjs(
+                        order?.shipping_updates![
+                          order?.shipping_updates!.length - 1
+                        ].estimated_delivery_date
+                      ).format('ddd, D MMMM, YYYY')
+                    : dayjs(order?.updated_at)
+                        .add(7, 'day')
+                        .format('ddd, D MMMM, YYYY')}
+                </span>
+              </div>
+              {(order?.shipping_updates?.length || 0) > 0 && (
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Delivery Updates</span>
+                  <span>
+                    {`${order.shipping_updates!.length} updates from seller — ${
+                      order.shipping_updates![
+                        order.shipping_updates!.length - 1
+                      ].message
+                    }`}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
 
         <div className="flex justify-end mb-8">
           <Button

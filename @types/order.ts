@@ -35,6 +35,7 @@ export interface Order {
   created_at: string;
   updated_at: string;
   customer: StoreCustomer;
+  shipping_updates?: OrderShippingUpdate[];
 }
 
 export interface OrderItem {
@@ -48,4 +49,19 @@ export interface OrderItem {
   created_at: string;
   updated_at: string;
   product: Product;
+}
+
+export interface OrderShippingUpdate {
+  id: number;
+  store_id: number;
+  customer_id: number;
+  cart_id: number;
+  message: string;
+  status: 'pending' | 'completed' | 'cancelled';
+  tracking_id?: string;
+  carrier?: string;
+  shipping_method?: string;
+  estimated_delivery_date: string;
+  created_at: string;
+  updated_at: string;
 }
