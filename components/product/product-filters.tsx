@@ -83,17 +83,22 @@ export default function ProductFilters({
         }}
       >
         <div>
-          <h3 className="font-semibold text-xs mb-2">
-            Find Your Perfect Products
-          </h3>
+          {!storeConfig?.show_hero_search && (
+            <>
+              <h3 className="font-semibold text-xs mb-2">
+                Find Your Perfect Products
+              </h3>
 
-          <Input
-            type="text"
-            placeholder="Search by name or description"
-            onChange={(e) => handleSearch(e.target.value)}
-          />
+              <Input
+                type="text"
+                placeholder="Search by name or description"
+                onChange={(e) => handleSearch(e.target.value)}
+                className="w-full mb-4"
+              />
+            </>
+          )}
 
-          <div className="mt-4">
+          <div>
             <h4 className="font-semibold text-xs mb-2">Sort By</h4>
             <ul className="space-y-1">
               {productFilters.map((filter) => (

@@ -34,15 +34,17 @@ export interface StoreConfig {
   show_store_logo: boolean;
   show_store_description: boolean;
   show_store_information_in_popup: boolean;
+  show_hero_search: boolean;
   show_product_price: boolean;
   show_product_description: boolean;
   show_contact_info: boolean;
-  contact_email?: string,
-  contact_phone?: string,
-  contact_address?: string,
-  facebook_url?: string,
-  instagram_url?: string,
-  twitter_url?: string,
+  two_cards_on_mobile: boolean;
+  contact_email?: string;
+  contact_phone?: string;
+  contact_address?: string;
+  facebook_url?: string;
+  instagram_url?: string;
+  twitter_url?: string;
   [key: string]: any;
 }
 

@@ -1,13 +1,30 @@
-import { Store, StoreConfig } from "@/@types/store";
-import { adjustColorBrightness } from "@/lib/utils";
+import { useCallback } from 'react';
+import debounce from 'lodash.debounce';
+import { Store, StoreConfig } from '@/@types/store';
+import { adjustColorBrightness } from '@/lib/utils';
+
+import type { ProductFilters } from '@/@types/product';
+import { Input } from '../ui/input';
 
 export default function Hero({
   store,
-  storeConfig
+  storeConfig,
+  setFilters,
 }: {
-  store: Store,
-  storeConfig?: StoreConfig
+  store: Store;
+  storeConfig?: StoreConfig;
+  setFilters: React.Dispatch<React.SetStateAction<ProductFilters>>;
 }) {
+  const handleSearch = useCallback(
+    debounce((value: string) => {
+      setFilters((prev) => ({
+        ...prev,
+        search: value,
+      }));
+    }, 300),
+    []
+  );
+
   return (
     <>
       {storeConfig?.show_hero && (
@@ -123,6 +140,17 @@ export default function Hero({
                           />
                         </svg>
                       </button>
+                    </div>
+                  )}
+
+                  {storeConfig?.show_hero_search && (
+                    <div className="mt-6">
+                      <Input
+                        type="text"
+                        placeholder="Search products..."
+                        className="w-full px-4 py-2 rounded-md bg-white/90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
+                        onChange={(e) => handleSearch(e.target.value)}
+                      />
                     </div>
                   )}
                 </div>

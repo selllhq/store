@@ -27,7 +27,11 @@ export default function Home() {
         paddingBottom: '4rem',
       }}
     >
-      <Hero store={store} storeConfig={config} />
+      <Hero
+        store={store}
+        storeConfig={config}
+        setFilters={setFilters}
+      />
 
       <main
         className="container mx-auto px-4 sm:px-6"
@@ -35,7 +39,10 @@ export default function Home() {
           marginTop: config?.show_hero ? 64 : 0,
         }}
       >
-        {(products?.length || 0) > 0 || filters.search || filters.category || isLoading ? (
+        {(products?.length || 0) > 0 ||
+        filters.search ||
+        filters.category ||
+        isLoading ? (
           <div id="products-section" className="scroll-m-28">
             <div className="flex justify-between items-center mb-8 gap-4">
               <h2
