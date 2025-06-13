@@ -27,11 +27,7 @@ export default function Home() {
         paddingBottom: '4rem',
       }}
     >
-      <Hero
-        store={store}
-        storeConfig={config}
-        setFilters={setFilters}
-      />
+      <Hero store={store} storeConfig={config} setFilters={setFilters} />
 
       <main
         className="container mx-auto px-4 sm:px-6"
@@ -78,7 +74,11 @@ export default function Home() {
               </div>
             )}
 
-            <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+            <div
+              className={`grid ${
+                config.two_cards_on_mobile ? 'grid-cols-2' : ''
+              } sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12`}
+            >
               {isLoading && (
                 <>
                   {[...Array(8)].map((_, index) => (
@@ -371,7 +371,7 @@ export default function Home() {
             <div className="flex flex-col items-center md:items-end gap-2">
               <AboutStoreModal store={store} storeConfig={config} />
               <p className="text-sm opacity-70">
-                Powered by{' '}
+                Create your free online store on {' '}
                 <a
                   href="https://selll.online"
                   target="_blank"
