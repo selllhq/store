@@ -67,6 +67,13 @@ export default function ProductFilters({
           className="relative p-2 hover:bg-gray-400/10 transition-colors"
           aria-label="Filter Products"
         >
+          {filters.sortBy && (
+            <span className="text-xs hover:text-white px-2 py-1 rounded">
+              <span className="mr-1">{productFilters.find((f) => f.value === filters.sortBy)?.icon}</span>
+              {productFilters.find((f) => f.value === filters.sortBy)?.name}
+            </span>
+          )}
+
           <ListFilterPlus
             style={{ color: storeConfig?.text_color }}
             className="size-5 md:size-6"
