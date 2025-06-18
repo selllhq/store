@@ -21,10 +21,10 @@ export default function ProductCard({
   return (
     <div
       key={product.id}
-      className={`overflow-hidden shadow-md border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
+      className={`overflow-hidden border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
         storeConfig?.two_cards_on_mobile
           ? 'border-0 md:border md:rounded-lg'
-          : 'rounded-lg'
+          : 'rounded-lg shadow-md'
       }`}
       style={{
         backgroundColor: storeConfig?.background_color
@@ -66,7 +66,7 @@ export default function ProductCard({
 
         {productImage ? (
           <div
-            className={`relative w-full h-full overflow-hidden bg-gray-100/10 ${
+            className={`relative w-full h-full overflow-hidden bg-gray-100/50 ${
               storeConfig?.two_cards_on_mobile
                 ? 'rounded-lg md:rounded-none'
                 : ''
