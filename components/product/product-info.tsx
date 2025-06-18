@@ -29,7 +29,7 @@ export default function ProductInfo({
 
   return (
     <>
-      <div className="aspect-square flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+      <div className="aspect-square relative flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
         {images.length > 0 ? (
           <div className="relative w-full h-full p-6 flex items-center justify-center overflow-hidden">
             <div className="absolute inset-0 opacity-5 z-10 hero-gradient pointer-events-none"></div>
@@ -58,38 +58,40 @@ export default function ProductInfo({
             </svg>
           </div>
         )}
-      </div>
 
-      {images.length > 1 && (
-        <div className="absolute bottom-4 left-4 right-4 z-20 w-1/2">
-          <div className="flex gap-2 overflow-x-auto pb-2 px-2 -mx-2 snap-x">
-            {images.map((image: string, index: number) => (
-              <button
-                key={index}
-                onClick={() => setSelectedImage(index)}
-                className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all duration-300 snap-start ${
-                  selectedImage === index
-                    ? 'ring-2 ring-offset-1 scale-105 shadow-lg'
-                    : 'opacity-60 hover:opacity-90 hover:scale-105'
-                }`}
-                style={{
-                  borderColor: storeConfig?.border_color || '#E5E5E5',
-                  boxShadow:
+        {images.length > 1 && (
+          <div className="absolute bottom-3 left-4 right-4 z-20 w-1/2">
+            <div className="flex gap-2 overflow-x-auto pb-2 px-2 -mx-2 snap-x">
+              {images.map((image: string, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => setSelectedImage(index)}
+                  className={`relative flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all duration-300 snap-start ${
                     selectedImage === index
-                      ? `0 4px 12px ${storeConfig?.theme_color || '#4CAF50'}30`
-                      : 'none',
-                }}
-              >
-                <img
-                  src={image}
-                  alt={`${product.name} - Thumbnail ${index + 1}`}
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            ))}
+                      ? 'ring-2 ring-offset-1 scale-105 shadow-lg'
+                      : 'opacity-60 hover:opacity-90 hover:scale-105'
+                  }`}
+                  style={{
+                    borderColor: storeConfig?.border_color || '#E5E5E5',
+                    boxShadow:
+                      selectedImage === index
+                        ? `0 4px 12px ${
+                            storeConfig?.theme_color || '#4CAF50'
+                          }30`
+                        : 'none',
+                  }}
+                >
+                  <img
+                    src={image}
+                    alt={`${product.name} - Thumbnail ${index + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       <div className="absolute top-4 left-4 z-20">
         <span
