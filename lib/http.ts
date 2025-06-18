@@ -22,6 +22,8 @@ const defaultStoreConfig: StoreConfig = {
   show_product_price: true,
   show_product_description: true,
   show_contact_info: true,
+  show_hero_search: false,
+  two_cards_on_mobile: true,
 };
 
 export async function getStore(): Promise<Store | null> {

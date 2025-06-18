@@ -42,7 +42,7 @@ export default function ProductModal({
       }}
     >
       <div
-        className="grid md:grid-cols-2 relative bg-opacity-95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] md:overflow-hidden transform transition-all duration-500 border border-opacity-10"
+        className="grid md:grid-cols-2 relative bg-opacity-95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-auto md:overflow-hidden transform transition-all duration-500 border border-opacity-10"
         onClick={(e) => e.stopPropagation()}
         style={{
           backgroundColor: storeConfig?.background_color || '#FFFFFF',
@@ -52,7 +52,7 @@ export default function ProductModal({
       >
         <Button
           variant="ghost"
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10 p-2 rounded-full transition-all duration-300 hover:bg-black/5"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-90 p-2 rounded-full transition-all duration-300 hover:bg-black/5"
           aria-label="Close modal"
           onClick={() => {
             setProduct(undefined);

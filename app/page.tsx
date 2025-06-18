@@ -77,7 +77,7 @@ export default function Home() {
             <div
               className={`grid ${
                 config.two_cards_on_mobile ? 'grid-cols-2' : ''
-              } sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12`}
+              } sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12`}
             >
               {isLoading && (
                 <>
@@ -371,7 +371,7 @@ export default function Home() {
             <div className="flex flex-col items-center md:items-end gap-2">
               <AboutStoreModal store={store} storeConfig={config} />
               <p className="text-sm opacity-70">
-                Create your free online store on {' '}
+                Create your free online store on{' '}
                 <a
                   href="https://selll.online"
                   target="_blank"
@@ -384,6 +384,113 @@ export default function Home() {
               </p>
             </div>
           </div>
+
+          {(config?.facebook_url ||
+            config?.instagram_url ||
+            config?.twitter_url) && (
+            <div className="pt-2">
+              <div className="flex gap-3">
+                {config?.facebook_url && (
+                  <a
+                    href={config.facebook_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full transition-all duration-200 hover:opacity-80"
+                    style={{
+                      backgroundColor: `${
+                        config?.theme_color || '#0070F3'
+                      }15`,
+                      color: config?.theme_color || '#0070F3',
+                    }}
+                    aria-label="Facebook"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
+                    </svg>
+                  </a>
+                )}
+
+                {config?.instagram_url && (
+                  <a
+                    href={config.instagram_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full transition-all duration-200 hover:opacity-80"
+                    style={{
+                      backgroundColor: `${
+                        config?.theme_color || '#0070F3'
+                      }15`,
+                      color: config?.theme_color || '#0070F3',
+                    }}
+                    aria-label="Instagram"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <rect
+                        width="20"
+                        height="20"
+                        x="2"
+                        y="2"
+                        rx="5"
+                        ry="5"
+                      ></rect>
+                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5"></line>
+                    </svg>
+                  </a>
+                )}
+
+                {config?.twitter_url && (
+                  <a
+                    href={config.twitter_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 rounded-full transition-all duration-200 hover:opacity-80"
+                    style={{
+                      backgroundColor: `${
+                        config?.theme_color || '#0070F3'
+                      }15`,
+                      color: config?.theme_color || '#0070F3',
+                    }}
+                    aria-label="Twitter"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="16"
+                      height="16"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z"></path>
+                    </svg>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
         </div>
       </footer>
 
