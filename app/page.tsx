@@ -42,7 +42,7 @@ export default function Home() {
           <div id="products-section" className="scroll-m-28">
             <div className="flex justify-between items-center mb-8 gap-4">
               <h2
-                className="text-3xl font-bold"
+                className="text-xl sm:text-3xl font-bold"
                 style={{ color: config?.text_color || '#000000' }}
               >
                 Our Products
