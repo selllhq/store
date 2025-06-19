@@ -15,7 +15,7 @@ export default function ProductModal({
   store,
   storeConfig,
 }: {
-  store: Store
+  store: Store;
   storeConfig?: StoreConfig;
 }) {
   const [product, setProduct] = useState<Product | undefined>();
@@ -32,7 +32,9 @@ export default function ProductModal({
     };
   }, []);
 
-  if (!product) return null;
+  if (!product) {
+    return null;
+  }
 
   return (
     <div

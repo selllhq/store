@@ -47,26 +47,26 @@ export default function ProductCard({
     >
       <div className="relative aspect-square overflow-hidden">
         <div className="absolute top-3 right-3 z-20">
-          <span
-            className={`text-xs font-medium px-2 py-1 rounded-full ${
-              product.quantity === 'unlimited' || product.quantity_items > '0'
-                ? 'bg-green-500/20 text-green-500'
-                : 'bg-red-500/20 text-red-500'
-            }`}
-          >
-            {product.quantity === 'unlimited'
-              ? 'Unlimited'
-              : parseInt(product.quantity_items || '0') === 0
-              ? 'Out of stock'
-              : parseInt(product.quantity_items || '0') <= 5
-              ? `Only ${product.quantity_items} left`
-              : `${product.quantity_items} in stock`}
-          </span>
+          {product.quantity !== 'unlimited' && (
+            <span
+              className={`text-xs font-medium px-2 py-1 rounded-full ${
+                product.quantity_items > '0'
+                  ? 'bg-green-500/20 text-green-500'
+                  : 'bg-red-500/20 text-red-500'
+              }`}
+            >
+              {parseInt(product.quantity_items || '0') === 0
+                ? 'Out of stock'
+                : parseInt(product.quantity_items || '0') <= 5
+                ? `Only ${product.quantity_items} left`
+                : `${product.quantity_items} in stock`}
+            </span>
+          )}
         </div>
 
         {productImage ? (
           <div
-            className={`relative w-full h-full overflow-hidden bg-gray-100/50 ${
+            className={`relative w-full h-full overflow-hidden bg-neutral-200/55 ${
               storeConfig?.two_cards_on_mobile
                 ? 'rounded-lg md:rounded-none'
                 : ''
@@ -122,7 +122,7 @@ export default function ProductCard({
           <h3
             className={`font-bold line-clamp-1 group-hover:text-opacity-90 transition-colors duration-300 ${
               storeConfig?.two_cards_on_mobile
-                ? 'text-lg md:text-xl'
+                ? 'text-base sm:text-lg md:text-xl'
                 : 'text-xl'
             }`}
           >
@@ -172,7 +172,11 @@ export default function ProductCard({
 
         {storeConfig?.show_product_description && (
           <p
-            className="text-sm mb-4 opacity-70 line-clamp-2 group-hover:opacity-90 transition-opacity duration-300"
+            className={`text-xs sm:text-sm mb-4 opacity-70 group-hover:opacity-90 transition-opacity duration-300 ${
+              storeConfig?.two_cards_on_mobile
+                ? 'line-clamp-1 md:line-clamp-2'
+                : 'line-clamp-2'
+            }`}
             dangerouslySetInnerHTML={{ __html: product.description }}
           ></p>
         )}

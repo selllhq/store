@@ -87,12 +87,12 @@ export default function Hero({
                       : ''
                   } max-w-xl`}
                 >
-                  <h2 className="text-4xl md:text-5xl font-bold mb-4 text-white tracking-tight">
+                  <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2 md:mb-4 text-white tracking-tight">
                     {storeConfig?.hero_title || 'Discover Our Products'}
                   </h2>
 
                   <p
-                    className="text-base md:text-lg text-white/80 mb-6"
+                    className="text-sm sm:text-base md:text-lg text-white/80 mb-6"
                     style={{ fontWeight: '300' }}
                   >
                     {storeConfig?.hero_description ||
@@ -148,7 +148,7 @@ export default function Hero({
                       <Input
                         type="text"
                         placeholder="Search products..."
-                        className="w-full px-4 py-2 rounded-md bg-white/90 text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
+                        className="w-full px-4 py-2 rounded-md bg-white/10 backdrop-blur-sm border border-white/20 text-white text-sm md:text-base !placeholder-white/55 h-10 md:h-12 focus:outline-none focus:ring-2 focus:ring-primary transition-all duration-300"
                         onChange={(e) => handleSearch(e.target.value)}
                       />
                     </div>
