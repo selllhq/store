@@ -51,8 +51,8 @@ export default function ProductCard({
             <span
               className={`text-xs font-medium px-2 py-1 rounded-full ${
                 product.quantity_items > '0'
-                  ? 'bg-green-500/20 text-green-500'
-                  : 'bg-red-500/20 text-red-500'
+                  ? 'bg-green-500/40 text-green-200'
+                  : 'bg-red-500/30 text-red-500'
               }`}
             >
               {parseInt(product.quantity_items || '0') === 0
