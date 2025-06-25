@@ -42,7 +42,7 @@ export const BagProvider: React.FC<
       }),
     })
       .then(() => {})
-      .catch((error) => {});
+      .catch(() => {});
 
     setItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(

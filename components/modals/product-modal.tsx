@@ -41,7 +41,7 @@ export default function ProductModal({
         }),
       })
         .then(() => {})
-        .catch((error) => {});
+        .catch(() => {});
 
       setProduct(event.detail.product);
     };
