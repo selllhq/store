@@ -22,6 +22,27 @@ export default function ProductModal({
 
   useEffect(() => {
     const handleOpenProductModal = (event: CustomEvent) => {
+      // forced analytics...will refine later
+      fetch(`${process.env.NEXT_PUBLIC_API_BASEURL}/analytics/product-view`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          store_id: store?.id,
+          action_id: event.detail.product.id,
+          user_device:
+            typeof window !== 'undefined'
+              ? window.navigator.userAgent
+              : 'unknown',
+          metadata: {
+            product_name: event.detail.product.name,
+          },
+        }),
+      })
+        .then(() => {})
+        .catch((error) => {});
+
       setProduct(event.detail.product);
     };
 

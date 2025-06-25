@@ -1,21 +1,17 @@
 'use client';
 
 import { SWRConfig } from 'swr';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useRef,
-  useState,
-} from 'react';
+import { createContext, useContext, useRef, useState } from 'react';
 
 import type { BagItem } from '@/@types/order';
 import type { Product } from '@/@types/product';
+import type { Store } from '@/@types/store';
 
 export const BagContext = createContext({});
 
 export const BagProvider: React.FC<
   React.PropsWithChildren<{
+    store?: Store;
     children: React.ReactNode;
   }>
 > = ({ children, ...props }) => {
@@ -24,6 +20,29 @@ export const BagProvider: React.FC<
 
   const addToBag = (item: BagItem) => {
     hasSetBag.current = false;
+
+    // forced analytics...will refine later
+    fetch(`${process.env.NEXT_PUBLIC_API_BASEURL}/analytics/add-to-cart`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        store_id: props.store?.id,
+        action_id: item.product.id,
+        user_device:
+          typeof window !== 'undefined'
+            ? window.navigator.userAgent
+            : 'unknown',
+        metadata: {
+          product_name: item.product.name,
+          product_price: item.product.price,
+          product_quantity: item.quantity,
+        },
+      }),
+    })
+      .then(() => {})
+      .catch((error) => {});
 
     setItems((prevItems) => {
       const existingItemIndex = prevItems.findIndex(

@@ -58,7 +58,7 @@ export default async function RootLayout({
           <StoreNotFound />
         ) : (
           <StoreProvider store={storeData}>
-            <BagProvider>
+            <BagProvider store={storeData}>
               <TopNav />
               {children}
             </BagProvider>
