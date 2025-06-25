@@ -32,7 +32,7 @@ export default function Home() {
       <main
         className="container mx-auto px-4 sm:px-6"
         style={{
-          marginTop: config?.show_hero ? 64 : 0,
+          marginTop: config?.show_hero ? 64 : 32,
         }}
       >
         {(products?.length || 0) > 0 ||
