@@ -29,7 +29,7 @@ export default function ProductInfo({
 
   return (
     <>
-      <div className="h-[50vh] md:h-full md:aspect-square relative flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+      <div className="w-full h-[50vh] md:h-full md:aspect-square relative flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
         {images.length > 0 ? (
           <div className="relative w-full h-full p-6 flex items-center justify-center overflow-hidden">
             <div className="absolute inset-0 opacity-5 z-10 hero-gradient pointer-events-none"></div>
