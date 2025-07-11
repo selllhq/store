@@ -349,7 +349,7 @@ export default function Home() {
         <div className="container mx-auto px-4 sm:px-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex flex-col items-center md:items-start gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-col md:flex-row items-center gap-2">
                 {store?.logo && (
                   <img
                     src={store.logo}
@@ -357,12 +357,14 @@ export default function Home() {
                     className="h-8 w-auto object-contain rounded-md"
                   />
                 )}
-                <h2 className="font-semibold text-lg">{store?.name}</h2>
+                <h2 className="font-semibold text-lg text-center md:text-left">
+                  {store?.name}
+                </h2>
               </div>
               {config?.show_store_description && store?.description && (
                 <p className="text-sm opacity-70">{store?.description}</p>
               )}
-              <p className="text-sm opacity-70">
+              <p className="text-sm opacity-70 text-center md:text-left">
                 &copy; {new Date().getFullYear()} {store?.name}. All rights
                 reserved.
               </p>
@@ -397,9 +399,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="p-2 rounded-full transition-all duration-200 hover:opacity-80"
                     style={{
-                      backgroundColor: `${
-                        config?.theme_color || '#0070F3'
-                      }15`,
+                      backgroundColor: `${config?.theme_color || '#0070F3'}15`,
                       color: config?.theme_color || '#0070F3',
                     }}
                     aria-label="Facebook"
@@ -427,9 +427,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="p-2 rounded-full transition-all duration-200 hover:opacity-80"
                     style={{
-                      backgroundColor: `${
-                        config?.theme_color || '#0070F3'
-                      }15`,
+                      backgroundColor: `${config?.theme_color || '#0070F3'}15`,
                       color: config?.theme_color || '#0070F3',
                     }}
                     aria-label="Instagram"
@@ -466,9 +464,7 @@ export default function Home() {
                     rel="noopener noreferrer"
                     className="p-2 rounded-full transition-all duration-200 hover:opacity-80"
                     style={{
-                      backgroundColor: `${
-                        config?.theme_color || '#0070F3'
-                      }15`,
+                      backgroundColor: `${config?.theme_color || '#0070F3'}15`,
                       color: config?.theme_color || '#0070F3',
                     }}
                     aria-label="Twitter"
