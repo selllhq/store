@@ -34,7 +34,7 @@ export default function TopNav() {
             )}
             {config.show_store_name && (
               <Link
-                className="text-xl font-semibold hover:text-gray-700 transition-colors"
+                className="text-xl font-semibold hover:text-gray-700 transition-colors overflow-hidden text-ellipsis max-w-[220px] truncate"
                 href="/"
                 data-discover="true"
               >
