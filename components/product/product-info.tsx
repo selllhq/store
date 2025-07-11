@@ -112,7 +112,7 @@ export default function ProductInfo({
         </span>
       </div>
 
-      <div className="flex flex-col p-6 md:p-10">
+      <div className="flex flex-col p-6 md:p-10 md:max-h-[700px] md:overflow-y-auto">
         <h2 className="text-3xl font-bold mb-4 leading-tight">
           {product.name}
         </h2>
