@@ -251,10 +251,10 @@ export default function ProductInfo({
             onAddToBag?.();
           }}
           disabled={
-            functions.isOutOfStock() || functions.isQuantityLimitReached()
+            functions.isOutOfStock() || (functions.isQuantityLimitReached() && functions.quantity !== 1)
           }
           className={`w-full flex-1 py-4 text-base mt-auto max-h-12 h-full font-medium rounded-md text-center transition-all duration-300 flex items-center justify-center gap-2 ${
-            functions.isOutOfStock() || functions.isQuantityLimitReached()
+            functions.isOutOfStock() || (functions.isQuantityLimitReached() && functions.quantity !== 1)
               ? 'opacity-50 cursor-not-allowed'
               : 'hover:shadow-lg hover:translate-y-[-1px]'
           }`}
