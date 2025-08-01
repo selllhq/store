@@ -29,7 +29,7 @@ export default function CheckoutModal({
     phone: '',
     address: '',
     city: '',
-    country: '',
+    country: 'Ghana',
     notes: '',
   });
 
@@ -246,7 +246,7 @@ export default function CheckoutModal({
 
           <div>
             <label htmlFor="address" className="block mb-1 font-medium">
-              Address
+              Address <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -256,6 +256,7 @@ export default function CheckoutModal({
               onChange={handleInputChange}
               className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50"
               style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
+              required
             />
           </div>
 
