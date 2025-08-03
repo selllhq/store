@@ -8,6 +8,7 @@ import { Button } from '../ui/button';
 
 import type { Product } from '@/@types/product';
 import type { Store, StoreConfig } from '@/@types/store';
+import ProductStockCount from './product-stock-count';
 
 export default function ProductInfo({
   product,
@@ -93,24 +94,7 @@ export default function ProductInfo({
         )}
       </div>
 
-      <div className="absolute top-4 left-4 z-20">
-        <span
-          className={`text-xs font-medium px-2 py-1 rounded-full ${
-            product.quantity === 'unlimited' ||
-            (parseInt(product.quantity_items) ?? 0) > 0
-              ? 'bg-green-500/20 text-green-500'
-              : 'bg-red-500/20 text-red-500'
-          }`}
-        >
-          {product.quantity === 'unlimited'
-            ? 'Unlimited'
-            : (parseInt(product.quantity_items) ?? 0) === 0
-            ? 'Out of stock'
-            : (parseInt(product.quantity_items) ?? 0) <= 5
-            ? `Only ${product.quantity_items} left`
-            : `${product.quantity_items} in stock`}
-        </span>
-      </div>
+      <ProductStockCount product={product} />
 
       <div className="flex flex-col p-6 md:p-10 md:max-h-[700px] md:overflow-y-auto">
         <h2 className="text-3xl font-bold mb-4 leading-tight">
