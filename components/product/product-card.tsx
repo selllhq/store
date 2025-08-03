@@ -4,6 +4,7 @@ import { Product } from '@/@types/product';
 import { StoreConfig } from '@/@types/store';
 import { useRouter } from 'next/navigation';
 import { Button } from '../ui/button';
+import ProductStockCount from './product-stock-count';
 
 export default function ProductCard({
   product,
@@ -21,17 +22,12 @@ export default function ProductCard({
   return (
     <div
       key={product.id}
-      className={`overflow-hidden border transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${
-        storeConfig?.two_cards_on_mobile
-          ? 'border-0 md:border md:rounded-lg'
-          : 'rounded-lg shadow-md'
-      }`}
+      className={`overflow-hidden`}
       style={{
         backgroundColor: storeConfig?.background_color
           ? `${storeConfig.background_color}`
           : '#FFFFFF',
         color: storeConfig?.text_color || '#000000',
-        borderColor: storeConfig?.border_color || '#E5E7EB',
       }}
       onClick={() => {
         if (storeConfig?.open_product_in_popup) {
@@ -46,31 +42,11 @@ export default function ProductCard({
       }}
     >
       <div className="relative aspect-square overflow-hidden">
-        <div className="absolute top-3 right-3 z-20">
-          {product.quantity !== 'unlimited' && (
-            <span
-              className={`text-xs font-medium px-2 py-1 rounded-full ${
-                product.quantity_items > '0'
-                  ? 'bg-green-500/40 text-green-200'
-                  : 'bg-red-500/30 text-red-500'
-              }`}
-            >
-              {parseInt(product.quantity_items || '0') === 0
-                ? 'Out of stock'
-                : parseInt(product.quantity_items || '0') <= 5
-                ? `Only ${product.quantity_items} left`
-                : `${product.quantity_items} in stock`}
-            </span>
-          )}
-        </div>
+        <ProductStockCount product={product} />
 
         {productImage ? (
           <div
-            className={`relative w-full h-full overflow-hidden bg-neutral-200/55 ${
-              storeConfig?.two_cards_on_mobile
-                ? 'rounded-lg md:rounded-none'
-                : ''
-            }`}
+            className={`relative w-full h-full overflow-hidden bg-neutral-200/55 rounded-lg`}
           >
             <div className="absolute inset-0 opacity-10 z-10 hero-gradient pointer-events-none"></div>
 
@@ -82,11 +58,7 @@ export default function ProductCard({
           </div>
         ) : (
           <div
-            className={`w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 ${
-              storeConfig?.two_cards_on_mobile
-                ? 'rounded-lg md:rounded-none'
-                : ''
-            }`}
+            className={`w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900 rounded-lg`}
           >
             <svg
               className="w-16 h-16 text-gray-600 animate-pulse-slower"
@@ -106,11 +78,7 @@ export default function ProductCard({
         )}
       </div>
 
-      <div
-        className={`relative ${
-          storeConfig?.two_cards_on_mobile ? 'py-3 px-0 sm:p-6' : 'p-6'
-        }`}
-      >
+      <div className={`relative py-6 px-0`}>
         <div
           className="absolute top-0 left-6 right-6 h-[1px] opacity-20"
           style={{
@@ -120,63 +88,49 @@ export default function ProductCard({
 
         <div className="flex items-center justify-between mb-1.5">
           <h3
-            className={`font-bold line-clamp-1 group-hover:text-opacity-90 transition-colors duration-300 ${
-              storeConfig?.two_cards_on_mobile
-                ? 'text-base sm:text-lg md:text-xl'
-                : 'text-xl'
-            }`}
+            className={`font-bold line-clamp-1 group-hover:text-opacity-90 transition-colors duration-300 text-base sm:text-lg`}
           >
             {product.name}
           </h3>
 
-          {storeConfig?.two_cards_on_mobile &&
-            (product.quantity === 'unlimited' ||
-              parseInt(product.quantity_items || '0') > 0) && (
-              <Button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.dispatchEvent(
-                    new CustomEvent('addToBag', {
-                      detail: { product, image: productImage, quantity: 1 },
-                    })
-                  );
-                }}
-                className="w-6 h-6 md:size-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
-                style={{
-                  backgroundColor: storeConfig?.theme_color
-                    ? `${storeConfig.theme_color}20`
-                    : '#FFA72620',
-                  color: storeConfig?.theme_color || '#FFA726',
-                  boxShadow: `0 2px 8px ${
-                    storeConfig?.theme_color || '#FFA726'
-                  }20`,
-                }}
+          {(product.quantity === 'unlimited' ||
+            parseInt(product.quantity_items || '0') > 0) && (
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                window.dispatchEvent(
+                  new CustomEvent('addToBag', {
+                    detail: { product, image: productImage, quantity: 1 },
+                  })
+                );
+              }}
+              className="size-6 md:size-10 rounded-full flex items-center justify-center transition-all duration-300 hover:scale-120"
+              style={{
+                backgroundColor: 'transparent',
+                color: storeConfig?.theme_color || '#FFA726',
+              }}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                className="size-5 md:size-8"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1.5}
-                    d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                  />
-                </svg>
-              </Button>
-            )}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={1.5}
+                  d="M12 6v12m6-6H6"
+                />
+              </svg>
+            </Button>
+          )}
         </div>
 
         {storeConfig?.show_product_description && (
           <p
-            className={`text-xs sm:text-sm mb-4 opacity-70 group-hover:opacity-90 transition-opacity duration-300 ${
-              storeConfig?.two_cards_on_mobile
-                ? 'line-clamp-1 md:line-clamp-2'
-                : 'line-clamp-2'
-            }`}
+            className={`text-xs sm:text-sm mb-4 opacity-70 group-hover:opacity-90 transition-opacity duration-300 line-clamp-1`}
             dangerouslySetInnerHTML={{ __html: product.description }}
           ></p>
         )}
@@ -184,11 +138,7 @@ export default function ProductCard({
         {storeConfig?.show_product_price && (
           <div className="flex justify-between items-center">
             <span
-              className={` font-bold transition-all duration-300 group-hover:translate-x-1 ${
-                storeConfig.two_cards_on_mobile
-                  ? 'text-md md:text-xl'
-                  : 'text-2xl'
-              }`}
+              className={`font-medium transition-all duration-300 group-hover:translate-x-1 text-md md:text-xl`}
               style={{
                 color: storeConfig?.theme_color || '#FFA726',
               }}
@@ -198,46 +148,6 @@ export default function ProductCard({
                 currency,
               }).format(Number(product.price))}
             </span>
-
-            {!storeConfig?.two_cards_on_mobile &&
-              (product.quantity === 'unlimited' ||
-                parseInt(product.quantity_items || '0') > 0) && (
-                <Button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    window.dispatchEvent(
-                      new CustomEvent('addToBag', {
-                        detail: { product, image: productImage, quantity: 1 },
-                      })
-                    );
-                  }}
-                  className="w-10 h-10 rounded-md flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-md"
-                  style={{
-                    backgroundColor: storeConfig?.theme_color
-                      ? `${storeConfig.theme_color}20`
-                      : '#FFA72620',
-                    color: storeConfig?.theme_color || '#FFA726',
-                    boxShadow: `0 2px 8px ${
-                      storeConfig?.theme_color || '#FFA726'
-                    }20`,
-                  }}
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={1.5}
-                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                    />
-                  </svg>
-                </Button>
-              )}
           </div>
         )}
       </div>

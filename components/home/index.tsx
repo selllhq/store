@@ -7,15 +7,15 @@ import { Button } from '@/components/ui/button';
 import { useStore } from '@/context/store-context';
 import Hero from '@/components/store/hero';
 import ProductCard from '@/components/product/product-card';
+import ProductModal from '@/components/modals/product-modal';
 import ProductFilters from '@/components/product/product-filters';
 import ProductCategory from '@/components/product/product-category';
-import ProductModal from '@/components/modals/product-modal';
 import AboutStoreModal from '@/components/modals/about-store-modal';
 
 export function HomeContent() {
     const { store, config } = useStore();
-    const { isLoading, products, filters, setFilters } = useProducts(store.id);
     const { categories } = useCategories(store.id);
+    const { isLoading, products, filters, setFilters } = useProducts(store.id);
 
     return (
       <div
@@ -75,9 +75,7 @@ export function HomeContent() {
               )}
 
               <div
-                className={`grid ${
-                  config.two_cards_on_mobile ? 'grid-cols-2' : ''
-                } sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12`}
+                className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 mb-12`}
               >
                 {isLoading && (
                   <>

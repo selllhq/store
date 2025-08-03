@@ -14,7 +14,7 @@ export default function TopNav() {
         style={{
           backgroundColor: config?.background_color || '#FFFFFF',
           color: config?.text_color || '#000000',
-          borderColor: config?.border_color || '#E5E5EB',
+          borderColor: `${config?.theme_color || '#E5E7EB'}10`,
         }}
       >
         {store?.status === 'sandbox' && (

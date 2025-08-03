@@ -1,12 +1,12 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { getStore } from '@/lib/http';
+import { Button } from '@/components/ui/button';
 import ProductInfo from '@/components/product/product-info';
 import ProductNotFound from '@/components/product/product-not-found';
-import { Button } from '@/components/ui/button';
 
+import type { Product } from '@/@types/product';
 import type { StoreConfig } from '@/@types/store';
-import { Product } from '@/@types/product';
 
 async function getProduct(
   storeId: number,
