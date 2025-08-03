@@ -59,13 +59,35 @@ export default function ProductModal({
 
   return (
     <div
-      className="fixed w-screen h-screen left-0 top-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-md transition-all duration-500"
+      className="fixed w-screen h-screen left-0 top-0 z-50 flex flex-col sm:flex-row items-center justify-center bg-black/40 backdrop-blur-md transition-all duration-500"
       onClick={() => {
         setProduct(undefined);
       }}
     >
       <div
-        className="grid md:grid-cols-2 relative bg-opacity-95 backdrop-blur-xl rounded-2xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-auto md:overflow-hidden transform transition-all duration-500 border border-opacity-10"
+        className="w-full py-4.5 sm:py-6 px-5 sm:px-9 md:px-12.5 sm:hidden"
+        style={{
+          backgroundColor: storeConfig?.background_color || '#FFFFFF',
+          color: storeConfig?.text_color || '#000000',
+          borderBottom: `1px solid ${storeConfig?.theme_color || '#E5E7EB'}10`,
+        }}
+      >
+        <div className="store-container flex justify-between items-center">
+          <div></div>
+          <Button
+            variant="ghost"
+            className="text-gray-500 hover:text-gray-700 z-90 p-2 rounded-full transition-all duration-300 hover:bg-black/5"
+            aria-label="Close modal"
+            onClick={() => {
+              setProduct(undefined);
+            }}
+          >
+            <X className="size-5" />
+          </Button>
+        </div>
+      </div>
+      <div
+        className="grid md:grid-cols-2 relative bg-opacity-95 backdrop-blur-xl sm:rounded-2xl sm:shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-auto md:overflow-hidden transform transition-all duration-500 border border-opacity-10"
         onClick={(e) => e.stopPropagation()}
         style={{
           backgroundColor: storeConfig?.background_color || '#FFFFFF',
@@ -75,7 +97,7 @@ export default function ProductModal({
       >
         <Button
           variant="ghost"
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-90 p-2 rounded-full transition-all duration-300 hover:bg-black/5"
+          className="hidden sm:flex absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-90 p-2 rounded-full transition-all duration-300 hover:bg-black/5"
           aria-label="Close modal"
           onClick={() => {
             setProduct(undefined);
