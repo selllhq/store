@@ -7,6 +7,7 @@ import { checkoutBag } from '@/data/order';
 
 import type { Store, StoreConfig } from '@/@types/store';
 import type { BagItem, CheckoutCustomer } from '@/@types/order';
+import Map from '../store/map';
 
 export default function CheckoutModal({
   show,
@@ -275,10 +276,12 @@ export default function CheckoutModal({
             />
           </div>
 
+          <Map />
+
           <Button
             type="submit"
             className="w-full py-4 mt-4 text-white font-medium rounded-md transition-all duration-300 hover:brightness-90"
-            style={{ backgroundColor: storeConfig?.primary_color || '#4CAF50' }}
+            style={{ backgroundColor: storeConfig?.theme_color || '#4CAF50' }}
           >
             Continue to Payment
           </Button>
@@ -306,7 +309,7 @@ export default function CheckoutModal({
             name="payment-method"
             checked
             className="mr-2"
-            style={{ accentColor: storeConfig?.primary_color || '#4CAF50' }}
+            style={{ accentColor: storeConfig?.theme_color || '#4CAF50' }}
           />
           <label htmlFor="payment-online" className="font-medium">
             Pay Online
@@ -325,8 +328,8 @@ export default function CheckoutModal({
           className="py-4 font-medium rounded-md transition-all duration-300"
           onClick={handleBackToInfo}
           style={{
-            borderColor: storeConfig?.primary_color || '#4CAF50',
-            color: storeConfig?.primary_color || '#4CAF50',
+            borderColor: storeConfig?.theme_color || '#4CAF50',
+            color: storeConfig?.theme_color || '#4CAF50',
             backgroundColor: 'transparent',
           }}
         >
@@ -337,7 +340,7 @@ export default function CheckoutModal({
           className="py-4 text-white font-medium rounded-md transition-all duration-300 hover:brightness-90"
           onClick={handleProceedToPayment}
           disabled={isSubmitting}
-          style={{ backgroundColor: storeConfig?.primary_color || '#4CAF50' }}
+          style={{ backgroundColor: storeConfig?.theme_color || '#4CAF50' }}
         >
           {isSubmitting ? 'Processing...' : 'Proceed to Payment'}
         </Button>

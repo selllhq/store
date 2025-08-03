@@ -8,6 +8,7 @@ import { Minus, X } from 'lucide-react';
 import { getProductCartFunctions } from '@/data/product';
 import CheckoutModal from '../modals/checkout-modal';
 import Link from 'next/link';
+import ProductStockCount from '../product/product-stock-count';
 
 declare global {
   interface WindowEventMap {
@@ -217,7 +218,7 @@ export default function Bag({
                     <div className="flex-1 flex flex-col min-h-[6rem]">
                       <div className="flex justify-between items-start">
                         <div className="space-y-1">
-                          <h3 className="font-semibold text-base tracking-tight">
+                          <h3 className="font-semibold text-base tracking-tight line-clamp-1">
                             {item.product.name}
                           </h3>
                           <p
@@ -231,17 +232,9 @@ export default function Bag({
                               currency: store.currency || 'USD',
                             }).format(Number(item.product.price))}
                           </p>
-                          {item.product.description && (
-                            <p
-                              className="text-sm text-gray-400 mt-1 line-clamp-2"
-                              dangerouslySetInnerHTML={{
-                                __html: item.product.description,
-                              }}
-                            ></p>
-                          )}
                         </div>
                         <button
-                          className="w-8 h-8 rounded-full flex items-center justify-center transition-colors hover:bg-gray-800 ml-2 flex-shrink-0"
+                          className="w-8 h-8 rounded-full flex items-center justify-center transition-colors text-red-400 hover:bg-red-100 ml-2 flex-shrink-0"
                           onClick={() => removeFromBag(item.product.id)}
                         >
                           <svg
@@ -262,69 +255,32 @@ export default function Bag({
                       </div>
                       <div className="flex flex-col gap-3 mt-auto">
                         <div className="flex justify-between items-center mt-3">
-                          <span
-                            className="text-xs font-medium px-3 py-1 rounded-full"
-                            style={{
-                              backgroundColor: functions.isOutOfStock()
-                                ? 'rgba(255, 0, 0, 0.1)'
-                                : item.product.quantity === 'unlimited'
-                                ? `${storeConfig?.theme_color || '#4CAF50'}15`
-                                : parseInt(
-                                    item.product.quantity_items || '0'
-                                  ) <= 5
-                                ? 'rgba(255, 152, 0, 0.1)'
-                                : `${storeConfig?.theme_color || '#4CAF50'}15`,
-                              color: functions.isOutOfStock()
-                                ? '#FF0000'
-                                : item.product.quantity === 'unlimited'
-                                ? storeConfig?.theme_color || '#4CAF50'
-                                : parseInt(
-                                    item.product.quantity_items || '0'
-                                  ) <= 5
-                                ? '#FF9800'
-                                : storeConfig?.theme_color || '#4CAF50',
-                            }}
-                          >
-                            {item.product.quantity === 'unlimited'
-                              ? 'Unlimited'
-                              : parseInt(item.product.quantity_items || '0') ===
-                                0
-                              ? 'Out of stock'
-                              : parseInt(item.product.quantity_items || '0') <=
-                                5
-                              ? `Only ${item.product.quantity_items} left`
-                              : `${item.product.quantity_items} in stock`}
-                          </span>
-                          <span className="font-semibold">
-                            {new Intl.NumberFormat('en-US', {
-                              style: 'currency',
-                              currency: store?.currency || 'USD',
-                            }).format(
-                              Number(item.product.price) * Number(item.quantity)
-                            )}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between gap-3 mt-1">
+                          <ProductStockCount product={item.product} />
                           <div
-                            className="flex items-center rounded-lg overflow-hidden"
+                            className="flex items-center rounded-full overflow-hidden"
                             style={{
                               border: `1px solid ${
-                                storeConfig?.border_color
-                                  ? `${storeConfig.border_color}40`
+                                storeConfig?.theme_color
+                                  ? `${storeConfig.theme_color}20`
                                   : 'rgba(42, 42, 42, 0.25)'
                               }`,
-                              backgroundColor: storeConfig?.border_color
-                                ? `${storeConfig.border_color}10`
+                              backgroundColor: storeConfig?.theme_color
+                                ? `${storeConfig.theme_color}10`
                                 : 'rgba(42, 42, 42, 0.1)',
                             }}
                           >
                             <Button
+                              variant="outline"
                               onClick={() => functions.decrement()}
-                              className={`w-9 h-9 flex items-center justify-center transition-colors hover:bg-gray-800 ${
+                              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
                                 functions.isOutOfStock()
                                   ? 'opacity-50 cursor-not-allowed'
                                   : ''
                               }`}
+                              style={{
+                                backgroundColor: storeConfig?.background_color,
+                                borderColor: `${storeConfig?.theme_color || '#E5E7EB'}20`,
+                              }}
                             >
                               <Minus className="h-4 w-4" />
                             </Button>
@@ -359,12 +315,17 @@ export default function Bag({
                               }`}
                             />
                             <Button
-                              className={`w-9 h-9 flex items-center justify-center transition-colors hover:bg-gray-800 ${
+                              variant="outline"
+                              className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${
                                 functions.isOutOfStock() ||
                                 functions.isQuantityLimitReached()
                                   ? 'opacity-50 cursor-not-allowed'
                                   : ''
                               }`}
+                              style={{
+                                backgroundColor: storeConfig?.background_color,
+                                borderColor: `${storeConfig?.theme_color || '#E5E7EB'}20`,
+                              }}
                               onClick={() => functions.increment()}
                               disabled={
                                 functions.isOutOfStock() ||
@@ -387,6 +348,14 @@ export default function Bag({
                               </svg>
                             </Button>
                           </div>
+                          <span className="font-semibold">
+                            {new Intl.NumberFormat('en-US', {
+                              style: 'currency',
+                              currency: store?.currency || 'USD',
+                            }).format(
+                              Number(item.product.price) * Number(item.quantity)
+                            )}
+                          </span>
                         </div>
                       </div>
                     </div>
@@ -394,11 +363,13 @@ export default function Bag({
                 );
               })}
 
+              {items.length > 1 && <div className="h-42"></div>}
+
               <div
-                className="absolute bottom-0 left-0 right-0 border-t p-4 space-y-4"
+                className="fixed bottom-0 left-0 right-0 border-t p-4 space-y-4"
                 style={{
                   backgroundColor: storeConfig?.background_color || '#1E1E1E',
-                  borderColor: storeConfig?.border_color || '#2A2A2A',
+                  borderColor: `${storeConfig?.theme_color || '#2A2A2A'}20`,
                 }}
               >
                 <div className="space-y-1">
