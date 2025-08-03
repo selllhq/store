@@ -1,16 +1,55 @@
 'use client';
 
+import { getStore } from '@/lib/http';
 import { ShimmerCard } from './loading';
 import { useProducts } from '@/data/product';
 import { useCategories } from '@/data/category';
+import { Button } from '@/components/ui/button';
 import { useStore } from '@/context/store-context';
 import Hero from '@/components/store/hero';
 import ProductCard from '@/components/product/product-card';
 import ProductFilters from '@/components/product/product-filters';
 import ProductCategory from '@/components/product/product-category';
-import { Button } from '@/components/ui/button';
 import ProductModal from '@/components/modals/product-modal';
 import AboutStoreModal from '@/components/modals/about-store-modal';
+
+export const generateMetadata = async () => {
+  const store = await getStore();
+
+  if (!store) {
+    return {
+      title: 'Store not found',
+      description: 'Store not found',
+    };
+  }
+
+  return {
+    icons: {
+      icon: store.logo
+        ? new URL(store.logo)
+        : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
+      apple: store.logo
+        ? new URL(store.logo)
+        : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
+      shortcut: store.logo
+        ? new URL(store.logo)
+        : new URL('https://zero.leafphp.dev/assets/img/logo.png'),
+    },
+    title: `${store.name} | Shop Online`,
+    description: store.description,
+    openGraph: {
+      title: `${store.name} | Shop Online`,
+      description: store.description,
+      images: [
+        {
+          url: store.logo,
+          width: 672,
+          height: 346,
+        },
+      ],
+    },
+  };
+};
 
 export default function Home() {
   const { store, config } = useStore();
