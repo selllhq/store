@@ -15,6 +15,10 @@ export interface CheckoutCustomer {
   city?: string;
   country?: string;
   notes?: string;
+  deliveryLocation?: {
+    address: string;
+    lngLat: [number, number];
+  };
 }
 
 export interface CheckoutResponse {

@@ -28,11 +28,15 @@ export default function CheckoutModal({
     name: '',
     email: '',
     phone: '',
-    address: '',
     city: '',
     country: 'Ghana',
     notes: '',
   });
+
+  const [deliveryLocation, setDeliveryLocation] = useState<{
+    address: string;
+    lngLat: [number, number];
+  } | null>(null);
 
   const calculateTotal = () => {
     return items.reduce(
@@ -61,19 +65,31 @@ export default function CheckoutModal({
   };
 
   const handleProceedToPayment = async () => {
+    if (!deliveryLocation) {
+      toast.error('Please select your delivery location on the map.');
+      return;
+    }
+
     setIsSubmitting(true);
 
     checkoutBag({
       store,
       items,
-      customer: customerInfo,
-    }).then((response) => {
-      window.location.href = response.url;
-      setIsSubmitting(false);
-    }).catch(() => {
-      toast.error('An error occurred while processing your order. Please try again.');
-      setIsSubmitting(false);
-    });
+      customer: {
+        ...customerInfo,
+        deliveryLocation,
+      },
+    })
+      .then((response) => {
+        window.location.href = response.url;
+        setIsSubmitting(false);
+      })
+      .catch(() => {
+        toast.error(
+          'An error occurred while processing your order. Please try again.'
+        );
+        setIsSubmitting(false);
+      });
   };
 
   const renderOrderSummary = () => (
@@ -165,22 +181,23 @@ export default function CheckoutModal({
       <div className="mt-6">
         <h2 className="text-xl font-semibold mb-4">Your Information</h2>
         <form onSubmit={handleContinueToPayment} className="space-y-4">
+          <div>
+            <label htmlFor="name" className="block mb-1 font-medium">
+              Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              required
+              value={customerInfo.name}
+              onChange={handleInputChange}
+              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50"
+              style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
+            />
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label htmlFor="name" className="block mb-1 font-medium">
-                Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                required
-                value={customerInfo.name}
-                onChange={handleInputChange}
-                className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50"
-                style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
-              />
-            </div>
             <div>
               <label htmlFor="email" className="block mb-1 font-medium">
                 Email <span className="text-red-500">*</span>
@@ -196,9 +213,6 @@ export default function CheckoutModal({
                 style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
               />
             </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label htmlFor="phone" className="block mb-1 font-medium">
                 Phone <span className="text-red-500">*</span>
@@ -214,51 +228,47 @@ export default function CheckoutModal({
                 style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
               />
             </div>
-            <div>
-              <label htmlFor="country" className="block mb-1 font-medium">
-                Country
-              </label>
-              <input
-                type="text"
-                id="country"
-                name="country"
-                value={customerInfo.country}
-                onChange={handleInputChange}
-                className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50"
-                style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
-              />
-            </div>
           </div>
 
           <div>
-            <label htmlFor="city" className="block mb-1 font-medium">
-              City
+            <label className="block mb-1 font-medium">
+              Delivery Location <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
-              id="city"
-              name="city"
-              value={customerInfo.city}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50"
-              style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
-            />
-          </div>
+            <Map
+              value={deliveryLocation || undefined}
+              onChange={(loc) => {
+                setDeliveryLocation(loc);
+                // Try to extract city and country from loc.address or loc context
+                // Use regex or split for city, country (Mapbox returns 'place_name' as 'city, region, country')
+                let city = '';
+                let country = '';
 
-          <div>
-            <label htmlFor="address" className="block mb-1 font-medium">
-              Address <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              id="address"
-              name="address"
-              value={customerInfo.address}
-              onChange={handleInputChange}
-              className="w-full p-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-opacity-50"
-              style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
-              required
+                if (loc.address) {
+                  const parts = loc.address.split(',').map((s) => s.trim());
+                  country = parts[parts.length - 1] || '';
+                  city = parts.length > 2 ? parts[parts.length - 3] : '';
+                }
+
+                setCustomerInfo((prev) => ({
+                  ...prev,
+                  city,
+                  country,
+                }));
+              }}
             />
+            {deliveryLocation?.address && (
+              <div
+                className="mt-2 text-xs"
+                style={{ color: storeConfig?.text_color || '#000000' }}
+              >
+                Selected: {deliveryLocation.address}
+              </div>
+            )}
+            {!deliveryLocation && (
+              <div className="mt-2 text-xs text-red-600">
+                Please select your delivery location on the map above.
+              </div>
+            )}
           </div>
 
           <div>
@@ -275,8 +285,6 @@ export default function CheckoutModal({
               style={{ borderColor: storeConfig?.border_color || '#E5E7EB' }}
             />
           </div>
-
-          <Map />
 
           <Button
             type="submit"

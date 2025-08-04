@@ -71,3 +71,21 @@ export interface StoreCustomer {
   created_at: string;
   updated_at: string;
 }
+
+export interface UserLocation {
+  country: string;
+  countryCode: string;
+  region: string;
+  regionName: string;
+  currency: string;
+  city: string;
+  zip: string;
+  lat: number;
+  lon: number;
+  timezone: string;
+  ip: string;
+  continent: string;
+  continentCode: string;
+  status: string;
+  query: string;
+}

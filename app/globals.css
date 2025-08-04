@@ -139,3 +139,11 @@ ol.list-node {
 ol.list-node li {
   @apply list-item ml-6;
 }
+
+canvas.mapboxgl-canvas {
+  @apply rounded-lg;
+}
+
+.mapboxgl-control-container .mapboxgl-ctrl {
+  @apply rounded-full;
+}
