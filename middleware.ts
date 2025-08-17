@@ -12,7 +12,12 @@ function getSubdomain(hostname: string): string | null {
     return null;
   }
 
+  if (!hostname.endsWith('.selll.store')) {
+    return hostname;
+  }
+
   const parts = hostname.split('.');
+
   if (parts.length > 2) {
     return parts[0];
   }
