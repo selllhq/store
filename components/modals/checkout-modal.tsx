@@ -85,6 +85,7 @@ export default function CheckoutModal({
       items,
       customer: {
         ...customerInfo,
+        // @ts-ignore
         deliveryLocation,
       },
     })
