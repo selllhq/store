@@ -15,6 +15,7 @@ export interface CheckoutCustomer {
   city?: string;
   country?: string;
   notes?: string;
+  usePickup?: boolean;
   deliveryLocation?: {
     address: string;
     lngLat: [number, number];

@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 
 import { Button } from '../ui/button';
 import { checkoutBag } from '@/data/order';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import type { Store, StoreConfig } from '@/@types/store';
 import type { BagItem, CheckoutCustomer } from '@/@types/order';
@@ -30,6 +31,7 @@ export default function CheckoutModal({
     phone: '',
     city: '',
     country: 'Ghana',
+    usePickup: false,
     notes: '',
   });
 
@@ -236,46 +238,143 @@ export default function CheckoutModal({
             </div>
           </div>
 
-          <div>
-            <label className="block mb-1 font-medium">
-              Delivery Location <span className="text-red-500">*</span>
-            </label>
-            <Map
-              value={deliveryLocation || undefined}
-              onChange={(loc) => {
-                setDeliveryLocation(loc);
-                // Try to extract city and country from loc.address or loc context
-                // Use regex or split for city, country (Mapbox returns 'place_name' as 'city, region, country')
-                let city = '';
-                let country = '';
+          {store?.delivery_defaults?.allow_pickups ? (
+            <Tabs defaultValue="delivery" className="w-full mt-6">
+              <TabsList className="w-full">
+                <TabsTrigger
+                  value="delivery"
+                  onClick={() => {
+                    setCustomerInfo((prev) => ({
+                      ...prev,
+                      usePickup: false,
+                    }));
+                  }}
+                >
+                  Delivery
+                </TabsTrigger>
+                <TabsTrigger
+                  value="pickup"
+                  onClick={() => {
+                    setCustomerInfo((prev) => ({
+                      ...prev,
+                      usePickup: true,
+                    }));
+                  }}
+                >
+                  Pickup
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="delivery">
+                <div>
+                  <label className="block mb-1 font-medium">
+                    Delivery Location <span className="text-red-500">*</span>
+                  </label>
+                  <Map
+                    value={deliveryLocation || undefined}
+                    onChange={(loc) => {
+                      setDeliveryLocation(loc);
+                      // Try to extract city and country from loc.address or loc context
+                      // Use regex or split for city, country (Mapbox returns 'place_name' as 'city, region, country')
+                      let city = '';
+                      let country = '';
 
-                if (loc.address) {
-                  const parts = loc.address.split(',').map((s) => s.trim());
-                  country = parts[parts.length - 1] || '';
-                  city = parts.length > 2 ? parts[parts.length - 3] : '';
-                }
+                      if (loc.address) {
+                        const parts = loc.address
+                          .split(',')
+                          .map((s) => s.trim());
+                        country = parts[parts.length - 1] || '';
+                        city = parts.length > 2 ? parts[parts.length - 3] : '';
+                      }
 
-                setCustomerInfo((prev) => ({
-                  ...prev,
-                  city,
-                  country,
-                }));
-              }}
-            />
-            {deliveryLocation?.address && (
-              <div
-                className="mt-2 text-xs"
-                style={{ color: storeConfig?.text_color || '#000000' }}
-              >
-                Selected: {deliveryLocation.address}
-              </div>
-            )}
-            {!deliveryLocation && (
-              <div className="mt-2 text-xs text-red-600">
-                Please select your delivery location on the map above.
-              </div>
-            )}
-          </div>
+                      setCustomerInfo((prev) => ({
+                        ...prev,
+                        city,
+                        country,
+                      }));
+                    }}
+                  />
+                  {deliveryLocation?.address && (
+                    <div
+                      className="mt-2 text-xs"
+                      style={{ color: storeConfig?.text_color || '#000000' }}
+                    >
+                      Selected: {deliveryLocation.address}
+                    </div>
+                  )}
+                  {!deliveryLocation && (
+                    <div className="mt-2 text-xs text-red-600">
+                      Please select your delivery location on the map above.
+                    </div>
+                  )}
+                </div>
+              </TabsContent>
+              <TabsContent value="pickup">
+                <div className="text-sm opacity-70 mt-4">
+                  <p>
+                    You can pick up your order from our store at{' '}
+                    <strong>{store?.name}</strong>.
+                  </p>
+                  <p>
+                    Address: {store?.address || 'Not provided by the store'}
+                  </p>
+                  <p>Phone: {store?.phone || 'Not provided by the store'}</p>
+                </div>
+                {store?.delivery_defaults?.latitude && (
+                  <div className="mt-4">
+                    <iframe
+                      width="100%"
+                      height="400"
+                      frameBorder="0"
+                      className="border-0 rounded-xl"
+                      src={`https://www.google.com/maps?q=${store?.delivery_defaults?.latitude},${store?.delivery_defaults?.longitude}&hl=en&z=14&output=embed`}
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          ) : (
+            <div>
+              <label className="block mb-1 font-medium">
+                Delivery Location <span className="text-red-500">*</span>
+              </label>
+              <Map
+                value={deliveryLocation || undefined}
+                onChange={(loc) => {
+                  setDeliveryLocation(loc);
+                  // Try to extract city and country from loc.address or loc context
+                  // Use regex or split for city, country (Mapbox returns 'place_name' as 'city, region, country')
+                  let city = '';
+                  let country = '';
+
+                  if (loc.address) {
+                    const parts = loc.address.split(',').map((s) => s.trim());
+                    country = parts[parts.length - 1] || '';
+                    city = parts.length > 2 ? parts[parts.length - 3] : '';
+                  }
+
+                  setCustomerInfo((prev) => ({
+                    ...prev,
+                    city,
+                    country,
+                  }));
+                }}
+              />
+              {deliveryLocation?.address && (
+                <div
+                  className="mt-2 text-xs"
+                  style={{ color: storeConfig?.text_color || '#000000' }}
+                >
+                  Selected: {deliveryLocation.address}
+                </div>
+              )}
+              {!deliveryLocation && (
+                <div className="mt-2 text-xs text-red-600">
+                  Please select your delivery location on the map above.
+                </div>
+              )}
+            </div>
+          )}
 
           <div>
             <label htmlFor="notes" className="block mb-1 font-medium">
@@ -296,7 +395,10 @@ export default function CheckoutModal({
             type="submit"
             className="w-full py-4 mt-4 text-white font-medium rounded-md transition-all duration-300 hover:brightness-90"
             style={{ backgroundColor: storeConfig?.theme_color || '#4CAF50' }}
-            disabled={!deliveryLocation || isSubmitting}
+            disabled={
+              isSubmitting ||
+              (!deliveryLocation && !customerInfo.usePickup)
+            }
           >
             Continue to Payment
           </Button>
@@ -307,7 +409,9 @@ export default function CheckoutModal({
 
   const renderPaymentForm = () => (
     <div className="p-6 overflow-y-auto max-h-[calc(100vh-80px)] sm:max-h-[calc(90vh-80px)]">
-      <h1 className="hidden sm:block text-2xl font-bold mb-6">Payment Information</h1>
+      <h1 className="hidden sm:block text-2xl font-bold mb-6">
+        Payment Information
+      </h1>
       {renderOrderSummary()}
 
       <div

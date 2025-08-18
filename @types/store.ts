@@ -16,6 +16,7 @@ export interface Store {
   updated_at: string;
   country: string;
   owner?: StoreOwner;
+  delivery_defaults?: StoreDeliveryDefaults;
 }
 
 export interface StoreConfig {
@@ -88,4 +89,17 @@ export interface UserLocation {
   continentCode: string;
   status: string;
   query: string;
+}
+
+export interface StoreDeliveryDefaults {
+  id: number;
+  store_id: number;
+  allow_pickups: true;
+  expected_delivery_days: number;
+  work_hours: null;
+  longitude: string;
+  latitude: string;
+  config: null;
+  created_at: string;
+  updated_at: string;
 }
