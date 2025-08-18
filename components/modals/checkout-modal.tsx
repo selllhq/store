@@ -60,7 +60,7 @@ export default function CheckoutModal({
   const handleContinueToPayment = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!deliveryLocation) {
+    if (!deliveryLocation && customerInfo.usePickup === false) {
       toast.error('Please select your delivery location on the map.');
       return;
     }
@@ -73,7 +73,7 @@ export default function CheckoutModal({
   };
 
   const handleProceedToPayment = async () => {
-    if (!deliveryLocation) {
+    if (!deliveryLocation && customerInfo.usePickup === false) {
       toast.error('Please select your delivery location on the map.');
       return;
     }

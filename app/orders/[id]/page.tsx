@@ -9,7 +9,9 @@ import { useParams } from 'next/navigation';
 
 export default function OrderPage() {
   const { store, config } = useStore();
-  const { isLoading, order } = useOrder(store.id, useParams().id as string);
+  const { isLoading, order, isError } = useOrder(store.id, useParams().id as string);
+
+  console.log('store', store);
 
   if (isLoading) {
     return (
@@ -91,7 +93,40 @@ export default function OrderPage() {
     );
   }
 
-  if (!order) {
+  if (isError) {
+    return (
+      <div className="container mx-auto px-4 py-12 max-w-4xl">
+        <div className="text-center py-12 px-4 rounded-lg bg-red-50">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full flex items-center justify-center bg-red-100 text-red-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-8 w-8"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+          </div>
+          <h2 className="text-2xl font-semibold mb-4">Error Loading Order</h2>
+          <p className="mb-8">There was an error loading your order details.</p>
+          <button
+            onClick={() => (window.location.href = '/')}
+            className="px-6 py-2 rounded font-medium transition-all duration-200 bg-red-600 text-white"
+          >
+            Return to Shop
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!order?.id) {
     return (
       <div className="container mx-auto px-4 py-12 max-w-4xl">
         <div
@@ -353,50 +388,113 @@ export default function OrderPage() {
           </div>
         </div>
 
-        {order?.status === 'paid' && (
-          <div
-            className="border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-8"
-            style={{ borderColor: config?.border_color || '#E5E7EB' }}
-          >
-            <div
-              className="p-4 border-b border-gray-200 bg-gray-50/10"
-              style={{ borderColor: config?.border_color || '#E5E7EB' }}
-            >
-              <h3 className="font-medium">Order Shipping/Delivery</h3>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Status</span>
-                <span>Pending</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Estimated Delivery Date</span>
-                <span>
-                  {(order?.shipping_updates?.length || 0) > 0
-                    ? dayjs(
-                        order?.shipping_updates![
-                          order?.shipping_updates!.length - 1
-                        ].estimated_delivery_date
-                      ).format('ddd, D MMMM, YYYY')
-                    : dayjs(order?.updated_at)
-                        .add(7, 'day')
-                        .format('ddd, D MMMM, YYYY')}
-                </span>
-              </div>
-              {(order?.shipping_updates?.length || 0) > 0 && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Delivery Updates</span>
-                  <span>
-                    {`${order.shipping_updates!.length} updates from seller — ${
-                      order.shipping_updates![
-                        order.shipping_updates!.length - 1
-                      ].message
-                    }`}
-                  </span>
+        {order?.address === 'PICKUP' ? (
+          <>
+            {order?.status === 'paid' && (
+              <div
+                className="border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-8"
+                style={{ borderColor: config?.border_color || '#E5E7EB' }}
+              >
+                <div
+                  className="p-4 border-b border-gray-200 bg-gray-50/10"
+                  style={{ borderColor: config?.border_color || '#E5E7EB' }}
+                >
+                  <h3 className="font-medium">Order Pickup</h3>
                 </div>
-              )}
-            </div>
-          </div>
+                <div className="p-6 space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Status</span>
+                    <span>Pending</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Pickup Location</span>
+
+                    <iframe
+                      width="100%"
+                      height="400"
+                      frameBorder="0"
+                      className="border-0 rounded-xl"
+                      src={`https://www.google.com/maps?q=${store?.delivery_defaults?.latitude},${store?.delivery_defaults?.longitude}&hl=en&z=14&output=embed`}
+                      allowFullScreen
+                    ></iframe>
+                  </div>
+                  {(order?.shipping_updates?.length || 0) > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Delivery Updates</span>
+                      <span>
+                        {`${
+                          order.shipping_updates!.length
+                        } updates from seller — ${
+                          order.shipping_updates![
+                            order.shipping_updates!.length - 1
+                          ].message
+                        }`}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {order?.status === 'paid' && (
+              <div
+                className="border border-gray-200 rounded-lg overflow-hidden shadow-sm mb-8"
+                style={{ borderColor: config?.border_color || '#E5E7EB' }}
+              >
+                <div
+                  className="p-4 border-b border-gray-200 bg-gray-50/10"
+                  style={{ borderColor: config?.border_color || '#E5E7EB' }}
+                >
+                  <h3 className="font-medium">Order Shipping/Delivery</h3>
+                </div>
+                <div className="p-6 space-y-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Status</span>
+                    <span>Pending</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">
+                      Estimated Delivery Date
+                    </span>
+                    <span>
+                      {(order?.shipping_updates?.length || 0) > 0
+                        ? dayjs(
+                            order?.shipping_updates![
+                              order?.shipping_updates!.length - 1
+                            ].estimated_delivery_date
+                          ).format('ddd, D MMMM, YYYY')
+                        : store?.delivery_defaults?.expected_delivery_days
+                        ? dayjs(order?.updated_at)
+                            .add(
+                              store?.delivery_defaults?.expected_delivery_days,
+                              'day'
+                            )
+                            .format('ddd, D MMMM, YYYY')
+                        : dayjs(order?.updated_at)
+                            .add(7, 'day')
+                            .format('ddd, D MMMM, YYYY')}
+                    </span>
+                  </div>
+                  {(order?.shipping_updates?.length || 0) > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Delivery Updates</span>
+                      <span>
+                        {`${
+                          order.shipping_updates!.length
+                        } updates from seller — ${
+                          order.shipping_updates![
+                            order.shipping_updates!.length - 1
+                          ].message
+                        }`}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         <div className="flex justify-end mb-8">
