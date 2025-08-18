@@ -39,6 +39,7 @@ export interface Order {
   status: string;
   created_at: string;
   updated_at: string;
+  address?: string;
   customer: StoreCustomer;
   shipping_updates?: OrderShippingUpdate[];
 }
