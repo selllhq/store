@@ -31,6 +31,7 @@ export const checkoutBag = async (data: {
         redirect_url: window.location.origin,
         cart: data.items.map((item) => ({
           id: item.product.id,
+          affiliate: item.product.affiliate,
           quantity: Number(item.quantity),
         })),
         customer: data.customer,

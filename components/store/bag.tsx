@@ -279,7 +279,9 @@ export default function Bag({
                               }`}
                               style={{
                                 backgroundColor: storeConfig?.background_color,
-                                borderColor: `${storeConfig?.theme_color || '#E5E7EB'}20`,
+                                borderColor: `${
+                                  storeConfig?.theme_color || '#E5E7EB'
+                                }20`,
                               }}
                             >
                               <Minus className="h-4 w-4" />
@@ -324,7 +326,9 @@ export default function Bag({
                               }`}
                               style={{
                                 backgroundColor: storeConfig?.background_color,
-                                borderColor: `${storeConfig?.theme_color || '#E5E7EB'}20`,
+                                borderColor: `${
+                                  storeConfig?.theme_color || '#E5E7EB'
+                                }20`,
                               }}
                               onClick={() => functions.increment()}
                               disabled={
@@ -425,37 +429,40 @@ export default function Bag({
                   >
                     Checkout
                   </button>
-                  <Button
-                    asChild
-                    onClick={() => {
-                      setShow(false);
-                    }}
-                    className="w-full py-3 border font-medium rounded transition-colors"
-                    style={{
-                      borderColor: storeConfig?.theme_color || '#2A2A2A',
-                      backgroundColor: 'transparent',
-                      filter: 'brightness(1)',
-                    }}
-                    onMouseOver={(e) =>
-                      (e.currentTarget.style.backgroundColor =
-                        storeConfig?.theme_color
-                          ? `${storeConfig.theme_color}22`
-                          : '#2A2A2A')
-                    }
-                    onMouseOut={(e) =>
-                      (e.currentTarget.style.backgroundColor = 'transparent')
-                    }
-                  >
-                    <Link
-                      href="/"
-                      style={{
-                        color: storeConfig?.text_color || '#FFFFFF',
-                        textDecoration: 'none',
+
+                  {!items.some((i) => i.product.affiliate) && (
+                    <Button
+                      asChild
+                      onClick={() => {
+                        setShow(false);
                       }}
+                      className="w-full py-3 border font-medium rounded transition-colors"
+                      style={{
+                        borderColor: storeConfig?.theme_color || '#2A2A2A',
+                        backgroundColor: 'transparent',
+                        filter: 'brightness(1)',
+                      }}
+                      onMouseOver={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          storeConfig?.theme_color
+                            ? `${storeConfig.theme_color}22`
+                            : '#2A2A2A')
+                      }
+                      onMouseOut={(e) =>
+                        (e.currentTarget.style.backgroundColor = 'transparent')
+                      }
                     >
-                      Keep Shopping
-                    </Link>
-                  </Button>
+                      <Link
+                        href="/"
+                        style={{
+                          color: storeConfig?.text_color || '#FFFFFF',
+                          textDecoration: 'none',
+                        }}
+                      >
+                        Keep Shopping
+                      </Link>
+                    </Button>
+                  )}
                 </div>
               </div>
             </div>

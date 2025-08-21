@@ -105,24 +105,40 @@ export default async function ProductPage({
         paddingBottom: '4rem',
       }}
     >
-      <main className="container mx-auto px-4 sm:px-6 py-10">
+      <main
+        className="container mx-auto px-4 sm:px-6 py-10"
+        style={
+          product.affiliate
+            ? {
+                zIndex: 20,
+                minHeight: '100vh',
+                height: '100%',
+                width: '100vw',
+                padding: 0,
+                overflowY: 'auto',
+              }
+            : {}
+        }
+      >
         <div className="grid md:grid-cols-2 gap-10 relative">
           <ProductInfo store={store} product={product} storeConfig={config} />
         </div>
 
-        <div className="mt-10 max-w-xs mx-auto">
-          <Button
-            asChild
-            variant="link"
-            className="w-full py-4 text-base font-medium rounded-md text-center transition-all duration-300"
-            style={{
-              borderColor: config?.border_color || '#E5E5E5',
-              color: config?.text_color || '#000000',
-            }}
-          >
-            <Link href="/">Continue Shopping</Link>
-          </Button>
-        </div>
+        {!product.affiliate && (
+          <div className="mt-10 max-w-xs mx-auto">
+            <Button
+              asChild
+              variant="link"
+              className="w-full py-4 text-base font-medium rounded-md text-center transition-all duration-300"
+              style={{
+                borderColor: config?.border_color || '#E5E5E5',
+                color: config?.text_color || '#000000',
+              }}
+            >
+              <Link href="/">Continue Shopping</Link>
+            </Button>
+          </div>
+        )}
       </main>
     </div>
   );

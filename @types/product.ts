@@ -14,6 +14,10 @@ export interface Product {
   variants: string | null;
   physical: boolean;
   is_featured: boolean;
+  affiliate?: {
+    id: number;
+    slug: string;
+  };
 }
 
 export type ProductImages = string[];
