@@ -53,8 +53,14 @@ export const BagProvider: React.FC<
         const updatedItems = [...prevItems];
 
         if (!hasSetBag.current) {
-          updatedItems[existingItemIndex].quantity += item.quantity;
-          hasSetBag.current = true;
+          if (
+            item.product.quantity !== 'unlimited' &&
+            updatedItems[existingItemIndex].quantity + item.quantity <=
+              parseInt(item.product.quantity_items)
+          ) {
+            updatedItems[existingItemIndex].quantity += item.quantity;
+            hasSetBag.current = true;
+          }
         }
 
         return updatedItems;
